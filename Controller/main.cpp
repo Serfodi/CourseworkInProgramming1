@@ -8,11 +8,14 @@
 #include <iostream>
 
 #include "Output.hpp"
+
 #include "Input.hpp"
-#include "ModelBirth.hpp"
-#include "FileProc.hpp"
 #include "Processing.hpp"
+#include "FileProces.hpp"
 #include "List.hpp"
+
+#include "ModelBirth.hpp"
+
 #include "ClassError.hpp"
 
 
@@ -27,21 +30,20 @@ int main() {
     Output output;
     Input input;
     Processing processing;
-    FileProc file;
+    static FileProces file;
     
     
     // MARK: - Обработка файла
     
-    file.openFile("/Users/serfodi/Xcode/C++/FileDataInfo");
+    file.openFileRead("/Users/serfodi/Xcode/C++/FileDataInfo");
     
     
-    string text = file.getText();
+    string text = file.readText();
     while (text != "") {
         new List(input.createBirth(text));
-        text = file.getText();
+        text = file.readText();
     }
     
-    List::description();
     
     // MARK: -  Mеню
     
@@ -50,23 +52,50 @@ int main() {
     
     switch (processing.choiceProcessing) {
         case viewData:
+            
             output.area();
             processing.area = input.areaCast(input.number());
+            
+            output.menuInput(processing.area);
+            processing.areaText = input.text();
+            
             output.dataFormat();
             processing.dataFormat = input.dataFormatCast(input.number());
+            
+            output.dataFormatInput(processing.dataFormat);
+            
+            try {
+            processing.data = input.data(input.text(), processing.dataFormat);
+            }
+            catch (ErrorInput){
+                cout << "хаха лох";
+            }
+                
             break;
         case histogram:
         case birthrate:
+            
             output.area();
             processing.area = input.areaCast(input.number());
+            
+            output.menuInput(processing.area);
+            processing.areaText = input.text();
+            
             output.birthrate();
             processing.birthrat = input.birthrateCast(input.number());
+            
             break;
         case delet:
+            
             output.delet();
+            
+//            output.menuInput();
+            
             break;
     }
     
+    
+    cout << processing.data;
     
     
     // MARK: - Обработка

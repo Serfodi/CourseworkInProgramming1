@@ -5,6 +5,12 @@
 //  Created by Сергей Насыбуллин on 27.03.2022.
 //
 
+/**
+ * @file
+ * Используется:
+ *      - main
+ */
+
 #ifndef List_hpp
 #define List_hpp
 

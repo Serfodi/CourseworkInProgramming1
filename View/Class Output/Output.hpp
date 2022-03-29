@@ -12,8 +12,8 @@
 
 #include <iostream>
 
+#include "ChoiceMenu.hpp"
 #include "TextFileDialogue.hpp"
-
 
 /**
  Класс Output отвечает за вывод в текста консоль.
@@ -30,22 +30,30 @@ public:
     void processing() {
         cout << text.textMenu[0] << endl;
         outputArray(text.textСP, 4);
-        cout << text.textMenu[1] << endl;
+        cout << text.textMenu[1] << " ";
     }
     void area() {
         cout << text.textMenu[0] << endl;
         outputArray(text.textArea, 3);
-        cout << text.textMenu[1] << endl;
+        cout << text.textMenu[1] << " ";
     }
     void birthrate() {
         cout << text.textMenu[0] << endl;
         outputArray(text.textBirthrate, 4);
-        cout << text.textMenu[1] << endl;
+        cout << text.textMenu[1] << " ";
     }
     void dataFormat() {
         cout << text.textMenu[0] << endl;
         outputArray(text.textDataFormat, 2);
-        cout << text.textMenu[1] << endl;
+        cout << text.textMenu[1] << " ";
+    }
+    
+    void menuInput(Area area) {
+        cout << text.textMenu[2] << " " << text.textAreaInput[area] << ": ";
+    }
+    
+    void dataFormatInput(DataFormat format) {
+        cout << text.textMenu[2] << " " << text.textDataFormatInput[format] << ": ";
     }
     
     void delet() {
