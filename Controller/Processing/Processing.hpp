@@ -16,19 +16,26 @@
 
 #include <stdio.h>
 
-#include "ChoiceMenu.hpp"
-#include "ModelBirth.hpp"
-#include "List.hpp"
+// Model
+#include "Birth.hpp"
 #include "Date.hpp"
 
+// Controller
+#include "List.hpp"
+
+// Supporting
+#include "ChoiceMenu.hpp"
+
+
+/// Обработка массива
 class Processing {
     
 public:
+    
     ChoiceProcessing choiceProcessing;
     Area area;
     DataFormat dataFormat;
     Birthrate birthrat;
-    
     
     string areaText;
     string fIO;
@@ -36,6 +43,7 @@ public:
     
     
     // MARK: - Методы
+    
     
     void processing() {
         switch (choiceProcessing) {
@@ -52,6 +60,21 @@ public:
                 deletProcessing();
                 break;
         }
+    }
+    
+    /// Передает информацию
+    string description() {
+        string s;
+        s += "choiceProcessing: " + to_string(choiceProcessing) + "\n";
+        s += "area: " + to_string(area) + "\n";
+        s += "dataFormat: "  + to_string(dataFormat) + "\n";
+        s += "birthrat: "  + to_string(birthrat) + "\n";
+        s += "areaText: " + areaText + "\n";
+        s += "fIO: " + fIO + "\n";
+        s += "data: ";
+        for (int i = 0; i <= dataFormat; i++)
+            s += data[i].description() + " - ";
+        return s;
     }
     
 private:

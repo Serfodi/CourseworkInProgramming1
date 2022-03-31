@@ -8,10 +8,7 @@
 /**
  * @file
  * Используется:
- *      - main
- *      - Output
- *      - Input
- *      - Processing
+ *
  */
 
 #ifndef ChoiceMenu_hpp
@@ -29,7 +26,9 @@ enum ChoiceProcessing {
     /// Определение месяцев максимальной и минимальной рождаемости
     birthrate,
     /// Удаления по фамилии и дате рождения
-    delet
+    delet,
+    
+    
 };
 
 /// Местность
@@ -39,7 +38,8 @@ enum Area {
     /// По району
     region,
     /// По городу
-    city
+    city,
+    
 };
 
 /// Формат даты
@@ -47,7 +47,8 @@ enum DataFormat {
     /// День: дд.мм.гггг
     day,
     /// Интервал: дд.мм.гггг - дд.мм.гггг
-    interval
+    interval,
+    
 };
 
 /// Критерии
@@ -60,6 +61,7 @@ enum Birthrate {
     girls,
     /// Многодетных родителей
     multiple,
+    
 };
 
 

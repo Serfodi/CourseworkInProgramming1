@@ -6,11 +6,7 @@
 //
 
 /**
- * @file
- * Используется:
- *      - main
- *      - Input
- *      - FileProcess
+ * @file Перечисления ошибок
  */
 
 #ifndef ClassError_hpp

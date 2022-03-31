@@ -6,10 +6,7 @@
 //
 
 /**
- * @file
- * Используется:
- *      - main
- *      - Input
+ * @file Работа с файлом
  */
 
 #ifndef FileProces_hpp
@@ -19,6 +16,7 @@
 
 #include <iostream>
 #include <fstream>
+
 
 #include "ClassError.hpp"
 
@@ -47,6 +45,7 @@ public:
     void openFileWrite() {}
     
     /// Читает строчку из потока файла
+    /// @todo eof для провекри возможности чтения
     string readText() {
         string line;
         getline(readFile, line);
