@@ -48,11 +48,9 @@ public:
     
     // MARK: - Инициализаторы
     
+    
     Birth() { }
     
-    /*
-     Я исключаю вероятность того что в фале будут не полны или неверны данные.
-     */
     /// @brief Приводит строку к Birth
     /// @param text Строка типа: | Номер роддома |  Дата рожд ребенка | Район | ФИО |  Дата  рожд. матери |  Пол 1 реб. | Пол 2 реб. | Пол 3 реб. |
     /// @warning Использовать тольк для обработки с файла или если вы уверены в корректности данных.
@@ -69,7 +67,36 @@ public:
         delete [] components;
     }
     
+    /// Для поиска
+    Birth(string fIO, Data data) {
+        number = 0;
+        dOB = Data();
+        region = "";
+        this -> fIO = fIO;
+        this -> dOBMother = data;
+        for (int i = 0; i < 3; i++)
+            children[i] = SexСhild::no;
+    }
     
+    
+    Birth operator = (Birth second) {
+        number = second.number;
+        dOB = second.dOB;
+        region = second.region;
+        fIO = second.fIO;
+        dOBMother = second.dOBMother;
+        for (int i = 0; i < 3; i++)
+            children[i] = second.children[i];
+        return *this;
+    }
+    
+    bool operator != (Birth second) {
+        return !(fIO == second.fIO && dOBMother == second.dOBMother);
+    }
+    
+    bool operator == (Birth second) {
+        return (fIO == second.fIO && dOBMother == second.dOBMother);
+    }
     
     /// Описание
     std::string description() {

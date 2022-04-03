@@ -34,8 +34,8 @@ public:
     
     /**
      * @brief Открывает файл
-     * @param resource Место нахождения файла
-     * @throws ErrorFile::errorOpen
+     * @param resource файл
+     * @throws ErrorFile::errorOpen Если не нашел
      */
     void openFileRead(string resource) {
         readFile.open(resource);

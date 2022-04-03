@@ -7,8 +7,6 @@
 
 /**
  * @file
- * Используется:
- *      - main
  */
 
 #ifndef Output_hpp
@@ -31,38 +29,87 @@ class Output {
     
 public:
     
-    // вывод текста
+    /// @brief Выбора обработки.
+    ///
+    /// 1. Просмотр данных за день или интервал.
+    ///
+    /// 2. Вывод гистограммы рождаемости по месяцам года и кривой  рождаемости за год.
+    ///
+    /// 3. Определение месяцев максимальной и минимальной рождаемости (birthrate).
+    ///
+    /// 4. Удаления.
     void processingOutput() {
-        cout << text.textMenu[0] << endl;
-        outputArray(text.textСP, 4);
-        cout << text.textMenu[1] << " ";
-    }
-    void areaOutput() {
-        cout << text.textMenu[0] << endl;
-        outputArray(text.textArea, 3);
-        cout << text.textMenu[1] << " ";
-    }
-    void birthrateOutput() {
-        cout << text.textMenu[0] << endl;
-        outputArray(text.textBirthrate, 4);
-        cout << text.textMenu[1] << " ";
-    }
-    void dataFormatOutput() {
-        cout << text.textMenu[0] << endl;
-        outputArray(text.textDataFormat, 2);
-        cout << text.textMenu[1] << " ";
-    }
-    void deletOutput() {
-        cout << text.textDelet[0] << endl;
+        outputArray(text.textСP, 5);
+        cout << text.textСP[5];
     }
     
-    // ввод текста
+    /// @brief Вывод меню выбора места.
+    ///
+    /// Вывод:
+    ///
+    ///     1. По роддому.
+    ///
+    ///     2. По району.
+    ///
+    ///     3. По городу.
+    ///
+    void areaOutput() {
+        outputArray(text.textArea, 4);
+        cout << text.textArea[4];
+    }
+    
+    /// @brief Вывод меню выбора рождаемости(фильтрации).
+    ///
+    /// Вывод:
+    ///
+    ///     1. Общей.
+    ///
+    ///     2. Мальчиков.
+    ///
+    ///     3. Девочек.
+    ///
+    void birthrateOutput() {
+        outputArray(text.textBirthrate, 5);
+        cout << text.textBirthrate[5];
+    }
+    
+    /// @brief Вывод меню выбора форматы даты.
+    ///
+    /// Вывод:
+    ///
+    ///     1. День.
+    ///
+    ///     2. Интервал.
+    void dataFormatOutput() {
+        outputArray(text.textDataFormat, 3);
+        cout << text.textDataFormat[3];
+    }
+    
+    /// @brief вывод текста для ввода удаления.
+    ///
+    ///     1. фио
+    ///
+    ///     2. дата рождения
+    void deletOutputFIO() {
+        cout << text.textDeletInput[0];
+    }
+    void deletOutputData() {
+        cout << text.textDeletInput[1] << endl;
+        cout << text.textDataFormatInput[0];
+    }
+    
+    /// @brief Вывод меню выбора места.
+    ///
     void menuInput(Area area) {
-        cout << text.textMenu[2] << " " << text.textAreaInput[area] << ": ";
+        cout << text.textAreaInput[area];
     }
+    
+    /// @brief Вывод меню выбора места.
+    ///
     void dataFormatInput(DataFormat format) {
-        cout << text.textMenu[2] << " " << text.textDataFormatInput[format] << ": ";
+        cout << text.textDataFormatInput[format];
     }
+    
     
     
     

@@ -29,7 +29,6 @@
 
 /// Обработка массива
 class Processing {
-    
 public:
     
     ChoiceProcessing choiceProcessing;
@@ -41,11 +40,12 @@ public:
     string fIO;
     Data *data;
     
+    Processing () { }
     
     // MARK: - Методы
     
     
-    void processing() {
+    void processing(List &list) {
         switch (choiceProcessing) {
             case viewData:
                 viewDataProcessing();
@@ -57,7 +57,7 @@ public:
                 birthrateProcessing();
                 break;
             case delet:
-                deletProcessing();
+                deletProcessing(list);
                 break;
         }
     }
@@ -84,7 +84,7 @@ private:
     
     void birthrateProcessing();
     
-    void deletProcessing();
+    void deletProcessing(List &list);
     
 };
 

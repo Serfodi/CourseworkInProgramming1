@@ -22,6 +22,12 @@ enum ErrorInput {
     incorrectData
 };
 
+/// Ошибка поиска
+enum ErrorFind {
+    /// Такого экземпляра не существует
+    noFind
+};
+
 /// Ошибки открытия файла
 enum ErrorFile {
     /// Ошибка открытия

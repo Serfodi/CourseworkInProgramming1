@@ -17,8 +17,8 @@
 
 // Controller
 #include "Input.hpp"
-#include "List.hpp"
 #include "Processing.hpp"
+#include "List.hpp"
 
 // Supporting
 #include "FileProces.hpp"
@@ -27,8 +27,6 @@
 
 // MARK: - main
 
-/// Начало списка
-List *List::first = 0;
 /// хз куда и как засунуть поэтому тут. Нужен для работы Sex
 string Sex::sexText[3] = {"м", "ж", "0"};
 
@@ -40,9 +38,8 @@ int main() {
     
     Input input;
     Output output;
-    
+    List list;
     static Processing processing;
-    
     static FileProces file;
     
     
@@ -52,11 +49,10 @@ int main() {
     
     string text = file.readText();
     while (text != "") {
-        new List(Birth(text));
+        list.append(Birth(text));
         text = file.readText();
     }
     
-//    List::description();
     
     // MARK: -  Mеню
     
@@ -87,29 +83,31 @@ int main() {
                 break;
             case histogram:
             case birthrate:
+                
+                output.birthrateOutput();
                 processing.birthrat = input.birthrateCast(input.number());
+                
                 break;
             case delet: break;
         }
         
     } else {
         
-        // ввод для удаления
+        output.deletOutputFIO();
+        processing.fIO = input.text();
+        
+        output.deletOutputData();
+        processing.data = input.dataCast(input.text(), day);
         
     }
     
-    cout << endl << processing.description() << endl;
     
     // MARK: - Обработка
     
-    
-    processing.processing();
-    
+    processing.processing(list);
     
     
     // MARK: - Вывод результата
-    
-    // вывод итоговой таблицы на экан и в файл
     
     
     

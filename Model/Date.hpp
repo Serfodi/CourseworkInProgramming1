@@ -66,6 +66,10 @@ public:
         year = second.year;
     }
     
+    bool operator == ( Data two) {
+        return (day == two.day && month == two.month && year == two.year);
+    }
+    
     // Вспомогательные методы
     
     /// Передает информацию

@@ -41,8 +41,10 @@ public:
     
     /// Ввод с клавиатуры  целого числа int
     int number() {
+        string textNumber = text();
         int number;
-        cin >> number;
+//        cin >> number;
+        number = stoi(textNumber);
         return number;
     }
     
@@ -51,7 +53,7 @@ public:
     /// Ввод с клавиатуры текста string
     string text() {
         string text;
-        clearInputEnter();
+//        clearInputEnter();
         getline(cin, text);
         return text;
     }

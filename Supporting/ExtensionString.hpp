@@ -14,7 +14,7 @@
 
 using namespace std;
 
-/// Расширение для string
+/// Расширение string
 class ExtensionString {
 public:
     
@@ -22,9 +22,17 @@ public:
     /**
      * @brief Возвращает массив, содержащий подстроки из получателя, которые были разделены на данный разделитель.
      *
-     * @warning Память на массив выделяется внутри.
+     * @param text Строка string
+     * @param separatedBy Символ с char разделитель по которому будет разбиваться строка
+     * @param count Число подстрок int
      *
-     * @return string[ size ]
+     * @return Динамический массив String размером 'count'
+     *
+     * @relatesalso std::string
+     *
+     * @warning Кол-во подстрок 'count' должно совпадать с кол-во разделителей 'separatedBy' в тексте 'text'.
+     *
+     * Память на массив выделяется внутри.
      */
     static string* componentsSeparatedBy(string text, char separatedBy, int count) {
         string *components = new string[count];

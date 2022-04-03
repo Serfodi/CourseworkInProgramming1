@@ -34,6 +34,8 @@ void Processing::birthrateProcessing() {
 
 // MARK: - delet
 
-void Processing::deletProcessing() {
-    
+void Processing::deletProcessing(List &list) {
+    Node *node = list.find(Birth(fIO, data[0]));
+    if (node == nullptr) throw ErrorFind::noFind;
+    list.removeBy(node -> birth);
 };
