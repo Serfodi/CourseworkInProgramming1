@@ -5,14 +5,19 @@
 //  Created by Сергей Насыбуллин on 31.03.2022.
 //
 
+/**
+ * @file Расширения для string
+ */
+
 #ifndef ExtensionString_hpp
 #define ExtensionString_hpp
 
 #include <stdio.h>
-
 #include <string>
 
+
 using namespace std;
+
 
 /// Расширение string
 class ExtensionString {
@@ -32,9 +37,10 @@ public:
      *
      * @warning Кол-во подстрок 'count' должно совпадать с кол-во разделителей 'separatedBy' в тексте 'text'.
      *
-     * Память на массив выделяется внутри.
+     * Память на массив выделяется динамически внутри.
      */
     static string* componentsSeparatedBy(string text, char separatedBy, int count) {
+        // Как будет лучше? Внутри память выделать или снаружи?
         string *components = new string[count];
         string words;
         int size = 0;

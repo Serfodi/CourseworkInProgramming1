@@ -6,9 +6,7 @@
 //
 
 /**
- * @file
- * Используется:
- *  -
+ * @file Модель даты
  */
 
 #ifndef Date_hpp
@@ -16,7 +14,7 @@
 
 #include <stdio.h>
 
-//#include <iostream>
+
 #include <string>
 #include "ExtensionString.hpp"
 
@@ -24,16 +22,15 @@
 using namespace std;
 
 
-/**
- * @brief Представление даты. В формате: дд.мм.гггг
- */
+/// @brief Представление даты. В формате: дд.мм.гггг
 struct Data {
     
     // MARK: - Свойства
-private:
-
+    
+    /// Разделитель даты
     static const char sep = '.';
     
+private:
     /// day День. Целое число от 1 до 31
     int day;
     /// month Месяц. Целое число от 1 до 12
@@ -42,7 +39,7 @@ private:
     int year;
     
     
-    // MARK: - Инициализаторы
+    // MARK: - Инициализатор
 public:
     
     Data() { }
@@ -55,6 +52,11 @@ public:
         year = stoi(*(components + 2));
     }
     
+    Data(int day, int month, int year) {
+        this -> day = day;
+        this -> month = month;
+        this -> year = year;
+    }
     
     // MARK: - Методы класса
     
@@ -70,7 +72,46 @@ public:
         return (day == two.day && month == two.month && year == two.year);
     }
     
+    bool operator > (Data two) {
+        if (year == two.year) {
+            if (month == two.month) {
+                return day > two.day;
+            } else {
+                return month > two.month;
+            }
+        }
+        return year > two.year;
+    }
+    
+    bool operator >= (Data two) {
+        if (year == two.year) {
+            if (month == two.month) {
+                return day >= two.day;
+            } else {
+                return month >= two.month;
+            }
+        }
+        return year >= two.year;
+    }
+    
+    bool operator <= (Data two) {
+        if (year == two.year) {
+            if (month == two.month) {
+                return day <= two.day;
+            } else {
+                return month <= two.month;
+            }
+        }
+        return year <= two.year;
+    }
+    
+    
     // Вспомогательные методы
+    
+    /// Выдает день из даты
+    int getMonth() {
+        return month;
+    }
     
     /// Передает информацию
     string description() {
@@ -83,5 +124,8 @@ public:
     
 };
 
+//ostream& operator << (ostream &out, Data data) {
+//    return out << data.description();
+//}
 
 #endif /* Date_hpp */

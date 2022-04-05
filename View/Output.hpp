@@ -6,90 +6,73 @@
 //
 
 /**
- * @file
+ * @file Отвечает за вывод
  */
 
 #ifndef Output_hpp
 #define Output_hpp
 
 #include <stdio.h>
-
 #include <iostream>
 
+#include "TextFileMenu.hpp"
 
+// supporting
 #include "ChoiceMenu.hpp"
-#include "TextFileDialogue.hpp"
 
 
-/// Класс Output отвечает за вывод в текста консоль.
 using namespace std;
+
+/// Класс Output отвечает за вывод в консоль.
 class Output {
     
-    TextFileDialogue text;
+    TextFileMenu text;
     
 public:
     
-    /// @brief Выбора обработки.
-    ///
-    /// 1. Просмотр данных за день или интервал.
-    ///
-    /// 2. Вывод гистограммы рождаемости по месяцам года и кривой  рождаемости за год.
-    ///
-    /// 3. Определение месяцев максимальной и минимальной рождаемости (birthrate).
-    ///
-    /// 4. Удаления.
+//    MARK: ChoiceProcessing
+    
+    /// Выбора обработки.
     void processingOutput() {
         outputArray(text.textСP, 5);
         cout << text.textСP[5];
     }
     
-    /// @brief Вывод меню выбора места.
-    ///
-    /// Вывод:
-    ///
-    ///     1. По роддому.
-    ///
-    ///     2. По району.
-    ///
-    ///     3. По городу.
-    ///
+//    MARK: Area
+    
+    /// Вывод меню выбора места.
     void areaOutput() {
         outputArray(text.textArea, 4);
         cout << text.textArea[4];
     }
+    /// Вывод меню выбора места.
+    void menuInput(Area area) {
+        cout << text.textAreaInput[area];
+    }
     
-    /// @brief Вывод меню выбора рождаемости(фильтрации).
-    ///
-    /// Вывод:
-    ///
-    ///     1. Общей.
-    ///
-    ///     2. Мальчиков.
-    ///
-    ///     3. Девочек.
-    ///
+//    MARK: Birthrate
+    
+    /// Вывод меню выбора рождаемости(фильтрации).
     void birthrateOutput() {
         outputArray(text.textBirthrate, 5);
         cout << text.textBirthrate[5];
     }
     
-    /// @brief Вывод меню выбора форматы даты.
-    ///
-    /// Вывод:
-    ///
-    ///     1. День.
-    ///
-    ///     2. Интервал.
+//    MARK: DataFormat
+    
+    /// Вывод меню выбора форматы даты.
     void dataFormatOutput() {
         outputArray(text.textDataFormat, 3);
         cout << text.textDataFormat[3];
     }
+    /// Вывод меню выбора даты.
+    void dataFormatInput(DataFormat format) {
+        cout << text.textDataFormatInput[format];
+    }
     
-    /// @brief вывод текста для ввода удаления.
-    ///
-    ///     1. фио
-    ///
-    ///     2. дата рождения
+//    MARK: Delete
+    
+    /// Вывод текста для ввода удаления.
     void deletOutputFIO() {
         cout << text.textDeletInput[0];
     }
@@ -98,18 +81,26 @@ public:
         cout << text.textDataFormatInput[0];
     }
     
-    /// @brief Вывод меню выбора места.
-    ///
-    void menuInput(Area area) {
-        cout << text.textAreaInput[area];
+//    MARK: Min and Max - 3
+    
+    void mouth(int mouthMax, int mouthMin, int numberMax, int numberMin) {
+        cout << "Максимальное кол-во рождений: " << text.textData[mouthMax-1] << endl
+        << "Что составило: " << numberMax << endl;
+        cout << "Минимальное кол-во рождений: " << text.textData[mouthMin-1] << endl
+        << "Что составило: " << numberMin << endl;
     }
     
-    /// @brief Вывод меню выбора места.
-    ///
-    void dataFormatInput(DataFormat format) {
-        cout << text.textDataFormatInput[format];
+    void mouthEqule(int number) {
+        cout << "В каждом месецы было одинаковое кол-во рождений." << endl
+        << "Что составило: " << number;
     }
     
+    
+//    MARK: ClassError
+    
+    void errorOpenFile() { cout << text.textErrorFileOpen[1] << endl; }
+    
+    void errorInputText() { cout << text.textErrorInput[0] << endl; }
     
     
     

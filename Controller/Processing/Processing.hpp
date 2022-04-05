@@ -20,6 +20,11 @@
 #include "Birth.hpp"
 #include "Date.hpp"
 
+// view
+#include "Output.hpp"
+#include "Table.hpp"
+#include "Histogram.hpp"
+
 // Controller
 #include "List.hpp"
 
@@ -31,14 +36,20 @@
 class Processing {
 public:
     
+    Table tabel;
+    Output output;
+    Histogram histog;
+    
     ChoiceProcessing choiceProcessing;
     Area area;
     DataFormat dataFormat;
     Birthrate birthrat;
     
-    string areaText;
-    string fIO;
-    Data *data;
+    int numberInput;
+    string areaTextInput;
+    string fIOInput;
+    Data *dataInput;
+    
     
     Processing () { }
     
@@ -48,13 +59,13 @@ public:
     void processing(List &list) {
         switch (choiceProcessing) {
             case viewData:
-                viewDataProcessing();
+                viewDataProcessing(list);
                 break;
             case histogram:
-                histogramProcessing();
+                histogramProcessing(list);
                 break;
             case birthrate:
-                birthrateProcessing();
+                birthrateProcessing(list);
                 break;
             case delet:
                 deletProcessing(list);
@@ -62,6 +73,9 @@ public:
         }
     }
     
+    /*
+     Нужен для отладки
+     
     /// Передает информацию
     string description() {
         string s;
@@ -69,22 +83,57 @@ public:
         s += "area: " + to_string(area) + "\n";
         s += "dataFormat: "  + to_string(dataFormat) + "\n";
         s += "birthrat: "  + to_string(birthrat) + "\n";
-        s += "areaText: " + areaText + "\n";
-        s += "fIO: " + fIO + "\n";
+        s += "areaText: " + areaTextInput + "\n";
+        s += "fIO: " + fIOInput + "\n";
         s += "data: ";
         for (int i = 0; i <= dataFormat; i++)
-            s += data[i].description() + " - ";
+            s += dataInput[i].description() + " - ";
         return s;
     }
+    */
     
 private:
-    void viewDataProcessing();
+    /// Просмотр данных за любой день (или за любой временной интервал)
+    void viewDataProcessing(List &list);
     
-    void histogramProcessing();
+    /// Вывод гистограммы рождаемости по месяцам года и кривой  рождаемости за год
+    void histogramProcessing(List &list);
     
-    void birthrateProcessing();
+    /// Определение месяцев максимальной и минимальной рождаемости по заданному Роддому, по району, по городу
+    void birthrateProcessing(List &list);
     
+    /// Удаление записей о родах (поиск по фамилии матери и по дате ее рождения).
     void deletProcessing(List &list);
+    
+    
+    
+//    MARK: Test
+    
+    /// Проверяет входит ли birth в введенную местность
+    bool isArea(Birth birth) {
+        switch (area) {
+            case hospital:
+                return numberInput == birth.number;
+            case city:
+            case region:
+                return areaTextInput == birth.region;
+        }
+    }
+    
+    /// Проверяет условия поиска
+    bool isBirthrate(Birth birth) {
+        switch (birthrat) {
+            case general:
+                return true;
+            case girls:
+                return false;
+            case boys:
+                return false;
+            case multiple:
+                return false;
+        }
+    }
+    
     
 };
 

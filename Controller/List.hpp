@@ -6,20 +6,24 @@
 //
 
 /**
- * @file
- * Используется:
- *      - main
+ * @file Структура: Односвязный список
  */
 
 #ifndef List_hpp
 #define List_hpp
 
 #include <stdio.h>
+#include <iostream>
 
+// Model
 #include "Birth.hpp"
+// Supporting
 #include "ClassError.hpp"
 
- 
+
+/// Узел
+///
+/// Содержит данные birth
 struct Node {
     Birth birth;
     
@@ -27,6 +31,7 @@ struct Node {
     Node(Birth _new) : birth(_new), next(nullptr) {}
 };
 
+/// Односвязный список
 struct List {
 public:
     /// Начало списка
@@ -51,6 +56,7 @@ public:
         last = p;
     }
     
+    /// Ищет равный элемент
     Node* find(Birth birth) {
         Node* p = first;
         while (p && p -> birth != birth) {
@@ -85,16 +91,6 @@ public:
         delete fast;
     }
     
-    Node* operator[] (const int index) {
-        Node* p = first;
-        for (int i = 0; i < index; i++) {
-            p = p -> next;
-            if (!p) return nullptr;
-        }
-        return p;
-    }
-    
-    
     /// Просмотреть весь список
     void description() {
         Node* p = first;
@@ -105,8 +101,21 @@ public:
     }
     
     
-//    MARK:  Private metode
+    // Перегрузка
     
+    Node* operator[] (const int index) {
+        Node* p = first;
+        for (int i = 0; i < index; i++) {
+            p = p -> next;
+            if (!p) return nullptr;
+        }
+        return p;
+    }
+    
+    
+    
+    
+//    MARK: - Private metode
 private:
     
     /// Проверяет существование списка

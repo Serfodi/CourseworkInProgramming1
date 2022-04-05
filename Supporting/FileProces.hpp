@@ -13,46 +13,46 @@
 #define FileProces_hpp
 
 #include <stdio.h>
-
-#include <iostream>
 #include <fstream>
 
-
+// Supporting
 #include "ClassError.hpp"
 
 
 using namespace std;
 
-ofstream writeFile;
+
+/// Поток чтения.
 ifstream readFile;
 
 
+/// Работа с фалом.
+///
 /// Открытия файла. Чтение из файла и записи в файл.
 class FileProces {
 public:
-    static const char separator = '|';
+    
+//    /// Разделитель
+//    ///
+//    /// Строка разделена этим разделителем
+//    static const char separator = '|';
     
     /**
      * @brief Открывает файл
      * @param resource файл
-     * @throws ErrorFile::errorOpen Если не нашел
+     * @throws ErrorFile::errorOpen Если не смог открыть
      */
     void openFileRead(string resource) {
         readFile.open(resource);
         if (!readFile.is_open()) { throw ErrorFile::errorOpen; }
     }
     
-    void openFileWrite() {}
-    
     /// Читает строчку из потока файла
-    /// @todo eof для провекри возможности чтения
     string readText() {
         string line;
         getline(readFile, line);
         return line;
     }
-    
-    void writeText(string text) {}
     
 };
 

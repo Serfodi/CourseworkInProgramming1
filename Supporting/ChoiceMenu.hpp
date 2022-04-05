@@ -6,9 +6,7 @@
 //
 
 /**
- * @file
- * Используется:
- *
+ * @file Содержит перечисления меню.
  */
 
 #ifndef ChoiceMenu_hpp
@@ -27,7 +25,6 @@ enum ChoiceProcessing {
     birthrate,
     /// Удаления по фамилии и дате рождения
     delet,
-    
     
 };
 

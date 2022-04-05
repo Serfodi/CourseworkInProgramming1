@@ -1,5 +1,5 @@
 //
-//  TextFileDialogue.hpp
+//  TextFileMenu.hpp
 //  CourseworkInProgramming26
 //
 //  Created by Сергей Насыбуллин on 26.03.2022.
@@ -10,15 +10,15 @@
 
 #include <stdio.h>
 
-#include <iostream>
 #include <string>
 
-/**
- Структура TextFileDialogue содержит текста для работы Output.
- */
 using namespace std;
-struct TextFileDialogue {
+
+
+/// Структура TextFileDialogue содержит текста
+struct TextFileMenu {
 public:
+    
     /// Текст для выбора обработки.
     const string textСP[6] = {
         "Выберите обработку:",
@@ -70,12 +70,19 @@ public:
         "Введите дату рождения матери: "
     };
     
+    string textData[12] = {
+        "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октяборь", "Нояборь", "Декабарь"
+    };
     
     
     // MARK: - Text error
     
-    const string textError[1] = {
+    const string textErrorInput[1] = {
         "Некорректный ввод."
+    };
+    
+    const string textErrorFileOpen[1] = {
+        "Файл ненайден."
     };
     
 };

@@ -5,12 +5,17 @@
 //  Created by Сергей Насыбуллин on 31.03.2022.
 //
 
+/**
+ * @file Описания модели Sex и методы обработки.
+ */
+
 #ifndef Sex_hpp
 #define Sex_hpp
 
 #include <stdio.h>
+#include <string>
 
-#include "Sex.hpp"
+// Supporting
 #include "ClassError.hpp"
 
 
@@ -28,18 +33,19 @@ enum SexСhild {
 };
 
 
-/// Пол ребенка
-class Sex {
+/// Модель пола ребенка
+struct Sex {
 public:
     
+    /// Содержит буквы для ассоциации с полом ребенка
+    ///
+    /// @see SexСhild
     static string sexText[3];
-    
     
     /**
      * @brief Приводит букву к перечислению Sex
      * @param text  Буква
      * @warning Перед использованием установите параметр "sexText[3]"
-     * @throws ErrorInput::incorrectData
      */
     static SexСhild sexCast(string text) {
         int index = -1;
@@ -49,9 +55,10 @@ public:
                 break;
             }
         }
-        if (index == -1) { throw ErrorInput::incorrectData; }
         return static_cast<SexСhild>(index);
     }
+    
+    
     
 };
 

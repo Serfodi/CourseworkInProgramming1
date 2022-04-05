@@ -6,9 +6,7 @@
 //
 
 /**
- * @file
- * Используется:
- *      - main
+ * @file Ввод данных с клавиатуры
  */
 
 #ifndef Input_hpp
@@ -16,44 +14,50 @@
 
 #include <stdio.h>
 
-#include <iostream>
+
 #include <string>
 
-#include "Birth.hpp"
+
+// Model
+#include "Date.hpp"
+
+// Supporting
 #include "ChoiceMenu.hpp"
 #include "ClassError.hpp"
 #include "ExtensionString.hpp"
-#include "Date.hpp"
 
 
 using namespace std;
 
-// Содержит логику обработки и формирования данных.
-/**
- * @brief Отвечает за ввод данных их обработку из консоли или из файла.
- */
+
+/// Отвечает за ввод данных их обработку из консоли или из файла.
+///
+/// Содержит логику обработки и формирования данных.
 class Input {
     
-    // MARK:  - input
+    // MARK:   Методы
 public:
+    
     
     // Числовые
     
     /// Ввод с клавиатуры  целого числа int
+    ///
+    /// @note Преобразуют строчку к int с помощью функции stoi.
+    /// Из-за того что в буфере при нажатии на enter остается "\0" пришлось использовать этот метод.
     int number() {
         string textNumber = text();
         int number;
-//        cin >> number;
         number = stoi(textNumber);
         return number;
     }
+    
     
     // Символьные
     
     /// Ввод с клавиатуры текста string
     string text() {
         string text;
-//        clearInputEnter();
         getline(cin, text);
         return text;
     }
@@ -63,18 +67,26 @@ public:
     
     /**
      * @brief Приводит строчку к Data
+     *
+     * Память выделяется внутри
+     *
      * @param dataText  Строка в формате "дд.мм.гггг" или "дд.мм.гггг - дд.мм.гггг"
-     * @param format Формат преобразования к одной дате или двум
-     * @return Массив из одной или двух дат
+     * @param format Формат преобразования к одной дате или интервалу
+     *
+     * @return Динамический массив из одной или двух дат зависит от Data format
+     *
      * @throws ErrorInput::incorrectData
      */
     Data *dataCast (string dataText, DataFormat format) {
         if (dataText == "") { throw ErrorInput::incorrectData; }
         Data *data = new Data[format+1]; // Вопрос на засыпку: где выделать память?
         switch (format) {
+                
             case day:
+                
                 data[0] = Data(dataText);
                 break;
+                
             case interval:
                 string *components = new string[format + 1];
                 components = ExtensionString::componentsSeparatedBy(dataText, '-', format + 1);
@@ -83,32 +95,16 @@ public:
                 }
                 delete [] components;
                 break;
+                
         }
         return data;
     }
     
     
-    // // MARK:  Вспомогательные private.
-//private:
-    
-    /// Удаляет из буфера "Enter"
-    void clearInputEnter() {
-        cin.get();
-        
-//        char non;
-//        (cin >> non).ignore();
-    }
-    
     
     
     // MARK: - cast to enum ChoiceMenu
 public:
-    
-    template <typename T>
-    T cast(int number) {
-        return static_cast<T>(number-1);
-    }
-    
     
     /**
      * @brief Приводит число к перечислению ChoiceProcessing
