@@ -10,29 +10,30 @@
 
 // MARK: - viewData
 
-void Processing::viewDataProcessing(Hospital hospital) {
+void Processing::viewDataProcessing(Hospital hospital, DataModel dataModel, void (*open)(string), void (*read)(Birth&), Test test, Close close) {
     tabel.printTable();
     
+    open(to_string(dataModel.number) + ".txt");
+    
+    Birth birth;
+    
     // повторять пока
-    while ( false ) {
+    while (test) {
         
-        // новый
-        Birth birth = FileProces::
+        read(birth);
         
-        if (isArea(birth)) {
-            
-            switch (dataFormat) {
+        if (true) {
+            switch (dataModel.dataFormat) {
                 case day:
-                    if (birth.dOB == dataInput[0]) tabel.addToTable(birth);
+                    if (birth.dOB == dataModel.dataInput[0]) tabel.addToTable(birth);
                     break;
                 case interval:
-                    if (birth.dOB >= dataInput[0] && birth.dOB <= dataInput[1]) tabel.addToTable(birth);
+                    if (birth.dOB >= dataModel.dataInput[0] && birth.dOB <= dataModel.dataInput[1]) tabel.addToTable(birth);
                     break;
             }
-            
-            
         }
     }
+    close();
 };
 
 /*

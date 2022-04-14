@@ -49,9 +49,10 @@ public:
         return name == second.name;
     }
     
-    ~Region() {
-        delete [] number;
-    }
+//    ~Region() {
+//        delete [] number;
+//    }
+    
 };
 
 
@@ -107,14 +108,18 @@ public:
 
 /// Класс где хранится города и госпитали для их ассациации
 class Hospital {
-public:
     /// Массив госпиталей
     City *hospitals;
     /// Кол-во госпиталей в массиве
     int count = 0;
     
+public:
     
     Hospital() {}
+    
+    
+    
+    // MARK: Методы
     
     /// Добавляет новый элемент в конец массива
     void append(City newElement) {
@@ -126,6 +131,9 @@ public:
         hospitals = hospitalNew;
     }
     
+    
+    
+    // MARK: Перегрузка операторов
     
     /// Вывод по названию города
     City operator[] (string city) {
@@ -165,9 +173,13 @@ public:
     
     
     
+    // MARK: Деконструктор
+    
     ~Hospital () {
         delete [] hospitals;
     }
+    
+    
     
 };
 

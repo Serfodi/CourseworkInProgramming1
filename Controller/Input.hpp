@@ -103,6 +103,7 @@ public:
     }
     
     
+    /*
     City castCity (string text, Area area, Hospital hospitals) {
         switch (area) {
             case city:
@@ -117,7 +118,7 @@ public:
         }
     }
     
-    
+    */
     
     
     // MARK: - cast to enum ChoiceMenu

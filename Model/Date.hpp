@@ -23,7 +23,7 @@ using namespace std;
 
 
 /// @brief Представление даты. В формате: дд.мм.гггг
-struct Data {
+class Data {
     
     // MARK: - Свойства
     

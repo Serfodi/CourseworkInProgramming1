@@ -13,6 +13,7 @@
 #define FileProces_hpp
 
 #include <stdio.h>
+
 #include <fstream>
 
 // Supporting
@@ -31,7 +32,7 @@ ofstream write;
 /// Работа с фалом.
 ///
 /// Открытия файла. Чтение из файла и записи в файл.
-class Processing {
+class FileProcessing {
 public:
     
     /// Заполняет Hospital из файла
@@ -55,14 +56,35 @@ public:
     }
     
     
-    static void openBinaryFile() {
-        
+    /// Создает бинарный файл
+    static void readBinaryFile(string resource) {
+        file.open(resource, ios::binary | ios::in);
+        if (!file.is_open()) { throw ErrorFile::errorOpen; }
     }
     
     
+    /// Закрывает текущий файла
+    static void closeBinaryFile() {
+        file.close();
+    }
+    
+    /// Читает из текущего бинарного файла
+    static void readBinary(Birth &data) {
+        file.read((char*)&data, sizeof(Birth));
+    }
+    
+    static bool isRead(){
+        return !file.eof();
+    }
     
     
 private:
+    
+    /// Создает бинарный файл
+    static void openBinaryFile(string resource) {
+        file.open(resource, ios::binary | ios::app | ios::out);
+        if (!file.is_open()) { throw ErrorFile::errorOpen; }
+    }
     
     /**
      * @brief Открывает файл для чтения
@@ -81,20 +103,7 @@ private:
         return text;
     }
     
-    /// Создает бинарный файл
-    static void openBinaryFile(string resource) {
-        file.open(resource, ios::binary | ios::app);
-        if (!file.is_open()) { throw ErrorFile::errorOpen; }
-    }
     
-    /// Читает из текущего бинарного файла
-    template<class Type>
-    static Type readBinary(string fromResource) {
-        openBinaryFile(fromResource);
-        Type data;
-        file.read((char*)&data, sizeof(data));
-        return data;
-    }
     
     /// Записывает в текущего бинарного файла
     template<class Type>

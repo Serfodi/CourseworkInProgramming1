@@ -10,18 +10,15 @@
 
 
 // Model
-#include "Birth.hpp"
-
-// View
-#include "Output.hpp"
-
-// Controller
-#include "Input.hpp"
-#include "Processing.hpp"
+#include "DataModel.hpp"
 #include "MaternityHospital.hpp"
 
+// Controller
+#include "Menu.hpp"
+#include "Processing.hpp"
+#include "FileProcessing.hpp"
+
 // Supporting
-#include "FileProces.hpp"
 #include "ClassError.hpp"
 
 
@@ -35,85 +32,55 @@ using namespace std;
 
 
 int main() {
-        
-    // Ввод / вывод данных в консоль
-    Input input;
-    Output output;
     
-    Hospital hospital;
-    
+    // controller
+    Menu menu;
     Processing processing;
+    
+    // data hospital
+    Hospital hospital;
+    // model Data
+    static DataModel dataModel;
+    
     
     // MARK: - Обработка файла
     
-    FileProces::fillingHospital("/Users/serfodi/File/MaternityHospital.txt", hospital);
-    FileProces::overwritingBinaryFiles("/Users/serfodi/File/Test/FileDataInfo_1");
+    try {
+        FileProcessing::fillingHospital("/Users/serfodi/File/MaternityHospital.txt", hospital);
+        FileProcessing::overwritingBinaryFiles("/Users/serfodi/File/Test/FileDataInfo_1");
+    } catch(...) {
+        cout << "Ошибка файла";
+    }
+    
+    
+//    FileProcessing::readBinaryFile("/Users/serfodi/File/hospitals/1.txt");
+//    if (FileProcessing::isRead()) {
+//        Birth birth;
+//        FileProcessing::readBinary(birth);
+//    }
+                                   
     
     // MARK: -  Mеню
     
     try {
-        
-        output.processingOutput();
-        processing.choiceProcessing = input.choiceProcessingCast(input.number());
-        
-            
-        if (processing.choiceProcessing != delet) {
-            
-            output.areaOutput();
-            processing.area = input.areaCast(input.number());
-            
-            output.menuInput(processing.area);
-            
-            processing.hospital = input.castCity(input.text(), processing.area, hospital);
-            
-            switch (processing.choiceProcessing) {
-                case viewData:
-                    
-                    output.dataFormatOutput();
-                    processing.dataFormat = input.dataFormatCast(input.number());
-                    
-                    
-                    output.dataFormatInput(processing.dataFormat);
-                    processing.dataInput = input.dataCast(input.text(), processing.dataFormat);
-                    
-                    break;
-                    
-                case histogram:
-                case birthrate:
-                    
-                    output.birthrateOutput();
-                    processing.birthrat = input.birthrateCast(input.number());
-                    
-                    break;
-                case delet: break;
-            }
-            
-        } else {
-            
-            output.deletOutputFIO();
-            processing.fIOInput = input.text();
-            
-            output.deletOutputData();
-            processing.dataInput = input.dataCast(input.text(), day);
-            
-        }
-    
+        menu.openMenu(dataModel);
     } catch (ErrorInput) {
-        
-        output.errorInputText();
-        
+        cout << "Ошибка  ввода";
     } catch (invalid_argument) {
-        
-        output.errorInputText();
-        
+        cout << "Ошибка выхода";
     }
-    
     
     
     // MARK: - Обработка
     
-//    processing.processing();
+    // передать итератор в функцию обработки
     
+    try {
+        processing.processing(hospital, dataModel, FileProcessing::readBinaryFile, FileProcessing::readBinary, FileProcessing::isRead, FileProcessing::closeBinaryFile);
+    } catch(...) {
+        cout << "Ошибка обработки";
+    }
+        
     return 0;
 }
 

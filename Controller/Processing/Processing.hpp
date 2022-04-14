@@ -17,21 +17,24 @@
 #include <stdio.h>
 
 // Model
-#include "Birth.hpp"
-#include "Date.hpp"
 #include "MaternityHospital.hpp"
+#include "DataModel.hpp"
+#include "Birth.hpp"
 
 // view
 #include "Output.hpp"
 #include "Table.hpp"
 #include "Histogram.hpp"
 
-// Controller
-#include "FileProces.hpp"
 
 // Supporting
 #include "ChoiceMenu.hpp"
 
+
+//typedef void (*Open)(string);
+//typedef void (*Read)(Birth);
+typedef bool (*Test)();
+typedef void (*Close)();
 
 /// Обработка массива
 class Processing {
@@ -41,74 +44,53 @@ private:
     Output output;
     Histogram histog;
     
+    
 public:
-    
-    // enum
-    ChoiceProcessing choiceProcessing;
-    Area area;
-    DataFormat dataFormat;
-    Birthrate birthrat;
-    
-    // data
-    City hospital;
-    
-    string fIOInput;
-    Data *dataInput;
-    
     
     Processing () { }
     
     // MARK: - Методы
     
-    
-    void processing(Hospital hospital) {
-        switch (choiceProcessing) {
+    /// Обработка
+    ///
+    /// @param hospital Госпитали
+    /// @param dataModel Модель данных
+    /// @param open Открытия файла
+    /// @param read Чтения из файла
+    /// @param test Проверка чтения
+    /// @param close Закрытия файла
+    ///
+    void processing(Hospital hospital, DataModel dataModel, void (*open)(string), void (*read)(Birth&), Test test, Close close) {
+        switch (dataModel.choiceProcessing) {
             case viewData:
-                viewDataProcessing(hospital);
+                viewDataProcessing(hospital, dataModel, open, read, test, close);
                 break;
             case histogram:
-                histogramProcessing(hospital);
+//                histogramProcessing(hospital, dataModel, open, read, test, close);
                 break;
             case birthrate:
-                birthrateProcessing(hospital);
+//                birthrateProcessing(hospital, dataModel, open, read, test, close);
                 break;
             case delet:
-                deletProcessing();
+//                deletProcessing(hospital, dataModel, open, read, test, close);
                 break;
         }
     }
-    
-    /*
-     Нужен для отладки
-     
-    /// Передает информацию
-    string description() {
-        string s;
-        s += "choiceProcessing: " + to_string(choiceProcessing) + "\n";
-        s += "area: " + to_string(area) + "\n";
-        s += "dataFormat: "  + to_string(dataFormat) + "\n";
-        s += "birthrat: "  + to_string(birthrat) + "\n";
-        s += "areaText: " + areaTextInput + "\n";
-        s += "fIO: " + fIOInput + "\n";
-        s += "data: ";
-        for (int i = 0; i <= dataFormat; i++)
-            s += dataInput[i].description() + " - ";
-        return s;
-    }
-    */
+
     
 private:
+
     /// Просмотр данных за любой день (или за любой временной интервал)
-    void viewDataProcessing(Hospital hospital);
+    void viewDataProcessing(Hospital hospital, DataModel dataFormat, void (*open)(string), void (*read)(Birth&), Test test, Close close);
     
     /// Вывод гистограммы рождаемости по месяцам года и кривой  рождаемости за год
-    void histogramProcessing(Hospital hospital);
+//    void histogramProcessing(Hospital hospital, DataModel dataFormat, Open open, Read read, Test test, Close close);
     
     /// Определение месяцев максимальной и минимальной рождаемости по заданному Роддому, по району, по городу
-    void birthrateProcessing(Hospital hospital);
+//    void birthrateProcessing(Hospital hospital, DataModel dataFormat, Open open, Read read, Test test, Close close);
     
     /// Удаление записей о родах (поиск по фамилии матери и по дате ее рождения).
-    void deletProcessing();
+//    void deletProcessing(Hospital hospital, DataModel dataFormat, Open open, Read read, Test test, Close close);
     
 };
 
