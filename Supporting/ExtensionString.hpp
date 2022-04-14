@@ -23,7 +23,6 @@ using namespace std;
 class ExtensionString {
 public:
     
-    
     /**
      * @brief Возвращает массив, содержащий подстроки из получателя, которые были разделены на данный разделитель.
      *
@@ -40,6 +39,7 @@ public:
      * Память на массив выделяется динамически внутри.
      */
     static string* componentsSeparatedBy(string text, char separatedBy, int count) {
+//        int count = countWords(text, separatedBy);
         // Как будет лучше? Внутри память выделать или снаружи?
         string *components = new string[count];
         string words;
@@ -56,6 +56,15 @@ public:
         components[size] = words;
         return components;
     }
+    
+    static int countWords(string text, char separatedBy) {
+        int count = 1;
+        for (int i=0; i<text.length(); i++)
+            if (text[i] == separatedBy)
+                count += 1;
+        return count;
+    }
+    
     
 };
 

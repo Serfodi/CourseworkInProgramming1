@@ -18,7 +18,7 @@
 // Controller
 #include "Input.hpp"
 #include "Processing.hpp"
-#include "List.hpp"
+#include "MaternityHospital.hpp"
 
 // Supporting
 #include "FileProces.hpp"
@@ -35,31 +35,19 @@ using namespace std;
 
 
 int main() {
-    
-    setlocale(LC_CTYPE,"Russian");
-    
+        
+    // Ввод / вывод данных в консоль
     Input input;
     Output output;
     
-    List list;
+    Hospital hospital;
+    
     Processing processing;
-    FileProces file;
     
     // MARK: - Обработка файла
     
-    
-    try {
-        file.openFileRead("/Users/serfodi/Xcode/C++/FileDataInfo_2");
-    } catch (ErrorFile) {
-        output.errorOpenFile();
-    }
-        
-    string text = file.readText();
-    while (text != "") {
-        list.append(Birth(text));
-        text = file.readText();
-    }
-    
+    FileProces::fillingHospital("/Users/serfodi/File/MaternityHospital.txt", hospital);
+    FileProces::overwritingBinaryFiles("/Users/serfodi/File/Test/FileDataInfo_1");
     
     // MARK: -  Mеню
     
@@ -76,15 +64,7 @@ int main() {
             
             output.menuInput(processing.area);
             
-            switch (processing.area) {
-                case hospital:
-                    processing.numberInput = input.number();
-                    break;
-                case city:
-                case region:
-                    processing.areaTextInput = input.text();
-                    break;
-            }
+            processing.hospital = input.castCity(input.text(), processing.area, hospital);
             
             switch (processing.choiceProcessing) {
                 case viewData:
@@ -128,9 +108,11 @@ int main() {
         
     }
     
+    
+    
     // MARK: - Обработка
     
-    processing.processing(list);
+//    processing.processing();
     
     return 0;
 }

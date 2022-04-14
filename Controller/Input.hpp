@@ -20,6 +20,8 @@
 
 // Model
 #include "Date.hpp"
+#include "MaternityHospital.hpp"
+
 
 // Supporting
 #include "ChoiceMenu.hpp"
@@ -98,6 +100,21 @@ public:
                 
         }
         return data;
+    }
+    
+    
+    City castCity (string text, Area area, Hospital hospitals) {
+        switch (area) {
+            case city:
+                return hospitals[text];
+                break;
+            case region:
+                return hospitals[Region(text, -1)];
+                break;
+            case hospital:
+                return hospitals[stoi(text)];
+                break;
+        }
     }
     
     

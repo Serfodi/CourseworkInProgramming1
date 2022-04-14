@@ -19,7 +19,7 @@ using namespace std;
 class Histogram {
     
     /// Поинт вывода
-    string bricks = "=";
+    string bricks ="#";
     
 public:
     
@@ -39,16 +39,16 @@ public:
         // Вывод строчек
         
         cout << "Вывод гистрограммы рождаемости:" << endl;
-        cout << "   |-------------------------" << endl;
+        cout << "     |-------------------------" << endl;
         
         for (int i=0; i < (max + 1); i++) {
             int count = (max + 1) - i;
             bool *avail = availability(count, mouth);
-            cout << setw(2) << count << " | " << histogramString(count, avail) << endl;
+            cout << setw(4) << count << " | " << histogramString(count, avail) << endl;
         }
         
-        cout << "   |-------------------------" << endl;
-        cout << "   | я ф м а м и и а с о н д " << endl;
+        cout << "     |-------------------------" << endl;
+        cout << "     | я ф м а м и и а с о н д " << endl;
     }
     
     

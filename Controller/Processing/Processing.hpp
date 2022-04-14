@@ -19,6 +19,7 @@
 // Model
 #include "Birth.hpp"
 #include "Date.hpp"
+#include "MaternityHospital.hpp"
 
 // view
 #include "Output.hpp"
@@ -26,7 +27,7 @@
 #include "Histogram.hpp"
 
 // Controller
-#include "List.hpp"
+#include "FileProces.hpp"
 
 // Supporting
 #include "ChoiceMenu.hpp"
@@ -34,19 +35,23 @@
 
 /// Обработка массива
 class Processing {
-public:
-    
+private:
+    // view
     Table tabel;
     Output output;
     Histogram histog;
     
+public:
+    
+    // enum
     ChoiceProcessing choiceProcessing;
     Area area;
     DataFormat dataFormat;
     Birthrate birthrat;
     
-    int numberInput;
-    string areaTextInput;
+    // data
+    City hospital;
+    
     string fIOInput;
     Data *dataInput;
     
@@ -56,19 +61,19 @@ public:
     // MARK: - Методы
     
     
-    void processing(List &list) {
+    void processing(Hospital hospital) {
         switch (choiceProcessing) {
             case viewData:
-                viewDataProcessing(list);
+                viewDataProcessing(hospital);
                 break;
             case histogram:
-                histogramProcessing(list);
+                histogramProcessing(hospital);
                 break;
             case birthrate:
-                birthrateProcessing(list);
+                birthrateProcessing(hospital);
                 break;
             case delet:
-                deletProcessing(list);
+                deletProcessing();
                 break;
         }
     }
@@ -94,46 +99,16 @@ public:
     
 private:
     /// Просмотр данных за любой день (или за любой временной интервал)
-    void viewDataProcessing(List &list);
+    void viewDataProcessing(Hospital hospital);
     
     /// Вывод гистограммы рождаемости по месяцам года и кривой  рождаемости за год
-    void histogramProcessing(List &list);
+    void histogramProcessing(Hospital hospital);
     
     /// Определение месяцев максимальной и минимальной рождаемости по заданному Роддому, по району, по городу
-    void birthrateProcessing(List &list);
+    void birthrateProcessing(Hospital hospital);
     
     /// Удаление записей о родах (поиск по фамилии матери и по дате ее рождения).
-    void deletProcessing(List &list);
-    
-    
-    
-//    MARK: Test
-    
-    /// Проверяет входит ли birth в введенную местность
-    bool isArea(Birth birth) {
-        switch (area) {
-            case hospital:
-                return numberInput == birth.number;
-            case city:
-            case region:
-                return areaTextInput == birth.region;
-        }
-    }
-    
-    /// Проверяет условия поиска
-    bool isBirthrate(Birth birth) {
-        switch (birthrat) {
-            case general:
-                return true;
-            case girls:
-                return false;
-            case boys:
-                return false;
-            case multiple:
-                return false;
-        }
-    }
-    
+    void deletProcessing();
     
 };
 

@@ -10,33 +10,37 @@
 
 // MARK: - viewData
 
-void Processing::viewDataProcessing(List &list) {
+void Processing::viewDataProcessing(Hospital hospital) {
     tabel.printTable();
     
-    int count = 0;
-    while (list[count]) {
-        Birth birth = list[count] -> birth;
-        count += 1;
+    // повторять пока
+    while ( false ) {
+        
+        // новый
+        Birth birth = FileProces::
+        
         if (isArea(birth)) {
+            
             switch (dataFormat) {
-                    
                 case day:
                     if (birth.dOB == dataInput[0]) tabel.addToTable(birth);
                     break;
-                    
                 case interval:
                     if (birth.dOB >= dataInput[0] && birth.dOB <= dataInput[1]) tabel.addToTable(birth);
                     break;
             }
+            
+            
         }
     }
 };
 
+/*
 
 
 // MARK: - histogram
 
-void Processing::histogramProcessing(List &list) {
+void Processing::histogramProcessing() {
     
     /// 12 месяцев. 0 месяц не учитывается
     int mouthStat[13] = {
@@ -59,7 +63,7 @@ void Processing::histogramProcessing(List &list) {
 
 // MARK: - birthrate
 
-void Processing::birthrateProcessing(List &list) {
+void Processing::birthrateProcessing() {
     // 12 месяцев
     int mouthStat[13]  = {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
@@ -99,8 +103,10 @@ void Processing::birthrateProcessing(List &list) {
 
 // MARK: - delet
 
-void Processing::deletProcessing(List &list) {
+void Processing::deletProcessing() {
     Node *node = list.find(Birth(fIOInput, dataInput[0]));
     if (node == nullptr) throw ErrorFind::noFind;
     list.removeBy(node -> birth);
 };
+
+ */

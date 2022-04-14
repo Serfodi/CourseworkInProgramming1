@@ -99,10 +99,10 @@ public:
         return *this;
     }
     
+    
     bool operator != (Birth second) {
         return !(fIO == second.fIO && dOBMother == second.dOBMother);
     }
-    
     bool operator == (Birth second) {
         return (fIO == second.fIO && dOBMother == second.dOBMother);
     }
