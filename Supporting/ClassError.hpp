@@ -12,7 +12,7 @@
 #ifndef ClassError_hpp
 #define ClassError_hpp
 
-#include <stdio.h>
+//#include <stdio.h>
 
 /// Ошибки ввода
 enum ErrorInput {

@@ -12,7 +12,7 @@
 #ifndef ExtensionString_hpp
 #define ExtensionString_hpp
 
-#include <stdio.h>
+//#include <stdio.h>
 #include <string>
 
 
@@ -26,7 +26,7 @@ public:
     /**
      * @brief Возвращает массив, содержащий подстроки из получателя, которые были разделены на данный разделитель.
      *
-     * @param text Строка string
+     * @param text Строка string разделенная separated
      * @param separatedBy Символ с char разделитель по которому будет разбиваться строка
      * @param count Число подстрок int
      *
@@ -57,6 +57,9 @@ public:
         return components;
     }
     
+    /// Считает кол-во слов
+    ///
+    /// Используется совместно с componentsSeparatedBy
     static int countWords(string text, char separatedBy) {
         int count = 1;
         for (int i=0; i<text.length(); i++)

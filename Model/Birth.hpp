@@ -12,8 +12,7 @@
 #ifndef Birth_hpp
 #define Birth_hpp
 
-#include <stdio.h>
-
+#include <string>
 
 // Model
 #include "Sex.hpp"
@@ -72,9 +71,10 @@ public:
         delete [] components;
     }
     
-    /// Для поиска
-    ///
+    
     /// Заполняет только ФИО и Дату рождения матери
+    ///
+    /// Используется для поиска
     Birth(string fIO, Data data) {
         number = 0;
         dOB = Data();
@@ -86,7 +86,9 @@ public:
     }
     
     
-    // Перегрузки
+    
+    // MARK: - Перегрузки
+    
     
     Birth operator = (Birth second) {
         number = second.number;

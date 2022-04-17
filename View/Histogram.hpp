@@ -16,7 +16,7 @@ using namespace std;
 
 
 /// Вывод гистограммы рождаемости
-class Histogram {
+class HistogramView {
     
     /// Поинт вывода
     string bricks ="#";

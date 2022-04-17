@@ -5,13 +5,10 @@
 //  Created by Сергей Насыбуллин on 26.03.2022.
 //
 
-// Directives
-#include <iostream>
-
 
 // Model
 #include "DataModel.hpp"
-#include "MaternityHospital.hpp"
+#include "Country.hpp"
 
 // Controller
 #include "Menu.hpp"
@@ -22,65 +19,60 @@
 #include "ClassError.hpp"
 
 
-// MARK: - main
-
-/// хз куда и как засунуть поэтому тут. Нужен для работы Sex
-string Sex::sexText[3] = {"м", "ж", "0"};
-
-
 using namespace std;
+
 
 
 int main() {
     
-    // controller
-    Menu menu;
-    Processing processing;
-    
-    // data hospital
-    Hospital hospital;
     // model Data
-    static DataModel dataModel;
+    DataModel dataModel;
     
+    // controllers
+    City city;
+    Menu menu;
+    
+    FileProcessing file;
     
     // MARK: - Обработка файла
     
     try {
-        FileProcessing::fillingHospital("/Users/serfodi/File/MaternityHospital.txt", hospital);
-        FileProcessing::overwritingBinaryFiles("/Users/serfodi/File/Test/FileDataInfo_1");
+        file.initCity("/Users/serfodi/Data/City", city);
+        file.initBirth("/Users/serfodi/Test/FileDataInfo_1.txt");
     } catch(...) {
         cout << "Ошибка файла";
     }
     
     
-//    FileProcessing::readBinaryFile("/Users/serfodi/File/hospitals/1.txt");
-//    if (FileProcessing::isRead()) {
-//        Birth birth;
-//        FileProcessing::readBinary(birth);
-//    }
-                                   
     
     // MARK: -  Mеню
     
     try {
-        menu.openMenu(dataModel);
+        menu.openMenu(dataModel, city);
     } catch (ErrorInput) {
-        cout << "Ошибка  ввода";
+        cout << "Ошибка ввода";
     } catch (invalid_argument) {
         cout << "Ошибка выхода";
     }
     
     
+    
     // MARK: - Обработка
     
-    // передать итератор в функцию обработки
-    
     try {
-        processing.processing(hospital, dataModel, FileProcessing::readBinaryFile, FileProcessing::readBinary, FileProcessing::isRead, FileProcessing::closeBinaryFile);
+                
+        switch (dataModel.choiceProcessing) {
+            case viewData: case histogram: case birthrate: case delet:
+                ViewData viewData;
+                file.fileProcessing(viewData, dataModel);
+                break;
+        }
+        
     } catch(...) {
         cout << "Ошибка обработки";
     }
-        
+    
+    
     return 0;
 }
 

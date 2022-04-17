@@ -34,6 +34,8 @@ public:
     /// Печать шапки таблицы
     void printTable() {
         
+        cout << "Таблица" << endl;
+        
 //        cout <<
 //        sep << setw(11) << text[0][0] << setw(2) <<
 //        sep << setw(18) << text[0][1] << setw(2) <<
@@ -55,9 +57,9 @@ public:
         << setw(20) << birth.region << setw(2) << sep
         << setw(7) << birth.fIO << setw(2) << sep
         << setw(10) << birth.dOBMother.description() << setw(2) << sep
-        << setw(4) << Sex::sexText[birth.children[0]] << setw(2) << sep
-        << setw(4) << Sex::sexText[birth.children[1]] << setw(2) << sep
-        << setw(4) << Sex::sexText[birth.children[2]] << setw(2) << sep
+//        << setw(4) << Sex::sexText[birth.children[0]] << setw(2) << sep
+//        << setw(4) << Sex::sexText[birth.children[1]] << setw(2) << sep
+//        << setw(4) << Sex::sexText[birth.children[2]] << setw(2) << sep
         << endl;
     }
     

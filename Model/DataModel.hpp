@@ -8,22 +8,21 @@
 #ifndef DataModel_hpp
 #define DataModel_hpp
 
-#include <stdio.h>
-
 #include "ChoiceMenu.hpp"
 #include "Date.hpp"
+#include "Country.hpp"
 
 struct DataModel {
     
     ChoiceProcessing choiceProcessing;
     Area area;
     DataFormat dataFormat;
-    Birthrate birthrate;
+    Attribute attribute;
     
-    int number;
-    string region;
     string fIOInput;
     Data *dataInput;
+    
+    string *number;
     
 };
 

@@ -8,8 +8,6 @@
 #ifndef Menu_hpp
 #define Menu_hpp
 
-#include <stdio.h>
-
 // View
 #include "Output.hpp"
 
@@ -21,49 +19,44 @@
 
 class Menu {
 private:
-    // Ввод / вывод данных в консоль
+    
+    /// Ввод
     Input input;
+    /// Вывод
     Output output;
     
 public:
     
-    // MARK:  Методы
+    // MARK: Методы
     
     /// Меню выбора обработки
-    void openMenu(DataModel &dataModel) {
+    void openMenu(DataModel &dataModel, City &city) {
         output.processingOutput();
         dataModel.choiceProcessing = input.choiceProcessingCast(input.number());
         
-        if (dataModel.choiceProcessing != delet) {
-            menuArea(dataModel);
-            switch (dataModel.choiceProcessing) {
-                case viewData:
-                    menuDataFormat(dataModel);
-                    break;
-                case histogram: case birthrate:
-                    menuAttributeBirthrate(dataModel);
-                    break;
-            }
-        } else {
-            menuDelete(dataModel);
+        if (dataModel.choiceProcessing != delet) menuArea(dataModel, city);
+        
+        switch (dataModel.choiceProcessing) {
+            case viewData:
+                menuDataFormat(dataModel);
+                break;
+            case histogram: case birthrate:
+                menuAttributeBirthrate(dataModel);
+                break;
+            case delet:
+                menuDelete(dataModel);
         }
     }
     
+    
 private:
+    
     /// Меню выбора места поиска
-    void menuArea(DataModel &dataModel) {
+    void menuArea(DataModel &dataModel, City &city) {
         output.areaOutput();
         dataModel.area = input.areaCast(input.number());
         output.menuInput(dataModel.area);
-        switch (dataModel.area) {
-            case hospital:
-                dataModel.number = input.number();
-                break;
-            case city: case region:
-                dataModel.region = input.text();
-                break;
-        }
-        
+        dataModel.number = input.numbersCase(input.text(), dataModel.area, city);
     }
     
     /// Меню выбора дата
@@ -74,9 +67,10 @@ private:
         dataModel.dataInput = input.dataCast(input.text(), dataModel.dataFormat);
     }
     
+    // Меню выбора критерия Birthrate
     void menuAttributeBirthrate(DataModel &dataModel) {
         output.birthrateOutput();
-        dataModel.birthrate = input.birthrateCast(input.number());
+        dataModel.attribute = input.attributeCast(input.number());
     }
     
     /// Меню удаления

@@ -7,6 +7,7 @@
 
 /**
  * @file Ввод данных с клавиатуры
+ * Все что связанно с вводом в консоль
  */
 
 #ifndef Input_hpp
@@ -14,14 +15,10 @@
 
 #include <stdio.h>
 
-
 #include <string>
-
 
 // Model
 #include "Date.hpp"
-#include "MaternityHospital.hpp"
-
 
 // Supporting
 #include "ChoiceMenu.hpp"
@@ -36,17 +33,12 @@ using namespace std;
 ///
 /// Содержит логику обработки и формирования данных.
 class Input {
-    
-    // MARK:   Методы
 public:
-    
-    
-    // Числовые
     
     /// Ввод с клавиатуры  целого числа int
     ///
-    /// @note Преобразуют строчку к int с помощью функции stoi.
-    /// Из-за того что в буфере при нажатии на enter остается "\0" пришлось использовать этот метод.
+    /// @note Преобразуют строчку к int с помощью функции stoi. Из-за того что в буфере при нажатии на enter остается "\0" пришлось использовать этот метод.
+    ///
     int number() {
         string textNumber = text();
         int number;
@@ -54,8 +46,6 @@ public:
         return number;
     }
     
-    
-    // Символьные
     
     /// Ввод с клавиатуры текста string
     string text() {
@@ -65,10 +55,8 @@ public:
     }
     
     
-    // Дата
-    
     /**
-     * @brief Приводит строчку к Data
+     * Приводит строчку к Data
      *
      * Память выделяется внутри
      *
@@ -85,7 +73,6 @@ public:
         switch (format) {
                 
             case day:
-                
                 data[0] = Data(dataText);
                 break;
                 
@@ -103,22 +90,18 @@ public:
     }
     
     
-    /*
-    City castCity (string text, Area area, Hospital hospitals) {
+    string* numbersCase(string text, Area area, City &city) {
         switch (area) {
-            case city:
-                return hospitals[text];
-                break;
+            case Area::city:
+                return city.getAllNumbers();
             case region:
-                return hospitals[Region(text, -1)];
-                break;
+                return city[text].getAllNumbers();
             case hospital:
-                return hospitals[stoi(text)];
-                break;
+                return new string(text);
         }
     }
-    
-    */
+
+
     
     
     // MARK: - cast to enum ChoiceMenu
@@ -156,12 +139,10 @@ public:
      * @param number  Целое число от 1 до 4
      * @throws ErrorInput::outOfIndex
      */
-    Birthrate birthrateCast(int number) {
+    Attribute attributeCast(int number) {
         if (number > 4 || number < 1) { throw ErrorInput::outOfIndex; }
-        return static_cast<Birthrate>(number-1);
+        return static_cast<Attribute>(number-1);
     }
-    
-    
     
 };
 

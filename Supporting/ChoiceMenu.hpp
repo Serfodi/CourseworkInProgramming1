@@ -12,7 +12,7 @@
 #ifndef ChoiceMenu_hpp
 #define ChoiceMenu_hpp
 
-#include <stdio.h>
+//#include <stdio.h>
 
 
 /// Выбор обработки
@@ -48,8 +48,8 @@ enum DataFormat {
     
 };
 
-/// Критерии
-enum Birthrate {
+/// Критерии отбора
+enum Attribute {
     /// Общей рождаемости
     general,
     /// Только мальчиков

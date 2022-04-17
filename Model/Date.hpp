@@ -12,10 +12,9 @@
 #ifndef Date_hpp
 #define Date_hpp
 
-#include <stdio.h>
-
-
 #include <string>
+
+// Supporting
 #include "ExtensionString.hpp"
 
 
@@ -45,6 +44,9 @@ public:
     Data() { }
     
     /// Приводит строчку типа дд.мм.гггг к дате.
+    ///
+    /// @param text Строка типа: дд.мм.гггг
+    ///
     Data(string text) {
         string *components = ExtensionString::componentsSeparatedBy(text, sep, 3);
         day = stoi(*(components));
@@ -52,13 +54,16 @@ public:
         year = stoi(*(components + 2));
     }
     
+    
     Data(int day, int month, int year) {
         this -> day = day;
         this -> month = month;
         this -> year = year;
     }
     
-    // MARK: - Методы класса
+    
+    
+    // MARK: - Перегрузки операторов
     
     // Перегрузки
     
@@ -106,7 +111,7 @@ public:
     }
     
     
-    // Вспомогательные методы
+    // Geter
     
     /// Выдает день из даты
     int getMonth() {
