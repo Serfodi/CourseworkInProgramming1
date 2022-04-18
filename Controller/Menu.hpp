@@ -56,7 +56,7 @@ private:
         output.areaOutput();
         dataModel.area = input.areaCast(input.number());
         output.menuInput(dataModel.area);
-        dataModel.number = input.numbersCase(input.text(), dataModel.area, city);
+        dataModel.areaText = input.text();
     }
     
     /// Меню выбора дата

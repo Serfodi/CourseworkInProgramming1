@@ -22,7 +22,7 @@ struct DataModel {
     string fIOInput;
     Data *dataInput;
     
-    string *number;
+    string areaText;
     
 };
 

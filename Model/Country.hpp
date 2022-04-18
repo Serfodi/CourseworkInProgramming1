@@ -16,44 +16,64 @@
 
 
 
-struct Region {
-    /// Названия Региона
-    string name;
-    /// Номера роддомов
-    string *numbers;
-    /// кол-во роддомов
+class Country {
+public:
     int count;
+    string name;
     
-    Region() {}
-    
-    /// Строка типа: Центральный|1,2,3
-    Region (string text) {
-        string *components = ExtensionString::componentsSeparatedBy(text, '|', 2);
-        name = components[0];
-        count = ExtensionString::countWords(components[1], ',');
-        string *componentsNumber = ExtensionString::componentsSeparatedBy(components[1], ',', count);
-        numbers = new string[count];
-        for (int i=0; i<count; i++) numbers[i] = componentsNumber[i];
-    }
-    
-    bool operator == (Region second){ return name == second.name; }
-    
-    string* getAllNumbers() {
-        return numbers;
-    }
-    
+public:
+    virtual string* allNumbers() = 0;
+    virtual int allCount() = 0;
     
 };
 
-struct City {
+
+struct Region: Country {
 private:
-    /// Названия Города
-    string name;
+    /// Номера роддомов
+    string *numbers;
+    
+    
+//     Инициализаторы
+public:
+    
+    Region() {}
+    
+    Region(string nameRegion, string* numbers, int countNumbers) {
+        name = nameRegion;
+        count = countNumbers;
+        this -> numbers = new string[count];
+        this -> numbers = numbers;
+    }
+    
+    
+//     Перегрузки
+    
+    string operator [] (int index) { return numbers[index]; }
+    
+    bool operator == (Region second){ return name == second.name; }
+    
+    
+//     Методы
+    
+    /// Возвращает номера роддомов
+    string* allNumbers() override { return numbers; }
+    
+    /// Возвращает кол-во роддомов
+    int allCount() override { return count; }
+    
+};
+
+
+
+
+struct City: Country {
+private:
     /// Регионы в городе
     Region *regions;
-    /// кол-во регионов
-    int count;
 
+    
+//    Инициализатор
 public:
     City () {}
     
@@ -62,6 +82,8 @@ public:
         regions = nullptr;
         count = 0;
     }
+    
+    
     
     /// Добавляет новый элемент в конец regions
     void append(Region newElement) {
@@ -73,30 +95,46 @@ public:
         regions = citiesNew;
     }
     
-    /// Сравнивает имена
+    
+    //    Перегрузки
+
     bool operator == (City second){ return name == second.name; }
+
     
-    
+    //    Перегрузки
+
     /// Вывод региона по слову. Как в словарике
-    Region operator [] (string region) {
+    Region findRegion (string region) {
         for (int i = 0; i < count; i++)
             if (regions[i].name == region)
                 return regions[i];
         return Region();
     }
     
-    /// Выдает Регион по индексу
-    Region operator[] (int index) {
-        return regions[index];
+    string* getAll(Area area, string areaText, int &forCount) {
+        string *numbers = nullptr;
+        switch (area) {
+            case city:
+                forCount = allCount();
+                numbers = new string[forCount];
+                numbers = allNumbers();
+                break;
+            case region:
+                forCount = findRegion(areaText).allCount();
+                numbers = new string[forCount];
+                numbers = findRegion(areaText).allNumbers();
+                break;
+            case hospital:
+                forCount = 1;
+                numbers = new string(areaText);
+                break;
+        }
+        return numbers;
     }
     
-    /// Выдает имя Города
-    string getName() { return name; }
-    /// Выдает кол-во регионов 
-    int getCount() { return count; }
     
     
-    int getAllNumberCount() {
+    int allCount() override {
         int countNumber = 0;
         for (int i=0; i<count; i++) {
             countNumber += regions[i].count;
@@ -104,13 +142,13 @@ public:
         return countNumber;
     }
     
-    string* getAllNumbers() {
-        int countNumbers = getAllNumberCount();
-        string *numbers = new string[countNumbers];
+    
+    string* allNumbers() override {
+        string *numbers = new string[allCount()];
         int now = 0;
         for (int i=0; i<count; i++) {
             for (int j=0; j < regions[i].count ; j++) {
-                numbers[now++] = regions[i].numbers[j];
+                numbers[now++] = regions[i][j];
             }
         }
         return numbers;

@@ -42,7 +42,7 @@ public:
     /// Дата рождения матери
     Data dOBMother;
     /// Дети
-    SexСhild children[3];
+    SexСhild children;
     
     
     // MARK: - Инициализаторы
@@ -50,39 +50,21 @@ public:
     
     Birth() { }
     
-    /// @brief Приводит строку к Birth
-    ///
-    /// @param text Строка типа: | Номер роддома |  Дата рожд ребенка | Район | ФИО |  Дата  рожд. матери |  Пол 1 реб. | Пол 2 реб. | Пол 3 реб. |
-    /// Разделенная сепаратором
-    ///
-    /// @see FileProces Data Sex
-    ///
-    /// @warning Использовать тольк для обработки текста из файла.
-    ///
-    Birth(string text) {
-        string *components = ExtensionString::componentsSeparatedBy(text, '|', 8);
-        number = stoi(*(components + 0));
-        dOB = Data(*(components + 1));
-        region = (*(components + 2));
-        fIO = *(components + 3);
-        dOBMother = Data(*(components + 4));
-        for (int i = 0; i < 3; i++)
-            children[i] = Sex::sexCast(*(components + i + 5));
-        delete [] components;
+    Birth (int number, Data dOB, string region, string fIO, Data dOBMother, SexСhild children) {
+        this -> number = number;
+        this -> dOB = dOB;
+        this -> region = region;
+        this -> fIO = fIO;
+        this -> dOBMother = dOBMother;
+        this -> children = children;
     }
-    
     
     /// Заполняет только ФИО и Дату рождения матери
     ///
     /// Используется для поиска
     Birth(string fIO, Data data) {
-        number = 0;
-        dOB = Data();
-        region = "";
         this -> fIO = fIO;
         this -> dOBMother = data;
-        for (int i = 0; i < 3; i++)
-            children[i] = SexСhild::no;
     }
     
     
@@ -96,8 +78,7 @@ public:
         region = second.region;
         fIO = second.fIO;
         dOBMother = second.dOBMother;
-        for (int i = 0; i < 3; i++)
-            children[i] = second.children[i];
+        children = second.children;
         return *this;
     }
     

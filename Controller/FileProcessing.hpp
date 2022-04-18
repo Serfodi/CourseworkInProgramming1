@@ -20,9 +20,12 @@
 #include <stdio.h>
 #include <fstream>
 
+
+//
+#include "Birth.hpp"
+
 // Supporting
 #include "ClassError.hpp"
-
 
 
 
@@ -39,116 +42,124 @@ ifstream read;
 ofstream write;
 
 
-/// Работа с фалом.
-///
-/// Открытия файла. Чтение из файла и записи в файл.
+enum Options {
+    isRead,
+    isDelete,
+    isNon
+};
+
+
+/**
+ * Работа с файлом
+ *
+ * Отвечает за чтения и запись. Обработка баз данных
+ *
+ */
 class FileProcessing {
+private:
+    char sep = '|';
+    
 public:
     
-    /// Заполняет City из файла
-    ///
-    /// @param fromResource деректива где хранятся город и регионы этого города
-    ///
+    
+    /**
+     * Инициализация базы данных госпиталей
+     *
+     * @param fromResource пусть к папку Data/City
+     * @param city Модель где хранятся данный о госпиталях
+     *
+     */
     void initCity(string fromResource, City &city) {
-        
         readFile(fromResource+"/City.txt");
         while (!read.eof()) city = City(readText());
         read.close();
-        
-        readFile(fromResource + "/" + city.getName() + ".txt");
-        while (!read.eof()) city.append(Region(readText()));
+        readFile(fromResource + "/" + city.name + ".txt");
+        while (!read.eof()) city.append(readRegionFromText(readText()));
         read.close();
-        
     }
     
-    /// Чтения из файла Brith и запись в бинарный файл
-    ///
-    /// @param fromResource Полный путь для файла где находятся данные о рождении
-    ///
+    
+    /**
+     * Создает бинарные файлы по номерам для модели Birth
+     *
+     * Заполнения файлов моделями Birth в бинарном виде
+     */
     void initBirth(string fromResource){
         readFile(fromResource);
         while (!read.eof()) {
-            Birth birth = Birth(readText());
-            writeBinaryFile(to_string(birth.number) + ".txt");
-            writeBinaryData(birth);
+            Birth birth = readBirthFromText(readText());
+            openFileBinary(to_string(birth.number) + ".txt");
+            fileData(birth);
             file.close();
         }
         read.close();
     }
     
     
-    /// Чтения из бинарного файла  по индексу
-    template<class Type>
-    Type operator [](int index) {
-        file.seekg(index * sizeof(Birth), ios::beg);
-        return readBinaryData<Type>();
-    }
     
-    
-    template<class Type>
-    Type get(string resource, int index) {
-        readBinaryFile(resource);
-        file.seekg(index * sizeof(Birth), ios::beg);
-        return readBinaryData<Type>();
-        file.close();
-    }
-    
-    
-    void fileProcessing(Processing &processing, DataModel &dataModel) {
-        file.open("res.txt", ios::out);
+    /**
+     * Обработка файлов
+     *
+     * @param processing  Метод обработки
+     * @param dataModel  Даные
+     * @param city Модель данных
+     *
+     */
+    void fileProcessing(Processing &processing, DataModel &dataModel, City &city, Options options = isNon) {
         
-        int count = 1;
-        string *numbers = nullptr;
+        // Получения всех номеров госпиталей в заданном area
+        int count = 0;
+        string *numbers = city.getAll(dataModel.area, dataModel.areaText, count);
         
         for (int i = 0; i<count; i++) {
-            
-            string url = numbers[i] + ".txt";
-            read.open(url, ios::binary);
-            
+            read.open( numbers[i] + ".txt", ios::binary );
             Birth birth;
-            while ( read.read((char*)&birth, sizeof(Birth)) )
-                if ( processing.processing(dataModel, birth) )
-                    file << birth.description();
             
+            // Чтения из файла и запись в протокол
+            while ( read.read((char*)&birth, sizeof(Birth)) )
+                if ( processing.processing(dataModel, birth))
+                    optionsProcessing(birth, options);
+                
             read.close();
         }
-        file.close();
+        delete [] numbers;
     }
     
     
-    // MARK: - Методы
-private:
     
     
-    string getURL() {
-        return "";
-    }
     
     
     // MARK: - Работа с файлами
+private:
     
     
     
     
-    // MARK: Открытия файлов
     
-    /// Открывает обычный файла для чтения
+    
+    
+    // MARK: Открытия файла
+    
+    
+    /// Открывает поток read
     void readFile(string resource) {
         read.open(resource);
         if (!read.is_open()) { throw ErrorFile::errorOpen; }
     }
-    /// Открывает поток write для записи. ios::App
-    void writeFile(string resource) {
+    
+    /// Открывает поток write в режиме: app
+    void openWrite(string resource) {
         write.open(resource, ios::app);
         if (!write.is_open()) { throw ErrorFile::errorOpen; }
     }
     
-    /// Открывает бинарный файл для записи
-    void writeBinaryFile(string resource) {
+    /// Открывает поток file в режиме: binary,  out, app
+    void openFileBinary(string resource) {
         file.open(resource, ios::binary | ios::app | ios::out);
         if (!file.is_open()) { throw ErrorFile::errorOpen; }
     }
-    /// Открывает бинарный файл для чтения
+    /// Открывает поток file в режиме: binary, in
     void readBinaryFile(string resource) {
         file.open(resource, ios::binary | ios::in);
         if (!file.is_open()) { throw ErrorFile::errorOpen; }
@@ -156,37 +167,102 @@ private:
     
     
     
-    // MARK: Чтения и запись
     
-    /// Читает текст из ifstream текущего файла
+    // MARK: Удаления
+    
+    
+    /// Удаления
+    void delet(Birth birth) {
+        
+    }
+    
+    
+    
+    // MARK: Вспомогательные методы
+    
+    
+    void optionsProcessing(const Birth &birth, Options options) {
+        switch (options) {
+            case isRead:
+                openFileBinary("res.txt");
+                fileData(birth);
+                file.close();
+                break;
+            case isDelete:
+                delet(birth);
+                break;
+            default:
+                break;
+        }
+    }
+    
+    
+    
+    // MARK:  Чтения и запись
+    
+    
+    /// Читает строчку из потока read
     string readText() {
         string text;
         getline(read, text);
         return text;
     }
     
-    /// Запись в поток write
+    /// Записывает Data в поток write
     template<class Type>
     void writeData(Type data) {
         if (!write.is_open()) { throw ErrorFile::errorOpen; }
         write.write((char*)&data, sizeof(Type));
     }
     
-    /// Записывает в текущего бинарного файла
+    /// Записывает Data в поток file
     template<class Type>
-    void writeBinaryData(Type data) {
+    void fileData(Type data) {
         if (!file.is_open()) { throw ErrorFile::errorOpen; }
         file.write((char*)&data, sizeof(Type));
     }
     
-    /// Чтение из текущего бинарного файла
-    template<class Type>
-    Type readBinaryData() {
-        if (!file.is_open()) { throw ErrorFile::errorOpen; }
-        Type data;
-        file.read((char*)&data, sizeof(Type));
-        return data;
+    
+    
+    
+    /// @brief Приводит строку к Birth
+    ///
+    /// @param text Строка типа: | Номер роддома |  Дата рожд ребенка | Район | ФИО |  Дата  рожд. матери |  Пол 1 реб. | Пол 2 реб. | Пол 3 реб. |
+    /// Разделенная сепаратором
+    ///
+    /// @see FileProces Data Sex
+    ///
+    /// @warning Использовать тольк для обработки текста из файла.
+    ///
+    Birth readBirthFromText (string text) {
+        string *components = ExtensionString::componentsSeparatedBy(text, sep , 8);
+        int number = stoi(*(components + 0));
+        Data dOB = Data(*(components + 1));
+        string region = (*(components + 2));
+        string fIO = *(components + 3);
+        Data dOBMother = Data(*(components + 4));
+        SexСhild children;
+        for (int i = 0; i < 3; i++)
+            children.append(children.sexCast(*(components + i + 5)));
+        delete [] components;
+        return Birth(number, dOB, region, fIO, dOBMother, children);
     }
+    
+    
+    /**
+     *
+     *
+     *
+     */
+    Region readRegionFromText(string text) {
+        string *components = ExtensionString::componentsSeparatedBy(text, sep, 2);
+        string name = components[0];
+        int count = ExtensionString::countWords(components[1], ',');
+        string *componentsNumber = ExtensionString::componentsSeparatedBy(components[1], ',', count);
+        delete [] components;
+        return Region(name, componentsNumber, count);
+    }
+    
     
 };
 

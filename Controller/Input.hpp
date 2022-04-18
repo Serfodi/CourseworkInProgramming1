@@ -90,16 +90,19 @@ public:
     }
     
     
-    string* numbersCase(string text, Area area, City &city) {
-        switch (area) {
-            case Area::city:
-                return city.getAllNumbers();
-            case region:
-                return city[text].getAllNumbers();
-            case hospital:
-                return new string(text);
-        }
-    }
+//    string* numbersCase(string text, Area area, City &city, int &count) {
+//        switch (area) {
+//            case Area::city:
+//                count = city.getAllNumberCount();
+//                return city.getAllNumbers();
+//            case region:
+//                count = city[text].count;
+//                return city[text].getAllNumbers();
+//            case hospital:
+//                count = 1;
+//                return new string(text);
+//        }
+//    }
 
 
     

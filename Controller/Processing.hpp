@@ -29,67 +29,139 @@
 #include "ChoiceMenu.hpp"
 
 
-/// Обработка массива
+/**
+ *
+ *
+ *
+ */
 class Processing {
 public:
+    
+    
     virtual bool processing(DataModel, Birth) = 0;
     
+    
+    /// Проверка по признаку
+    static bool isAttribute(Attribute attribute, SexСhild children) {
+        switch (attribute) {
+            case general:
+                return true;
+            case boys:
+                return children.attribute(m);
+            case girls:
+                return children.attribute(g);
+            case multiple:
+                return children.isMultiple();
+        }
+    }
+    
+    
 };
 
 
-class ViewData: public Processing {
 
-    Table tabel;
-    
+/**
+ *
+ *
+ *
+ */
+class ViewData: public Processing {
 public:
-    ViewData() {
-        tabel.printTable();
-    }
     
     bool processing(DataModel dataModel, Birth birth) override {
+        if ( isAttribute(dataModel.attribute, birth.children) ) { return false; }
         switch (dataModel.dataFormat) {
             case day:
-                if (birth.dOB == dataModel.dataInput[0]) {
-                    tabel.addToTable(birth);
-                    return true;
-                }
+                return  birth.dOB == dataModel.dataInput[0];
             case interval:
-                if (birth.dOB >= dataModel.dataInput[0] && birth.dOB <= dataModel.dataInput[1]) {
-                    tabel.addToTable(birth);
-                    return true;
-                }
+                return (birth.dOB >= dataModel.dataInput[0] && birth.dOB <= dataModel.dataInput[1]);
         }
-        return false;
     }
     
 };
 
-class Histogram {
-    
-    HistogramView histogramView;
+
+
+/**
+ *
+ *
+ *
+ */
+class Histogram: public Processing {
+public:
     
     int mouthStat[13] = {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
     };
     
+    bool processing(DataModel dataModel, Birth birth) override {
+        if ( !isAttribute(dataModel.attribute, birth.children) ) { return false; }
+        mouthStat[birth.dOB.getMonth()] += 1;
+        return true;
+    }
+    
+};
+
+
+
+/**
+ *
+ *
+ *
+ */
+class Birthrate: public Processing {
+public:
+    
+    int indexMax, indexMin;
+    
+    int max = 0;
+    int min = -1;
+    
+    int mouthStat[13] = {
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+    };
+    
+    bool processing(DataModel dataModel, Birth birth) override {
+        
+        if (!isAttribute(dataModel.attribute, birth.children)) { return false; }
+        
+        mouthStat[birth.dOB.getMonth()] += 1;
+        
+        if ( mouthStat[birth.dOB.getMonth()] > max ) {
+            max = mouthStat[birth.dOB.getMonth()];
+            indexMax = mouthStat[birth.dOB.getMonth()];
+        }
+        
+        if (min == -1) {
+            min = 1;
+            indexMin = mouthStat[birth.dOB.getMonth()];
+        }
+        
+        if ( mouthStat[birth.dOB.getMonth()] < min ) {
+            min = mouthStat[birth.dOB.getMonth()];
+            indexMin = mouthStat[birth.dOB.getMonth()];
+        }
+        
+        return true;
+    }
     
     
 };
 
-class Birthrate {
+
+/**
+ *
+ * Удаления по: фио матери и году рождения матери
+ *
+ */
+class Delet: public Processing {
     
-    // view
-    Output output;
-    
-    int max = 0;
-    int min = 0;
-    
-    int mouthStat[13] = {
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-    };
-    
+    bool processing(DataModel dataModel, Birth birth) override {
+        return ( dataModel.fIOInput == birth.fIO && dataModel.dataInput[0] == birth.dOBMother );
+    }
     
 };
+
 
 
 

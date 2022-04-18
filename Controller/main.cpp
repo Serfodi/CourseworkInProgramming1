@@ -14,6 +14,7 @@
 #include "Menu.hpp"
 #include "Processing.hpp"
 #include "FileProcessing.hpp"
+#include "ChoiceMenu.hpp"
 
 // Supporting
 #include "ClassError.hpp"
@@ -62,15 +63,33 @@ int main() {
     try {
                 
         switch (dataModel.choiceProcessing) {
-            case viewData: case histogram: case birthrate: case delet:
+            case viewData: {
                 ViewData viewData;
-                file.fileProcessing(viewData, dataModel);
+                file.fileProcessing(viewData, dataModel, city, isRead);
                 break;
+            }
+            case histogram: {
+                Histogram histogram;
+                file.fileProcessing(histogram, dataModel, city);
+                break;
+            }
+            case birthrate: {
+                Birthrate birthrate;
+                file.fileProcessing(birthrate, dataModel, city);
+                break;
+            }
+            case delet: {
+                Delet delet;
+                file.fileProcessing(delet, dataModel, city, isDelete);
+                break;
+            }
         }
+        
         
     } catch(...) {
         cout << "Ошибка обработки";
     }
+    
     
     
     return 0;
