@@ -14,7 +14,8 @@
 #include "Menu.hpp"
 #include "Processing.hpp"
 #include "FileProcessing.hpp"
-#include "ChoiceMenu.hpp"
+#include "HistogramView.hpp"
+#include "Table.hpp"
 
 // Supporting
 #include "ClassError.hpp"
@@ -23,23 +24,26 @@
 using namespace std;
 
 
-
 int main() {
+    
     
     // model Data
     DataModel dataModel;
     
     // controllers
     City city;
+    
     Menu menu;
     
     FileProcessing file;
+    
+    
     
     // MARK: - Обработка файла
     
     try {
         file.initCity("/Users/serfodi/Data/City", city);
-        file.initBirth("/Users/serfodi/Test/FileDataInfo_1.txt");
+        file.initBirth("/Users/serfodi/Test/FileDataInfo_3.txt");
     } catch(...) {
         cout << "Ошибка файла";
     }
@@ -65,12 +69,18 @@ int main() {
         switch (dataModel.choiceProcessing) {
             case viewData: {
                 ViewData viewData;
+                Table tabel;
                 file.fileProcessing(viewData, dataModel, city, isRead);
+                file.fileOutputTabel(tabel);
+                
                 break;
             }
             case histogram: {
                 Histogram histogram;
+                HistogramView view;
                 file.fileProcessing(histogram, dataModel, city);
+                file.fileOutputHistogram(histogram, view);
+                view.output(cout, histogram);
                 break;
             }
             case birthrate: {
@@ -80,7 +90,9 @@ int main() {
             }
             case delet: {
                 Delet delet;
+                dataModel.areaText = city.name;
                 file.fileProcessing(delet, dataModel, city, isDelete);
+                
                 break;
             }
         }

@@ -6,9 +6,7 @@
 //
 
 /**
- * @file
- * Используется:
- *      - main
+ * @file Содержит классы обработки файла
  */
 
 #ifndef Processing_hpp
@@ -19,42 +17,18 @@
 #include "DataModel.hpp"
 #include "Birth.hpp"
 
-// view
-#include "Output.hpp"
-#include "Table.hpp"
-#include "Histogram.hpp"
-
 
 // Supporting
 #include "ChoiceMenu.hpp"
 
 
 /**
- *
- *
- *
+ * Метод обработки, однапроходный алгоритм возврощающий bool
  */
 class Processing {
 public:
     
-    
-    virtual bool processing(DataModel, Birth) = 0;
-    
-    
-    /// Проверка по признаку
-    static bool isAttribute(Attribute attribute, SexСhild children) {
-        switch (attribute) {
-            case general:
-                return true;
-            case boys:
-                return children.attribute(m);
-            case girls:
-                return children.attribute(g);
-            case multiple:
-                return children.isMultiple();
-        }
-    }
-    
+    virtual bool processing(const DataModel&, const Birth&) = 0;
     
 };
 
@@ -68,8 +42,8 @@ public:
 class ViewData: public Processing {
 public:
     
-    bool processing(DataModel dataModel, Birth birth) override {
-        if ( isAttribute(dataModel.attribute, birth.children) ) { return false; }
+    bool processing(const DataModel &dataModel, const Birth &birth) override {
+        if ( SexСhild::isAttribute(dataModel.attribute, birth.children) ) { return false; }
         switch (dataModel.dataFormat) {
             case day:
                 return  birth.dOB == dataModel.dataInput[0];
@@ -94,8 +68,8 @@ public:
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
     };
     
-    bool processing(DataModel dataModel, Birth birth) override {
-        if ( !isAttribute(dataModel.attribute, birth.children) ) { return false; }
+    bool processing(const DataModel &dataModel, const Birth &birth) override {
+        if ( !SexСhild::isAttribute(dataModel.attribute, birth.children) ) { return false; }
         mouthStat[birth.dOB.getMonth()] += 1;
         return true;
     }
@@ -121,9 +95,9 @@ public:
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
     };
     
-    bool processing(DataModel dataModel, Birth birth) override {
+    bool processing(const DataModel &dataModel, const Birth &birth) override {
         
-        if (!isAttribute(dataModel.attribute, birth.children)) { return false; }
+        if (!SexСhild::isAttribute(dataModel.attribute, birth.children)) { return false; }
         
         mouthStat[birth.dOB.getMonth()] += 1;
         
@@ -156,7 +130,7 @@ public:
  */
 class Delet: public Processing {
     
-    bool processing(DataModel dataModel, Birth birth) override {
+    bool processing(const DataModel &dataModel, const Birth &birth) override {
         return ( dataModel.fIOInput == birth.fIO && dataModel.dataInput[0] == birth.dOBMother );
     }
     

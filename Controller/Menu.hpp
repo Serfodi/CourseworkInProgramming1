@@ -9,13 +9,15 @@
 #define Menu_hpp
 
 // View
-#include "Output.hpp"
+#include "OutputMenu.hpp"
 
 // Controller
 #include "Input.hpp"
+
 #include "DataModel.hpp"
 #include "ChoiceMenu.hpp"
 
+#include "TextFileMenu.hpp"
 
 class Menu {
 private:
@@ -23,15 +25,18 @@ private:
     /// Ввод
     Input input;
     /// Вывод
-    Output output;
+    OutputMenu output;
+    
+    /// Текст для вывода
+    TextFileMenu text;
     
 public:
     
     // MARK: Методы
     
     /// Меню выбора обработки
-    void openMenu(DataModel &dataModel, City &city) {
-        output.processingOutput();
+    void openMenu(DataModel &dataModel, const City &city) {
+        output.outMenu(output.textСP, 5);
         dataModel.choiceProcessing = input.choiceProcessingCast(input.number());
         
         if (dataModel.choiceProcessing != delet) menuArea(dataModel, city);
@@ -52,24 +57,24 @@ public:
 private:
     
     /// Меню выбора места поиска
-    void menuArea(DataModel &dataModel, City &city) {
-        output.areaOutput();
+    void menuArea(DataModel &dataModel, const City &city) {
+        output.outMenu(output.textArea, 4);
         dataModel.area = input.areaCast(input.number());
-        output.menuInput(dataModel.area);
+        output.areaForInput(dataModel.area);
         dataModel.areaText = input.text();
     }
     
     /// Меню выбора дата
     void menuDataFormat(DataModel &dataModel) {
-        output.dataFormatOutput();
+        output.outMenu(output.textDataFormat, 3);
         dataModel.dataFormat = input.dataFormatCast(input.number());
-        output.dataFormatInput(dataModel.dataFormat);
+        output.dataFormatForInput(dataModel.dataFormat);
         dataModel.dataInput = input.dataCast(input.text(), dataModel.dataFormat);
     }
     
     // Меню выбора критерия Birthrate
     void menuAttributeBirthrate(DataModel &dataModel) {
-        output.birthrateOutput();
+        output.outMenu(output.textBirthrate, 5);
         dataModel.attribute = input.attributeCast(input.number());
     }
     

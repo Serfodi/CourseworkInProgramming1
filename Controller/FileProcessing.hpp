@@ -20,31 +20,33 @@
 #include <stdio.h>
 #include <fstream>
 
-
-//
 #include "Birth.hpp"
 
 // Supporting
 #include "ClassError.hpp"
-
-
-
-
-// MARK: - Внешние определения
-
-
+#include "HistogramView.hpp"
+#include "Table.hpp"
 
 using namespace std;
 
-/// Потоки
+
+// Потоки
+
+/// Двух-сторонний
 fstream file;
+/// Чтение
 ifstream read;
+/// Запись
 ofstream write;
 
 
+/// Выбор опций для обработки
 enum Options {
+    /// Запись данных в файла
     isRead,
+    /// Удаления данных из текущего файла
     isDelete,
+    /// Ничего не делать
     isNon
 };
 
@@ -53,21 +55,36 @@ enum Options {
  * Работа с файлом
  *
  * Отвечает за чтения и запись. Обработка баз данных
- *
  */
 class FileProcessing {
-private:
-    char sep = '|';
     
+    // MARK: Свойства
+private:
+    
+    /// Разделитель между словами
+    const char sep = '|';
 public:
+    
+    /// Символ обозначения ребенка
+    ///
+    /// Массив из 3 элементов обозначающие пол ребенка
+    string sexChar[3] = {"м", "ж", "0"};
+    
+    
+    
+    // MARK: Методы обработки файлов
     
     
     /**
      * Инициализация базы данных госпиталей
      *
-     * @param fromResource пусть к папку Data/City
-     * @param city Модель где хранятся данный о госпиталях
+     * Читает из файла City названия города и записывает его в city.name.
+     * Потом проходит в файл где хоронятся Регионы  по пути "названияГорода"
      *
+     * @param fromResource пусть к папку Data/City
+     * @param[out] city  Модель где хранятся данный о госпиталях
+     *
+     * @warning Указывать путь до папки Data без  '/' в конце.
      */
     void initCity(string fromResource, City &city) {
         readFile(fromResource+"/City.txt");
@@ -84,7 +101,7 @@ public:
      *
      * Заполнения файлов моделями Birth в бинарном виде
      */
-    void initBirth(string fromResource){
+    void initBirth(string fromResource) {
         readFile(fromResource);
         while (!read.eof()) {
             Birth birth = readBirthFromText(readText());
@@ -96,16 +113,17 @@ public:
     }
     
     
-    
     /**
      * Обработка файлов
      *
-     * @param processing  Метод обработки
-     * @param dataModel  Даные
-     * @param city Модель данных
+     * Получает номера роддомов и читает их проверяя по условию.
+     * Выполняет Options если true иначе ни чего не делает.
      *
+     * @param[out] processing  Метод обработки, однапроходный алгоритм возврощающий bool
+     * @param dataModel  Данные пользователя выведенных с клавиатуры
+     * @param city Модель данных
      */
-    void fileProcessing(Processing &processing, DataModel &dataModel, City &city, Options options = isNon) {
+    void fileProcessing(Processing &processing, const DataModel &dataModel, const City &city, Options options = isNon) {
         
         // Получения всех номеров госпиталей в заданном area
         int count = 0;
@@ -113,9 +131,9 @@ public:
         
         for (int i = 0; i<count; i++) {
             read.open( numbers[i] + ".txt", ios::binary );
-            Birth birth;
             
-            // Чтения из файла и запись в протокол
+            // Чтения из файла и обработка
+            Birth birth;
             while ( read.read((char*)&birth, sizeof(Birth)) )
                 if ( processing.processing(dataModel, birth))
                     optionsProcessing(birth, options);
@@ -126,15 +144,30 @@ public:
     }
     
     
+    void fileOutputHistogram(Histogram processing, HistogramView &histogramView) {
+        openWrite("protocol.txt");
+        histogramView.output(write, processing);
+        write.close();
+    }
+    
+    void fileOutputTabel(Table &table) {
+        openWrite("protocol.txt");
+//        openFileBinary("res.txt");
+        
+        file.open("res.txt", ios::in);
+        
+        table.printTable(write);
+        Birth birth;
+        while (file.read((char*)&birth, sizeof(Birth))) {
+            table.addToTable(write, birth);
+        }
+        file.close();
+        write.close();
+    }
     
     
-    
-    
-    // MARK: - Работа с файлами
+    // MARK: - private Работа с файлами
 private:
-    
-    
-    
     
     
     
@@ -172,7 +205,17 @@ private:
     
     
     /// Удаления
-    void delet(Birth birth) {
+    void delet(const Birth &birth) {
+        
+    }
+    
+    
+    
+    // MARK: Сортировка
+    
+    
+    /// Сортировка текущего файла
+    void sortedBy(bool (*test)(Data, Data) ) {
         
     }
     
@@ -195,6 +238,7 @@ private:
                 break;
         }
     }
+    
     
     
     
@@ -243,7 +287,7 @@ private:
         Data dOBMother = Data(*(components + 4));
         SexСhild children;
         for (int i = 0; i < 3; i++)
-            children.append(children.sexCast(*(components + i + 5)));
+            children.append(SexСhild::sexCast( *(components + i + 5), sexChar) );
         delete [] components;
         return Birth(number, dOB, region, fIO, dOBMother, children);
     }
@@ -265,6 +309,9 @@ private:
     
     
 };
+
+//ifstream& operator >> (ostream &out, Birth &birth) { return }
+
 
 
 #endif /* FileProcess_hpp */

@@ -5,12 +5,12 @@
 //  Created by Сергей Насыбуллин on 05.04.2022.
 //
 
-#ifndef Histogram_hpp
-#define Histogram_hpp
+#ifndef HistogramView_hpp
+#define HistogramView_hpp
 
 #include <stdio.h>
 #include <iomanip>
-
+//#include <fstream>
 
 using namespace std;
 
@@ -26,29 +26,35 @@ public:
     /**
      * Вывод гистограммы рождаемости по месяцам года
      *
-     * @param mouth Кол-во рождений в каждом месяце
+     * @param histogram
      */
-    void histogram(int mouth[13]) {
+    void output(ostream &out, Histogram &histogram) {
         
         // максимальный элимент – это будет высота гистограммы (max + 1)
         int max = 0;
         for (int i = 1; i<13; i++)
-            if (max < mouth[i])
-                max = mouth[i];
+            if (max < histogram.mouthStat[i])
+                max = histogram.mouthStat[i];
         
         // Вывод строчек
         
-        cout << "Вывод гистрограммы рождаемости:" << endl;
-        cout << "     |-------------------------" << endl;
+        // Шапка
+        out << "Вывод гистрограммы рождаемости:" << endl;
+        out << "     |-------------------------" << endl;
         
         for (int i=0; i < (max + 1); i++) {
             int count = (max + 1) - i;
-            bool *avail = availability(count, mouth);
-            cout << setw(4) << count << " | " << histogramString(count, avail) << endl;
+            bool *avail = availability(count, histogram.mouthStat);
+            
+            // Вывод строчки histogramString
+            out << setw(4) << count << " | " << histogramString(count, avail) << endl;
+            
         }
         
-        cout << "     |-------------------------" << endl;
-        cout << "     | я ф м а м и и а с о н д " << endl;
+        // Подвал
+        out << "     |-------------------------" << endl;
+        out << "     | я ф м а м и и а с о н д " << endl;
+        
     }
     
     
@@ -83,4 +89,4 @@ private:
     
 };
 
-#endif /* Histogram_hpp */
+#endif /* HistogramView_hpp */

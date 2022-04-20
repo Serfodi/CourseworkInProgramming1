@@ -14,7 +14,9 @@
 
 #include <string>
 
+
 using namespace std;
+
 
 
 /// Пол ребенка
@@ -28,26 +30,22 @@ enum Sex {
 };
 
 
-/// Модель пола ребенка
+
+/// Модель 3-х детей
 class SexСhild {
 private:
-    
-    string sexText[3] = {"м", "ж", "0"}; // вообще нужно его внешне определять по хорошему
     
     /// Дети
     Sex child[3] = {no, no, no};
     /// Кол-во детей
-    int count = 0;
-    
+    int count;
     
 public:
     
-    
-    SexСhild() {}
-    
+    SexСhild() { count = 0; }
     
     
-    // MARK: - Методы
+    // MARK:  Методы
     
     
     /// Добавляет новый элемент в конец
@@ -55,14 +53,15 @@ public:
     
     
     /**
-     * @brief Приводит букву к перечислению Sex
+     * Приводит букву к перечислению Sex
+     *
      * @param text  Буква
-     * @warning Перед использованием установите параметр "sexText[3]"
+     * @param sexChar Массив обозначений пола
      */
-    Sex sexCast(string text) {
+    const static Sex sexCast(string text, const string sexChar[3]) {
         int index = -1;
         for (int i=0; i<3; i++) {
-            if (text == *(sexText + i)) {
+            if (text == sexChar[i] ) {
                 index = i;
                 break;
             }
@@ -71,37 +70,50 @@ public:
     }
     
     
+    /**
+     * Провекра по признуку
+     *
+     * @param attribute  Признак по которому будет проверка
+     * @param children Объект который проверяется
+     */
+    const static bool isAttribute(Attribute attribute, SexСhild children) {
+        switch (attribute) {
+            case general:
+                return true;
+            case boys:
+                return children.attribute(m);
+            case girls:
+                return children.attribute(g);
+            case multiple:
+                return children.isMultiple();
+        }
+    }
+    
+    
     /// Проверка на один пол
-    bool attribute(Sex sex) {
+    const bool attribute(Sex sex) const {
         bool flag = false;
         for (int i=0; i<count; i++) flag = child[i] == sex && flag;
         return flag;
     }
     
-    
     /// Проверка на многодетность
-    bool isMultiple() {
+    const bool isMultiple() const {
         return count >= 2;
     }
     
-//    dataModel.attribute, birth.children
     
     
+    // MARK:  Перегрузки
     
     
-    
-    // MARK: - Перегрузки
-    
-    
-    Sex operator [] (int index) { return child[index]; }
-    
+    const Sex operator [] (int index) const { return child[index]; }
     
     SexСhild operator = (SexСhild second) {
         for (int i = 0; i < count; i++)
             child[i] = second.child[i];
         return *this;
     }
-    
     
 };
 

@@ -6,20 +6,16 @@
 //
 
 /**
- * @file Описания модели Birth и методы обработки из файла
+ * @file Описания модели Birth
  */
 
 #ifndef Birth_hpp
 #define Birth_hpp
 
 #include <string>
-
 // Model
 #include "Sex.hpp"
 #include "Date.hpp"
-
-// Supporting
-#include "ExtensionString.hpp"
 
 
 using namespace std;
@@ -28,7 +24,7 @@ using namespace std;
 /// Модель данных о рождении детей.
 struct Birth {
     
-    // MARK: - Свойства
+    // MARK:  Свойства
 public:
     
     /// Номер роддома
@@ -45,8 +41,8 @@ public:
     SexСhild children;
     
     
-    // MARK: - Инициализаторы
     
+    // MARK:  Инициализаторы
     
     Birth() { }
     
@@ -59,9 +55,11 @@ public:
         this -> children = children;
     }
     
-    /// Заполняет только ФИО и Дату рождения матери
-    ///
-    /// Используется для поиска
+    /**
+     * Заполняет только ФИО и Дату рождения матери
+     *
+     * Используется для поиска
+     */
     Birth(string fIO, Data data) {
         this -> fIO = fIO;
         this -> dOBMother = data;
@@ -69,7 +67,7 @@ public:
     
     
     
-    // MARK: - Перегрузки
+    // MARK:  Перегрузки
     
     
     Birth operator = (Birth second) {
@@ -82,17 +80,14 @@ public:
         return *this;
     }
     
-    
-    bool operator != (Birth second) {
-        return !(fIO == second.fIO && dOBMother == second.dOBMother);
-    }
-    bool operator == (Birth second) {
-        return (fIO == second.fIO && dOBMother == second.dOBMother);
-    }
+    /// Сравнивает ФИО и ДатуРожденияМатери
+    bool operator != (Birth second) const { return !(fIO == second.fIO && dOBMother == second.dOBMother); }
+    /// Сравнивает ФИО и ДатуРожденияМатери
+    bool operator == (Birth second) const { return (fIO == second.fIO && dOBMother == second.dOBMother); }
     
     
-    /// Описание
-    std::string description() {
+    /// Вывод описания
+    string description() const {
         std::string text;
         text += std::to_string(number) + "\n";
         text += dOB.description() + "\n";

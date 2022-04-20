@@ -29,16 +29,19 @@
 using namespace std;
 
 
-/// Отвечает за ввод данных их обработку из консоли или из файла.
-///
-/// Содержит логику обработки и формирования данных.
+/**
+ * Отвечает за ввод данных их обработку из консоли или из файла.
+ *
+ * Содержит логику обработки и формирования данных из консоли.
+ */
 class Input {
 public:
     
-    /// Ввод с клавиатуры  целого числа int
-    ///
-    /// @note Преобразуют строчку к int с помощью функции stoi. Из-за того что в буфере при нажатии на enter остается "\0" пришлось использовать этот метод.
-    ///
+    /**
+     * Ввод с клавиатуры  целого числа int
+     *
+     * @note Преобразуют строчку к int с помощью функции stoi. Из-за того что в буфере при нажатии на enter остается "\0" пришлось использовать этот метод.
+     */
     int number() {
         string textNumber = text();
         int number;
@@ -69,13 +72,12 @@ public:
      */
     Data *dataCast (string dataText, DataFormat format) {
         if (dataText == "") { throw ErrorInput::incorrectData; }
+        
         Data *data = new Data[format+1]; // Вопрос на засыпку: где выделать память?
         switch (format) {
-                
             case day:
                 data[0] = Data(dataText);
                 break;
-                
             case interval:
                 string *components = new string[format + 1];
                 components = ExtensionString::componentsSeparatedBy(dataText, '-', format + 1);
@@ -84,31 +86,15 @@ public:
                 }
                 delete [] components;
                 break;
-                
         }
         return data;
     }
-    
-    
-//    string* numbersCase(string text, Area area, City &city, int &count) {
-//        switch (area) {
-//            case Area::city:
-//                count = city.getAllNumberCount();
-//                return city.getAllNumbers();
-//            case region:
-//                count = city[text].count;
-//                return city[text].getAllNumbers();
-//            case hospital:
-//                count = 1;
-//                return new string(text);
-//        }
-//    }
-
 
     
     
-    // MARK: - cast to enum ChoiceMenu
-public:
+    
+    
+    // MARK:  Cast to enum ChoiceMenu
     
     /**
      * @brief Приводит число к перечислению ChoiceProcessing

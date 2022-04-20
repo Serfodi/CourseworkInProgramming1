@@ -10,33 +10,44 @@
 
 #include <string>
 
-// Supporting
-#include "ExtensionString.hpp"
 
-
-
-
+/// Абстрактный класс Страны
 class Country {
 public:
-    int count;
+    /// Имя
     string name;
+    /// Кол-во вхождений
+    int count;
     
-public:
-    virtual string* allNumbers() = 0;
-    virtual int allCount() = 0;
+//    /// Возвращает все входящие номера
+//    virtual string* allNumbers() = 0;
+//    /// Возвращает кол-во всех входящих экземпляров
+//    virtual int allCount() = 0;
     
 };
 
 
+
+
+// MARK: - Region
+
+/**
+ * Регион
+ *
+ * Входит в состав Города City class
+ */
 struct Region: Country {
+    
+    // MARK: Свойства
 private:
+    
     /// Номера роддомов
     string *numbers;
     
     
-//     Инициализаторы
+    // MARK: Конструкторы
 public:
-    
+
     Region() {}
     
     Region(string nameRegion, string* numbers, int countNumbers) {
@@ -47,36 +58,46 @@ public:
     }
     
     
-//     Перегрузки
+    // Перегрузки
     
     string operator [] (int index) { return numbers[index]; }
     
+    /// Сравнения имён
     bool operator == (Region second){ return name == second.name; }
     
     
-//     Методы
+    // Методы
     
     /// Возвращает номера роддомов
-    string* allNumbers() override { return numbers; }
+    string* const allNumbers() const  { return numbers; }
     
     /// Возвращает кол-во роддомов
-    int allCount() override { return count; }
+    const int allCount() const  { return count; }
     
 };
 
 
 
 
+// MARK: - City
+
+
+/// Город
 struct City: Country {
+    
+    // MARK: Свойства
 private:
+    
     /// Регионы в городе
     Region *regions;
 
     
-//    Инициализатор
+    // MARK: Конструкторы
 public:
+    
     City () {}
     
+    /// Создания по имени
     City(string nameCity) {
         this -> name = nameCity;
         regions = nullptr;
@@ -84,6 +105,13 @@ public:
     }
     
     
+    //    Перегрузки
+    
+    /// Сравнения имён
+    bool operator == (City second){ return name == second.name; }
+    
+    
+    // MARK: Методы
     
     /// Добавляет новый элемент в конец regions
     void append(Region newElement) {
@@ -96,22 +124,26 @@ public:
     }
     
     
-    //    Перегрузки
-
-    bool operator == (City second){ return name == second.name; }
-
-    
-    //    Перегрузки
-
     /// Вывод региона по слову. Как в словарике
-    Region findRegion (string region) {
+    const Region findRegion (string region) const {
         for (int i = 0; i < count; i++)
             if (regions[i].name == region)
                 return regions[i];
         return Region();
     }
     
-    string* getAll(Area area, string areaText, int &forCount) {
+    /**
+     * Обработка выдачи номера роддомов
+     *
+     * Логика выдачи по area
+     *
+     * @param area Место поиска
+     * @param areaText Адрес поиска
+     * @param[out] forCount передача по адресу кол-во роддомов
+     *
+     * @return Динамический массив string номеров роддомов
+     */
+    string * const getAll(Area area, string areaText, int &forCount) const {
         string *numbers = nullptr;
         switch (area) {
             case city:
@@ -126,15 +158,15 @@ public:
                 break;
             case hospital:
                 forCount = 1;
-                numbers = new string(areaText);
+                numbers = new string[forCount];
+                numbers[0] = areaText;
                 break;
         }
         return numbers;
     }
     
-    
-    
-    int allCount() override {
+    /// Возвращает кол-во всех роддомов
+    const int allCount() const  {
         int countNumber = 0;
         for (int i=0; i<count; i++) {
             countNumber += regions[i].count;
@@ -142,8 +174,8 @@ public:
         return countNumber;
     }
     
-    
-    string* allNumbers() override {
+    /// Возвращает номера роддомов всех вхождений
+    string* const allNumbers() const {
         string *numbers = new string[allCount()];
         int now = 0;
         for (int i=0; i<count; i++) {
@@ -153,7 +185,6 @@ public:
         }
         return numbers;
     }
-    
     
 };
 
