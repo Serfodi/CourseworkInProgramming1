@@ -12,11 +12,8 @@
 #ifndef Sex_hpp
 #define Sex_hpp
 
-#include <string>
-#include "ChoiceMenu.hpp"
 
 using namespace std;
-
 
 
 /// Пол ребенка

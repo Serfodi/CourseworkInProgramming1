@@ -13,18 +13,6 @@
 #ifndef Input_hpp
 #define Input_hpp
 
-#include <stdio.h>
-
-#include <string>
-
-// Model
-#include "Date.hpp"
-
-// Supporting
-#include "ChoiceMenu.hpp"
-#include "ClassError.hpp"
-#include "ExtensionString.hpp"
-
 
 using namespace std;
 
@@ -68,7 +56,7 @@ public:
      *
      * @return Динамический массив из одной или двух дат зависит от Data format
      *
-     * @throws ErrorInput::incorrectData
+     * @throws
      *
      * @Warning Память выделяется внутри
      */
@@ -101,39 +89,46 @@ public:
     /**
      * @brief Приводит число к перечислению ChoiceProcessing
      * @param number  Целое число от 1 до 4
-     * @throws ErrorInput::outOfIndex
+     * @throws
      */
     ChoiceProcessing choiceProcessingCast(int number) {
         if (number > 4 || number < 1) { throw ErrorInput::outOfIndex; }
         return static_cast<ChoiceProcessing>(number-1);
     }
+    
     /**
      * @brief Приводит число к перечислению Area
      * @param number  Целое число от 1 до 3
-     * @throws ErrorInput::outOfIndex
+     * @throws
      */
     Area areaCast(int number) {
         if (number > 3 || number < 1) { throw ErrorInput::outOfIndex; }
         return static_cast<Area>(number-1);
     }
+    
     /**
      * @brief Приводит число к перечислению DataFormat
      * @param number  Целое число от 1 до 2
-     * @throws ErrorInput::outOfIndex
+     * @throws
      */
     DataFormat dataFormatCast(int number) {
         if (number > 2 || number < 1) { throw ErrorInput::outOfIndex; }
         return static_cast<DataFormat>(number-1);
     }
+    
     /**
      * @brief Приводит число к перечислению Birthrate
      * @param number  Целое число от 1 до 4
-     * @throws ErrorInput::outOfIndex
+     * @throws
      */
     Attribute attributeCast(int number) {
         if (number > 4 || number < 1) { throw ErrorInput::outOfIndex; }
         return static_cast<Attribute>(number-1);
     }
+    
+    
+    ~Input() {}
+    
     
 };
 

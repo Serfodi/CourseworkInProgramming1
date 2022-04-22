@@ -12,10 +12,6 @@
 #ifndef Birth_hpp
 #define Birth_hpp
 
-#include <string>
-// Model
-#include "Sex.hpp"
-#include "Date.hpp"
 
 
 using namespace std;

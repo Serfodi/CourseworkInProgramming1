@@ -8,8 +8,6 @@
 #ifndef Country_hpp
 #define Country_hpp
 
-#include <string>
-#include "ChoiceMenu.hpp"
 
 /// Абстрактный класс Страны
 class Country {
@@ -19,10 +17,7 @@ public:
     /// Кол-во вхождений
     int count;
     
-//    /// Возвращает все входящие номера
-//    virtual string* allNumbers() = 0;
-//    /// Возвращает кол-во всех входящих экземпляров
-//    virtual int allCount() = 0;
+    ~Country() {}
     
 };
 
@@ -51,7 +46,7 @@ public:
     Region() {}
     
     /**
-     * @Warning Выделения памяти нужно производит снаружи
+     * @Warning Выделения памяти должно происходит снаружи
      */
     Region(string nameRegion, int* numbers, int countNumbers) {
         name = nameRegion;
@@ -60,14 +55,18 @@ public:
     }
     
     
+    
     // Перегрузки
     
+    /// Доступ к numbers по индексу
     int operator [] (int index) { return numbers[index]; }
     
     /// Сравнения имён
     bool operator == (Region second){ return name == second.name; }
     
+    /// ввод
     friend ifstream& operator >> (ifstream&, Region&);
+    
     
     
     // Методы
@@ -78,14 +77,16 @@ public:
     /// Возвращает кол-во роддомов
     const int allCount() const  { return count; }
     
-    
+    /// Устанавливает значения для массива numbers
     void setNumbers(string *numbers) {
         for (int i=0; i<count; i++) {
             this -> numbers[i] = stoi(numbers[i]);
         }
     }
     
+    
     ~Region() { }
+    
     
 };
 
@@ -117,10 +118,12 @@ public:
     }
     
     
+    
     //    Перегрузки
     
     /// Сравнения имён
     bool operator == (City second){ return name == second.name; }
+    
     
     
     // MARK: Методы
@@ -136,13 +139,18 @@ public:
     }
     
     
-    /// Вывод региона по слову. Как в словарике
+    /**
+     * Вывод региона по слову. Как в словарике
+     *
+     * @throws ошибка поиска
+     */
     const Region findRegion (string region) const {
         for (int i = 0; i < count; i++)
             if (regions[i].name == region)
                 return regions[i];
         return Region();
     }
+    
     
     /**
      * Обработка выдачи номера роддомов
@@ -160,12 +168,10 @@ public:
         switch (area) {
             case city:
                 forCount = allCount();
-//                numbers = new string[forCount];
                 numbers = allNumbers();
                 break;
             case region:
                 forCount = findRegion(areaText).allCount();
-//                numbers = new string[forCount];
                 numbers = findRegion(areaText).allNumbers();
                 break;
             case hospital:
@@ -177,6 +183,7 @@ public:
         return numbers;
     }
     
+    
     /// Возвращает кол-во всех роддомов
     const int allCount() const  {
         int countNumber = 0;
@@ -185,6 +192,7 @@ public:
         }
         return countNumber;
     }
+    
     
     /// Возвращает номера роддомов всех вхождений
     int* const allNumbers() const {
@@ -199,9 +207,12 @@ public:
     }
     
     
+    
+    
     ~City() {
         delete [] regions;
     }
+    
     
     
 };

@@ -1,5 +1,5 @@
 //
-//  Output.hpp
+//  OutputMenu.hpp
 //  CourseworkInProgramming26
 //
 //  Created by Сергей Насыбуллин on 26.03.2022.
@@ -11,14 +11,6 @@
 
 #ifndef Output_hpp
 #define Output_hpp
-
-#include <stdio.h>
-#include <iostream>
-
-
-// supporting
-#include "ChoiceMenu.hpp"
-
 
 
 using namespace std;
@@ -87,29 +79,36 @@ public:
     }
     
     /// Вывод меню выбора места.
-    void areaForInput(Area area) {
+    void areaForInput(Area area) const {
         cout << textAreaInput[area];
     }
     
     /// Вывод меню выбора даты.
-    void dataFormatForInput(DataFormat format) {
+    void dataFormatForInput(DataFormat format) const {
         cout << textDataFormatInput[format];
     }
     
     /// Вывод текста для ввода удаления.
-    void deletOutputFIO() {
+    void deletOutputFIO() const {
         cout << textDeletInput[0];
     }
-    void deletOutputData() {
+    
+    void deletOutputData() const {
         cout << textDeletInput[1] << endl;
         cout << textDataFormatInput[0];
     }
+    
+    
+    
+    ~OutputMenu(){}
+    
     
 private:
     
     void outputArray(const string array[], int size) const {
         for (int i = 0; i < size; i++) { cout << array[i] << endl; }
     }
+    
     
 };
 

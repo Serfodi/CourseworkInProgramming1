@@ -8,15 +8,8 @@
 #ifndef Menu_hpp
 #define Menu_hpp
 
-// View
 #include "OutputMenu.hpp"
-
-// Controller
 #include "Input.hpp"
-
-#include "DataModel.hpp"
-#include "ChoiceMenu.hpp"
-
 
 class Menu {
 private:
@@ -81,6 +74,11 @@ private:
         output.deletOutputData();
         dataModel.dataInput = input.dataCast(input.text(), day);
     }
+    
+
+    
+public: ~Menu() {}
+    
     
 };
 

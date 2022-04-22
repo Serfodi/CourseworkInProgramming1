@@ -8,10 +8,6 @@
 #ifndef DataModel_hpp
 #define DataModel_hpp
 
-#include "ChoiceMenu.hpp"
-#include "Date.hpp"
-#include "Country.hpp"
-
 
 /// Модель данные пользователя выведенных с клавиатуры
 struct DataModel {
@@ -31,9 +27,11 @@ struct DataModel {
     /// Ввод адреса
     string areaText;
     
+    
     ~DataModel() {
         delete [] dataInput;
     }
+    
     
 };
 

@@ -6,22 +6,28 @@
 //
 
 #include <iostream>
- 
-
-// Model
-
-// Controller
-#include "Menu.hpp"
-#include "Processing.hpp"
-#include "FileProcessing.hpp"
-#include "ViewText.hpp"
-
-#include "DataModel.hpp"
-#include "Country.hpp"
-#include "Birth.hpp"
+#include <fstream>
+#include <string>
 
 // Supporting
 #include "ClassError.hpp"
+#include "ExtensionString.hpp"
+#include "ChoiceMenu.hpp"
+
+// Model
+#include "Date.hpp"
+#include "Sex.hpp"
+#include "Birth.hpp"
+#include "DataModel.hpp"
+#include "Country.hpp"
+
+// View
+#include "Menu.hpp"
+#include "ViewText.hpp"
+
+// Controller
+#include "Processing.hpp"
+#include "FileProcessing.hpp"
 
 
 using namespace std;
@@ -29,26 +35,22 @@ using namespace std;
 
 int main() {
     
-    
     // model Data
     DataModel dataModel;
-    
-    // controllers
     City city;
-    
-    Menu menu;
     
     FileProcessing file;
     
+    Menu menu;
     
     
     // MARK: - Обработка файла
     
     
     try {
-        file.initCity("/Users/serfodi/Data/City", city);
         
-        file.initBirth("/Users/serfodi/Test/FileDataInfo_1.txt");
+        file.initCity("/Users/serfodi/Data/City", city);
+        file.initData<Birth>("/Users/serfodi/Test/FileDataInfo_1.txt");
         
     } catch(...) {
         cout << "Ошибка файла";
@@ -59,11 +61,11 @@ int main() {
     // MARK: -  Mеню
     
     try {
+        
         menu.openMenu(dataModel);
-    } catch (ErrorInput) {
+        
+    } catch(...) {
         cout << "Ошибка ввода";
-    } catch (invalid_argument) {
-        cout << "Ошибка выхода";
     }
     
     
@@ -80,24 +82,29 @@ int main() {
         switch (dataModel.choiceProcessing) {
             case viewData: {
                 ViewData viewData = { dataModel };
-                file.fileProcessing(viewData, count, numbers, isRead);
+                file.fileProcessing<Birth>(viewData, count, numbers, isRead);
+                Table tabel;
+                file.fileOutput<Birth>(tabel);
+                break;
+            }
+            case histogram: {
+                Histogram histogram;
+                file.fileProcessing<Birth>(histogram, count, numbers);
+                HistogramViewText view = HistogramViewText(histogram.mouthStat);
+                file.fileOutput(view);
+                view.output(cout);
+                break;
+            }
+            case birthrate: {
+                Birthrate birthrate;
+                file.fileProcessing<Birth>(birthrate, count, numbers);
+                BirthrateViewText view = BirthrateViewText(birthrate.max, birthrate.indexMax, birthrate.min, birthrate.indexMin);
+                file.fileOutput(view);
+                view.output(cout);
                 break;
             }
             default:
                 break;
-//            case histogram: {
-//                Histogram histogram;
-//                HistogramView view;
-//                file.fileProcessing(histogram, dataModel, city);
-//                file.fileOutputHistogram(histogram, view);
-//                view.output(cout, histogram);
-//                break;
-//            }
-//            case birthrate: {
-//                Birthrate birthrate;
-//                file.fileProcessing(birthrate, dataModel, city);
-//                break;
-//            }
 //            case delet: {
 //                Delet delet;
 //                dataModel.areaText = city.name;

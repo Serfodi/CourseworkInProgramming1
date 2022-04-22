@@ -7,7 +7,6 @@
 
 /**
  * @file Работа с файлом. Открытия файла, открытия бинарного, чтения и запись бинарного файла.
- *  Логика ввода тут
  */
 
 
@@ -17,16 +16,6 @@
 #ifndef FileProces_hpp
 #define FileProces_hpp
 
-#include <stdio.h>
-#include <fstream>
-
-#include "Birth.hpp"
-
-
-// Supporting
-#include "ClassError.hpp"
-#include "ViewText.hpp"
-#include "TableViewText.hpp"
 
 using namespace std;
 
@@ -52,22 +41,23 @@ enum Options {
 };
 
 
-
-
 /**
  * Работа с файлом
  *
- * Отвечает за чтения и запись. Обработка баз данных
+ * Отвечает за чтения и запись.
+ * Обработка баз данных.
  */
 class FileProcessing {
+    
+    
+    // MARK: Свойства
 private:
+    
     /// Файл с результатом
     string res = "res.txt";
     /// Файла с записями Brith
     string dataRes = "dataRes.txt";
     
-    
-    // MARK: Свойства
 public:
     
     /// Разделитель между словами
@@ -75,15 +65,14 @@ public:
     
     
     
-    // MARK: Методы обработки файлов
-    
-    
+    // MARK: Методы
+public:
     
     /**
-     * Инициализация базы данных госпиталей
+     * Инициализация базы данных номера госпиталей
      *
      * Читает из файла City названия города и записывает его в city.name.
-     * Потом проходит в файл где хоронятся Регионы  по пути "названияГорода"
+     * Потом проходит в файл где сохранены Регионы  по пути "названияГорода"
      *
      * @param fromResource пусть к папку Data/City
      * @param[out] city  Модель где хранятся данный о госпиталях
@@ -110,15 +99,16 @@ public:
     /**
      * Создает бинарные файлы по номерам для модели Birth
      *
-     * Заполнения файлов моделями Birth в бинарном виде
+     * @param fromResource пусть к папку со всеми записями рождения
      */
-    void initBirth(string fromResource) {
+    template<class Type>
+    void initData(string fromResource) {
         openRead(fromResource);
-        Birth birth;
+        Type data;
         while (!read.eof()) {
-            read >> birth;
-            openFile(to_string(birth.number) + ".txt", ios_base::binary | ios::out);
-            writeFileData(birth);
+            read >> data;
+            openFile(to_string(data.number) + ".txt", ios_base::binary | ios::out);
+            writeFileData(data);
             file.close();
         }
         read.close();
@@ -129,42 +119,61 @@ public:
     /**
      * Обработка файлов
      *
-     * Получает номера роддомов и читает их проверяя по условию.
-     * Выполняет Options если true иначе ни чего не делает.
-     *
      * @param[out] processing  Метод обработки, однапроходный алгоритм возврощающий bool
-     * @param count кол-во роддомов
-     * @param numbers номера роддомов
+     * @param count кол-во адресов
+     * @param numbers адреса
+     * @param options опции обработки. Если processing вернул true
      */
+    template<class Type>
     void fileProcessing(Processing &processing, int count, int *numbers, Options options = isNon) {
-        Birth birth;
+        Type type;
         for (int i = 0; i<count; i++) {
             openRead(to_string(numbers[i]) + ".txt", ios::binary);
-            while ( read.read((char*)&birth, sizeof(Birth)) )
-                if ( processing.processing(birth))
-                    optionsProcessing(birth, options);
+            while ( read.read((char*)&type, sizeof(Type)) )
+                if ( processing.processing(type))
+                    optionsProcessing(type, options);
             read.close();
         }
     }
     
-    /// Выводит таблицу в файла результата
-    void fileTableOutput(Table tableViewText) {
+    
+    
+    
+    /**
+     * Вывод в файл и в консоль
+     *
+     * Открывает файл "dataRes" и читает из него. Также записывает в "res" в виде Table.
+     *
+     * @param tableViewText вид вывода
+     */
+    template<class Type>
+    void fileOutput(Table &tableViewText) {
         openFile(dataRes, ios::in);
         openWrite(res);
-        Birth birth;
-        while (file.read((char*)&birth, sizeof(Birth))) writeData(birth);
+        Type data;
+        while (file.read((char*)&data, sizeof(Type))) {
+            tableViewText.addToTable(write, data);
+            tableViewText.addToTable(cout, data);
+        }
         write.close();
         file.close();
     }
     
-    ///  Вывод текста в файл
-    void fileOutput(ViewText viewText) {
+    
+    
+    
+    /**
+     * Вывод в файл.
+     *
+     * Открывает файл "res" и записывает в виде viewText
+     *
+     * @param viewText выид вывода
+     */
+    void fileOutput(ViewText &viewText) {
         openWrite(res);
-//        viewText
+        viewText.output(write);
         write.close();
     }
-    
-    
     
     
     
@@ -179,18 +188,31 @@ private:
     // MARK: Открытия файла
     
     
-    /// Открывает поток read
+    /**
+     * Открывает поток read ifstream
+     *
+     * @throws
+     */
     void openRead(string resource, ios_base::openmode __mode = ios::in) {
         read.open(resource, __mode);
         if (!read.is_open()) { throw ErrorFile::errorOpen; }
     }
     
-    /// Открывает поток write в режиме: app
+    /**
+     * Открывает поток write ofstream
+     *
+     * @throws
+     */
     void openWrite(string resource, ios_base::openmode __mode = ios::out) {
         write.open(resource, __mode);
         if (!write.is_open()) { throw ErrorFile::errorOpen; }
     }
     
+    /**
+     * Открывает поток file fstream
+     *
+     * @throws
+     */
     void openFile(string resource, ios_base::openmode __mode) {
         file.open(resource, __mode);
         if (!file.is_open()) { throw ErrorFile::errorOpen; }
@@ -201,16 +223,16 @@ private:
         
     // MARK: Вспомогательные методы
     
-    
-    void optionsProcessing(const Birth &birth, Options options) {
+    template<class Type>
+    void optionsProcessing(const Type &data, Options options) {
         switch (options) {
             case isRead:
                 openFile(dataRes, ios::binary | ios::out);
-                writeFileData(birth);
+                writeFileData(data);
                 file.close();
                 break;
             case isDelete:
-                delet(birth);
+                delet(data);
                 break;
             default:
                 break;
@@ -225,7 +247,8 @@ private:
     
         
     /// Удаления
-    void delet(const Birth &birth) { }
+    template <class Type>
+    void delet(const Type &data) { }
     
     
         
@@ -263,6 +286,11 @@ private:
         if (!file.is_open()) { throw ErrorFile::errorOpen; }
         file.write((char*)&data, sizeof(Type));
     }
+    
+    
+    
+public:   ~FileProcessing() {}
+    
     
 };
 

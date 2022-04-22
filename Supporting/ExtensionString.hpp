@@ -13,9 +13,6 @@
 #define ExtensionString_hpp
 
 
-#include <string>
-
-
 using namespace std;
 
 
@@ -68,6 +65,7 @@ public:
         return count;
     }
     
+    ~ExtensionString() {}
     
 };
 

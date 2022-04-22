@@ -12,7 +12,21 @@
 #ifndef ClassError_hpp
 #define ClassError_hpp
 
-//#include <stdio.h>
+
+using namespace std;
+
+
+class Error: public exception {
+    
+public:
+    
+//    Error(char *text) : exception() {}
+    
+    
+    
+    
+};
+
 
 /// Ошибки ввода
 enum ErrorInput {

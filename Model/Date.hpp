@@ -5,18 +5,9 @@
 //  Created by Сергей Насыбуллин on 26.03.2022.
 //
 
-/**
- * @file Модель даты
- */
 
 #ifndef Date_hpp
 #define Date_hpp
-
-
-#include <string>
-
-// Supporting
-#include "ExtensionString.hpp"
 
 
 using namespace std;
@@ -50,6 +41,8 @@ public:
      * Приводит строчку типа дд.мм.гггг к дате.
      *
      * @param text Строка типа: "дд.мм.гггг"
+     *
+     * @throws ошибка выхода за придела даты
      */
     Data(string text) {
         string *components = ExtensionString::componentsSeparatedBy(text, sep, 3);
@@ -80,6 +73,7 @@ public:
     const bool operator == ( Data two) const {
         return (day == two.day && month == two.month && year == two.year);
     }
+    
     
     /*
      В операторах: >, <, >=, <=, сравниваются сначала год, потом месяц, потом день.

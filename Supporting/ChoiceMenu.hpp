@@ -12,8 +12,6 @@
 #ifndef ChoiceMenu_hpp
 #define ChoiceMenu_hpp
 
-//#include <stdio.h>
-
 
 /// Выбор обработки
 enum ChoiceProcessing {
@@ -25,7 +23,6 @@ enum ChoiceProcessing {
     birthrate,
     /// Удаления по фамилии и дате рождения
     delet,
-    
 };
 
 /// Местность
@@ -36,7 +33,6 @@ enum Area {
     region,
     /// По городу
     city,
-    
 };
 
 /// Формат даты
@@ -45,7 +41,6 @@ enum DataFormat {
     day,
     /// Интервал: дд.мм.гггг - дд.мм.гггг
     interval,
-    
 };
 
 /// Критерии отбора
@@ -58,7 +53,6 @@ enum Attribute {
     girls,
     /// Многодетных родителей
     multiple,
-    
 };
 
 

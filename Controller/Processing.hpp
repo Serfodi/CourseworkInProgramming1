@@ -12,15 +12,6 @@
 #ifndef Processing_hpp
 #define Processing_hpp
 
-// Model
-#include "Country.hpp"
-#include "DataModel.hpp"
-#include "Birth.hpp"
-
-
-// Supporting
-#include "ChoiceMenu.hpp"
-
 
 /**
  * Метод обработки, однапроходный алгоритм возврощающий bool
@@ -33,6 +24,7 @@ public:
     
     virtual bool processing(const Birth&) = 0;
     
+    ~Processing() {}
 };
 
 
@@ -59,6 +51,9 @@ public:
         }
     }
     
+    
+    ~ViewData() {}
+    
 };
 
 
@@ -80,6 +75,9 @@ public:
         mouthStat[birth.dOB.getMonth()] += 1;
         return true;
     }
+    
+    
+    ~Histogram() {}
     
 };
 
