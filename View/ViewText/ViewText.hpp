@@ -1,18 +1,30 @@
 //
-//  Histogram.hpp
+//  ViewText.hpp
 //  CourseworkInProgramming26
 //
-//  Created by Сергей Насыбуллин on 05.04.2022.
+//  Created by Сергей Насыбуллин on 20.04.2022.
 //
 
-#ifndef HistogramView_hpp
-#define HistogramView_hpp
+#ifndef ViewText_hpp
+#define ViewText_hpp
 
 #include <stdio.h>
-#include <iomanip>
-//#include <fstream>
+#include <fstream>
 
-using namespace std;
+
+#include "string"
+#include "Birth.hpp"
+#include "Processing.hpp"
+
+
+class ViewText {
+    
+    void output(ostream &out) {}
+    
+};
+
+
+
 
 
 /// Вывод гистограммы рождаемости
@@ -26,9 +38,10 @@ public:
     /**
      * Вывод гистограммы рождаемости по месяцам года
      *
-     * @param histogram
+     * @param histogram обарботка Гистограммы
+     * @param out поток ostream
      */
-    void output(ostream &out, Histogram &histogram) {
+    void output(ostream &out, const Histogram &histogram) {
         
         // максимальный элимент – это будет высота гистограммы (max + 1)
         int max = 0;
@@ -40,20 +53,21 @@ public:
         
         // Шапка
         out << "Вывод гистрограммы рождаемости:" << endl;
-        out << "     |-------------------------" << endl;
+        out << "     |-------------------------|" << endl;
         
         for (int i=0; i < (max + 1); i++) {
             int count = (max + 1) - i;
             bool *avail = availability(count, histogram.mouthStat);
             
             // Вывод строчки histogramString
-            out << setw(4) << count << " | " << histogramString(count, avail) << endl;
+            out << setw(4) << count << " | " << histogramString(count, avail) << "|" << endl;
             
+            delete [] avail;
         }
         
         // Подвал
-        out << "     |-------------------------" << endl;
-        out << "     | я ф м а м и и а с о н д " << endl;
+        out << "     |-------------------------|" << endl;
+        out << "     | я ф м а м и и а с о н д |" << endl;
         
     }
     
@@ -80,7 +94,7 @@ private:
     }
     
     /// Просматривает есть ли рождаемость на заданном кол-во
-    bool* availability(int count, int mouth[13]) {
+    bool* availability(int count, const int mouth[13]) {
         bool *array = new bool[13];
         for (int i=1; i<13; i++)
             array[i] = count <= mouth[i];
@@ -89,4 +103,28 @@ private:
     
 };
 
-#endif /* HistogramView_hpp */
+/*
+
+class ViewTextBirthrate {
+    
+    string textData[12] = {
+        "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октяборь", "Нояборь", "Декабарь"
+    };
+    
+    void mouth(int mouthMax, int mouthMin, int numberMax, int numberMin) {
+        cout << "Максимальное кол-во рождений: " << textData[mouthMax-1] << endl
+        << "Что составило: " << numberMax << endl;
+        cout << "Минимальное кол-во рождений: " << textData[mouthMin-1] << endl
+        << "Что составило: " << numberMin << endl;
+    }
+
+    void mouthEqule(int number) {
+        cout << "В каждом месецы было одинаковое кол-во рождений." << endl
+        << "Что составило: " << number;
+    }
+    
+};
+*/
+
+
+#endif /* ViewText_hpp */

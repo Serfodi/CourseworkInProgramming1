@@ -17,7 +17,6 @@
 #include "DataModel.hpp"
 #include "ChoiceMenu.hpp"
 
-#include "TextFileMenu.hpp"
 
 class Menu {
 private:
@@ -27,19 +26,16 @@ private:
     /// Вывод
     OutputMenu output;
     
-    /// Текст для вывода
-    TextFileMenu text;
-    
 public:
     
     // MARK: Методы
     
     /// Меню выбора обработки
-    void openMenu(DataModel &dataModel, const City &city) {
+    void openMenu(DataModel &dataModel) {
         output.outMenu(output.textСP, 5);
         dataModel.choiceProcessing = input.choiceProcessingCast(input.number());
         
-        if (dataModel.choiceProcessing != delet) menuArea(dataModel, city);
+        if (dataModel.choiceProcessing != delet) menuArea(dataModel);
         
         switch (dataModel.choiceProcessing) {
             case viewData:
@@ -57,7 +53,7 @@ public:
 private:
     
     /// Меню выбора места поиска
-    void menuArea(DataModel &dataModel, const City &city) {
+    void menuArea(DataModel &dataModel) {
         output.outMenu(output.textArea, 4);
         dataModel.area = input.areaCast(input.number());
         output.areaForInput(dataModel.area);

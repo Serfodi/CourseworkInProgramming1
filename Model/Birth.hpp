@@ -85,6 +85,7 @@ public:
     /// Сравнивает ФИО и ДатуРожденияМатери
     bool operator == (Birth second) const { return (fIO == second.fIO && dOBMother == second.dOBMother); }
     
+    friend ifstream& operator >> (ifstream &, Birth &);
     
     /// Вывод описания
     string description() const {
@@ -99,7 +100,11 @@ public:
         return text;
     }
     
+    
+    ~Birth() {}
+    
 };
+
 
 
 #endif /* ModelBirth_hpp */

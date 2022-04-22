@@ -69,18 +69,20 @@ public:
      * @return Динамический массив из одной или двух дат зависит от Data format
      *
      * @throws ErrorInput::incorrectData
+     *
+     * @Warning Память выделяется внутри
      */
-    Data *dataCast (string dataText, DataFormat format) {
+    Data * const dataCast (string dataText, DataFormat format) const {
         if (dataText == "") { throw ErrorInput::incorrectData; }
         
         Data *data = new Data[format+1]; // Вопрос на засыпку: где выделать память?
+        
         switch (format) {
             case day:
                 data[0] = Data(dataText);
                 break;
             case interval:
-                string *components = new string[format + 1];
-                components = ExtensionString::componentsSeparatedBy(dataText, '-', format + 1);
+                string *components = ExtensionString::componentsSeparatedBy(dataText, '-', format + 1);
                 for (int i=0; i < format + 1 ; i++) {
                     data[i] = Data(*(components + i));
                 }

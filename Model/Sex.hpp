@@ -13,7 +13,7 @@
 #define Sex_hpp
 
 #include <string>
-
+#include "ChoiceMenu.hpp"
 
 using namespace std;
 
@@ -30,7 +30,6 @@ enum Sex {
 };
 
 
-
 /// Модель 3-х детей
 class SexСhild {
 private:
@@ -38,11 +37,11 @@ private:
     /// Дети
     Sex child[3] = {no, no, no};
     /// Кол-во детей
-    int count;
+    int count = 0;
     
 public:
     
-    SexСhild() { count = 0; }
+    SexСhild() {}
     
     
     // MARK:  Методы
@@ -56,9 +55,9 @@ public:
      * Приводит букву к перечислению Sex
      *
      * @param text  Буква
-     * @param sexChar Массив обозначений пола
      */
-    const static Sex sexCast(string text, const string sexChar[3]) {
+    const static Sex sexCast(string text) {
+        const string sexChar[3] = {"м", "ж", "0"};
         int index = -1;
         for (int i=0; i<3; i++) {
             if (text == sexChar[i] ) {
@@ -76,7 +75,7 @@ public:
      * @param attribute  Признак по которому будет проверка
      * @param children Объект который проверяется
      */
-    const static bool isAttribute(Attribute attribute, SexСhild children) {
+    const static bool isAttribute(Attribute attribute, SexСhild children)  {
         switch (attribute) {
             case general:
                 return true;
@@ -110,10 +109,15 @@ public:
     const Sex operator [] (int index) const { return child[index]; }
     
     SexСhild operator = (SexСhild second) {
+        count = second.count;
         for (int i = 0; i < count; i++)
             child[i] = second.child[i];
         return *this;
     }
+    
+    
+    ~SexСhild() {}
+    
     
 };
 

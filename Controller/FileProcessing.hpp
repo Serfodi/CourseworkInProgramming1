@@ -22,10 +22,11 @@
 
 #include "Birth.hpp"
 
+
 // Supporting
 #include "ClassError.hpp"
-#include "HistogramView.hpp"
-#include "Table.hpp"
+#include "ViewText.hpp"
+#include "TableViewText.hpp"
 
 using namespace std;
 
@@ -51,28 +52,31 @@ enum Options {
 };
 
 
+
+
 /**
  * Работа с файлом
  *
  * Отвечает за чтения и запись. Обработка баз данных
  */
 class FileProcessing {
+private:
+    /// Файл с результатом
+    string res = "res.txt";
+    /// Файла с записями Brith
+    string dataRes = "dataRes.txt";
+    
     
     // MARK: Свойства
-private:
-    
-    /// Разделитель между словами
-    const char sep = '|';
 public:
     
-    /// Символ обозначения ребенка
-    ///
-    /// Массив из 3 элементов обозначающие пол ребенка
-    string sexChar[3] = {"м", "ж", "0"};
+    /// Разделитель между словами
+    static const char sep = '|';
     
     
     
     // MARK: Методы обработки файлов
+    
     
     
     /**
@@ -87,13 +91,20 @@ public:
      * @warning Указывать путь до папки Data без  '/' в конце.
      */
     void initCity(string fromResource, City &city) {
-        readFile(fromResource+"/City.txt");
+        
+        openRead(fromResource+"/City.txt");
         while (!read.eof()) city = City(readText());
         read.close();
-        readFile(fromResource + "/" + city.name + ".txt");
-        while (!read.eof()) city.append(readRegionFromText(readText()));
+        
+        openRead(fromResource + "/" + city.name + ".txt");
+        Region region;
+        while (!read.eof()) {
+            read >> region;
+            city.append(region);
+        }
         read.close();
     }
+    
     
     
     /**
@@ -102,15 +113,17 @@ public:
      * Заполнения файлов моделями Birth в бинарном виде
      */
     void initBirth(string fromResource) {
-        readFile(fromResource);
+        openRead(fromResource);
+        Birth birth;
         while (!read.eof()) {
-            Birth birth = readBirthFromText(readText());
-            openFileBinary(to_string(birth.number) + ".txt");
-            fileData(birth);
+            read >> birth;
+            openFile(to_string(birth.number) + ".txt", ios_base::binary | ios::out);
+            writeFileData(birth);
             file.close();
         }
         read.close();
     }
+    
     
     
     /**
@@ -120,50 +133,42 @@ public:
      * Выполняет Options если true иначе ни чего не делает.
      *
      * @param[out] processing  Метод обработки, однапроходный алгоритм возврощающий bool
-     * @param dataModel  Данные пользователя выведенных с клавиатуры
-     * @param city Модель данных
+     * @param count кол-во роддомов
+     * @param numbers номера роддомов
      */
-    void fileProcessing(Processing &processing, const DataModel &dataModel, const City &city, Options options = isNon) {
-        
-        // Получения всех номеров госпиталей в заданном area
-        int count = 0;
-        string *numbers = city.getAll(dataModel.area, dataModel.areaText, count);
-        
+    void fileProcessing(Processing &processing, int count, int *numbers, Options options = isNon) {
+        Birth birth;
         for (int i = 0; i<count; i++) {
-            read.open( numbers[i] + ".txt", ios::binary );
-            
-            // Чтения из файла и обработка
-            Birth birth;
+            openRead(to_string(numbers[i]) + ".txt", ios::binary);
             while ( read.read((char*)&birth, sizeof(Birth)) )
-                if ( processing.processing(dataModel, birth))
+                if ( processing.processing(birth))
                     optionsProcessing(birth, options);
-                
             read.close();
         }
-        delete [] numbers;
     }
     
-    
-    void fileOutputHistogram(Histogram processing, HistogramView &histogramView) {
-        openWrite("protocol.txt");
-        histogramView.output(write, processing);
-        write.close();
-    }
-    
-    void fileOutputTabel(Table &table) {
-        openWrite("protocol.txt");
-//        openFileBinary("res.txt");
-        
-        file.open("res.txt", ios::in);
-        
-        table.printTable(write);
+    /// Выводит таблицу в файла результата
+    void fileTableOutput(Table tableViewText) {
+        openFile(dataRes, ios::in);
+        openWrite(res);
         Birth birth;
-        while (file.read((char*)&birth, sizeof(Birth))) {
-            table.addToTable(write, birth);
-        }
+        while (file.read((char*)&birth, sizeof(Birth))) writeData(birth);
+        write.close();
         file.close();
+    }
+    
+    ///  Вывод текста в файл
+    void fileOutput(ViewText viewText) {
+        openWrite(res);
+//        viewText
         write.close();
     }
+    
+    
+    
+    
+    
+    
     
     
     // MARK: - private Работа с файлами
@@ -171,64 +176,37 @@ private:
     
     
     
-    
     // MARK: Открытия файла
     
     
     /// Открывает поток read
-    void readFile(string resource) {
-        read.open(resource);
+    void openRead(string resource, ios_base::openmode __mode = ios::in) {
+        read.open(resource, __mode);
         if (!read.is_open()) { throw ErrorFile::errorOpen; }
     }
     
     /// Открывает поток write в режиме: app
-    void openWrite(string resource) {
-        write.open(resource, ios::app);
+    void openWrite(string resource, ios_base::openmode __mode = ios::out) {
+        write.open(resource, __mode);
         if (!write.is_open()) { throw ErrorFile::errorOpen; }
     }
     
-    /// Открывает поток file в режиме: binary,  out, app
-    void openFileBinary(string resource) {
-        file.open(resource, ios::binary | ios::app | ios::out);
-        if (!file.is_open()) { throw ErrorFile::errorOpen; }
-    }
-    /// Открывает поток file в режиме: binary, in
-    void readBinaryFile(string resource) {
-        file.open(resource, ios::binary | ios::in);
+    void openFile(string resource, ios_base::openmode __mode) {
+        file.open(resource, __mode);
         if (!file.is_open()) { throw ErrorFile::errorOpen; }
     }
     
     
     
-    
-    // MARK: Удаления
-    
-    
-    /// Удаления
-    void delet(const Birth &birth) {
         
-    }
-    
-    
-    
-    // MARK: Сортировка
-    
-    
-    /// Сортировка текущего файла
-    void sortedBy(bool (*test)(Data, Data) ) {
-        
-    }
-    
-    
-    
     // MARK: Вспомогательные методы
     
     
     void optionsProcessing(const Birth &birth, Options options) {
         switch (options) {
             case isRead:
-                openFileBinary("res.txt");
-                fileData(birth);
+                openFile(dataRes, ios::binary | ios::out);
+                writeFileData(birth);
                 file.close();
                 break;
             case isDelete:
@@ -238,6 +216,26 @@ private:
                 break;
         }
     }
+    
+        
+        
+        
+    // MARK: Удаления
+    
+    
+        
+    /// Удаления
+    void delet(const Birth &birth) { }
+    
+    
+        
+    
+    // MARK: Сортировка
+    
+    
+        
+    /// Сортировка текущего файла
+    void sortedBy(bool (*test)(Data, Data) ) { }
     
     
     
@@ -253,64 +251,65 @@ private:
     }
     
     /// Записывает Data в поток write
-    template<class Type>
+    template <class Type>
     void writeData(Type data) {
         if (!write.is_open()) { throw ErrorFile::errorOpen; }
         write.write((char*)&data, sizeof(Type));
     }
     
     /// Записывает Data в поток file
-    template<class Type>
-    void fileData(Type data) {
+    template <class Type>
+    void writeFileData(Type data) {
         if (!file.is_open()) { throw ErrorFile::errorOpen; }
         file.write((char*)&data, sizeof(Type));
     }
     
-    
-    
-    
-    /// @brief Приводит строку к Birth
-    ///
-    /// @param text Строка типа: | Номер роддома |  Дата рожд ребенка | Район | ФИО |  Дата  рожд. матери |  Пол 1 реб. | Пол 2 реб. | Пол 3 реб. |
-    /// Разделенная сепаратором
-    ///
-    /// @see FileProces Data Sex
-    ///
-    /// @warning Использовать тольк для обработки текста из файла.
-    ///
-    Birth readBirthFromText (string text) {
-        string *components = ExtensionString::componentsSeparatedBy(text, sep , 8);
-        int number = stoi(*(components + 0));
-        Data dOB = Data(*(components + 1));
-        string region = (*(components + 2));
-        string fIO = *(components + 3);
-        Data dOBMother = Data(*(components + 4));
-        SexСhild children;
-        for (int i = 0; i < 3; i++)
-            children.append(SexСhild::sexCast( *(components + i + 5), sexChar) );
-        delete [] components;
-        return Birth(number, dOB, region, fIO, dOBMother, children);
-    }
-    
-    
-    /**
-     *
-     *
-     *
-     */
-    Region readRegionFromText(string text) {
-        string *components = ExtensionString::componentsSeparatedBy(text, sep, 2);
-        string name = components[0];
-        int count = ExtensionString::countWords(components[1], ',');
-        string *componentsNumber = ExtensionString::componentsSeparatedBy(components[1], ',', count);
-        delete [] components;
-        return Region(name, componentsNumber, count);
-    }
-    
-    
 };
 
-//ifstream& operator >> (ostream &out, Birth &birth) { return }
+
+
+/// Ввод Region
+ifstream& operator >> (ifstream &in, Region & region) {
+    string line;
+    getline(in, region.name, FileProcessing::sep);
+    getline(in, line);
+    int count = ExtensionString::countWords(line, ',');
+    string *componentsNumber = ExtensionString::componentsSeparatedBy(line, ',', count);
+    region.setNumbers(componentsNumber);
+    delete [] componentsNumber;
+    return in;
+}
+
+
+
+/// Ввод Birth
+ifstream& operator >> (ifstream &in, Birth &birth) {
+    string line;
+    
+    getline(in, line, FileProcessing::sep);
+    birth.number = stoi(line);
+    
+    getline(in, line, FileProcessing::sep);
+    birth.dOB = Data(line);
+    
+    getline(in, birth.region, FileProcessing::sep);
+    getline(in, birth.fIO, FileProcessing::sep);
+    
+    getline(in, line, FileProcessing::sep);
+    birth.dOBMother = Data(line);
+    
+    SexСhild children;
+    for (int i = 0; i < 2; i++) {
+        getline(in, line, FileProcessing::sep);
+        children.append(SexСhild::sexCast(line));
+    }
+    getline(in, line);
+    children.append(SexСhild::sexCast(line));
+    birth.children = children;
+    
+    return in;
+}
+
 
 
 

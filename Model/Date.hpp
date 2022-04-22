@@ -12,6 +12,7 @@
 #ifndef Date_hpp
 #define Date_hpp
 
+
 #include <string>
 
 // Supporting
@@ -69,10 +70,11 @@ public:
     // MARK:  Перегрузки
     
     
-    void operator = (Data second) {
+    Data operator = (Data second) {
         day = second.day;
         month = second.month;
         year = second.year;
+        return *this;
     }
     
     const bool operator == ( Data two) const {
@@ -117,12 +119,20 @@ public:
     }
     
     
-    
     // MARK:  Методы
     
+    /// setDay
+    void setDay(int day) { this -> day = day; }
+    
+    /// setMonth
+    void setMonth(int month) { this -> month = month; }
+    
+    /// setYear
+    void setYear(int year) { this -> year = year; }
     
     /// Возвращает месяц
     const int getMonth() const { return month; }
+    
     
     /// Возвращает дату в формате: дд.мм.гггг
     string description() const {
@@ -133,10 +143,11 @@ public:
         return s;
     }
     
+    
+    ~Data() { }
+    
+    
 };
 
-ostream& operator << (ostream &out, Data &data) {
-    return out << data.description();
-}
 
 #endif /* Date_hpp */

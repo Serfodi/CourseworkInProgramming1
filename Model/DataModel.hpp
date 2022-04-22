@@ -31,6 +31,10 @@ struct DataModel {
     /// Ввод адреса
     string areaText;
     
+    ~DataModel() {
+        delete [] dataInput;
+    }
+    
 };
 
 #endif /* DataModel_hpp */

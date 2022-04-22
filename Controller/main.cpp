@@ -5,17 +5,20 @@
 //  Created by Сергей Насыбуллин on 26.03.2022.
 //
 
+#include <iostream>
+ 
 
 // Model
-#include "DataModel.hpp"
-#include "Country.hpp"
 
 // Controller
 #include "Menu.hpp"
 #include "Processing.hpp"
 #include "FileProcessing.hpp"
-#include "HistogramView.hpp"
-#include "Table.hpp"
+#include "ViewText.hpp"
+
+#include "DataModel.hpp"
+#include "Country.hpp"
+#include "Birth.hpp"
 
 // Supporting
 #include "ClassError.hpp"
@@ -41,9 +44,12 @@ int main() {
     
     // MARK: - Обработка файла
     
+    
     try {
         file.initCity("/Users/serfodi/Data/City", city);
-        file.initBirth("/Users/serfodi/Test/FileDataInfo_3.txt");
+        
+        file.initBirth("/Users/serfodi/Test/FileDataInfo_1.txt");
+        
     } catch(...) {
         cout << "Ошибка файла";
     }
@@ -53,7 +59,7 @@ int main() {
     // MARK: -  Mеню
     
     try {
-        menu.openMenu(dataModel, city);
+        menu.openMenu(dataModel);
     } catch (ErrorInput) {
         cout << "Ошибка ввода";
     } catch (invalid_argument) {
@@ -65,36 +71,41 @@ int main() {
     // MARK: - Обработка
     
     try {
-                
+        
+        // Получения всех номеров госпиталей в заданном area
+        int count = 0;
+        int *numbers = city.getAll(dataModel.area, dataModel.areaText, count);
+        
+        
         switch (dataModel.choiceProcessing) {
             case viewData: {
-                ViewData viewData;
-                Table tabel;
-                file.fileProcessing(viewData, dataModel, city, isRead);
-                file.fileOutputTabel(tabel);
-                
+                ViewData viewData = { dataModel };
+                file.fileProcessing(viewData, count, numbers, isRead);
                 break;
             }
-            case histogram: {
-                Histogram histogram;
-                HistogramView view;
-                file.fileProcessing(histogram, dataModel, city);
-                file.fileOutputHistogram(histogram, view);
-                view.output(cout, histogram);
+            default:
                 break;
-            }
-            case birthrate: {
-                Birthrate birthrate;
-                file.fileProcessing(birthrate, dataModel, city);
-                break;
-            }
-            case delet: {
-                Delet delet;
-                dataModel.areaText = city.name;
-                file.fileProcessing(delet, dataModel, city, isDelete);
-                
-                break;
-            }
+//            case histogram: {
+//                Histogram histogram;
+//                HistogramView view;
+//                file.fileProcessing(histogram, dataModel, city);
+//                file.fileOutputHistogram(histogram, view);
+//                view.output(cout, histogram);
+//                break;
+//            }
+//            case birthrate: {
+//                Birthrate birthrate;
+//                file.fileProcessing(birthrate, dataModel, city);
+//                break;
+//            }
+//            case delet: {
+//                Delet delet;
+//                dataModel.areaText = city.name;
+//                file.fileProcessing(delet, dataModel, city, isDelete);
+//
+//                break;
+//            }
+        
         }
         
         

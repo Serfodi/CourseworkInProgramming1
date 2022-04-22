@@ -9,7 +9,7 @@
 #define Country_hpp
 
 #include <string>
-
+#include "ChoiceMenu.hpp"
 
 /// Абстрактный класс Страны
 class Country {
@@ -42,7 +42,7 @@ struct Region: Country {
 private:
     
     /// Номера роддомов
-    string *numbers;
+    int *numbers;
     
     
     // MARK: Конструкторы
@@ -50,32 +50,44 @@ public:
 
     Region() {}
     
-    Region(string nameRegion, string* numbers, int countNumbers) {
+    /**
+     * @Warning Выделения памяти нужно производит снаружи
+     */
+    Region(string nameRegion, int* numbers, int countNumbers) {
         name = nameRegion;
         count = countNumbers;
-        this -> numbers = new string[count];
         this -> numbers = numbers;
     }
     
     
     // Перегрузки
     
-    string operator [] (int index) { return numbers[index]; }
+    int operator [] (int index) { return numbers[index]; }
     
     /// Сравнения имён
     bool operator == (Region second){ return name == second.name; }
+    
+    friend ifstream& operator >> (ifstream&, Region&);
     
     
     // Методы
     
     /// Возвращает номера роддомов
-    string* const allNumbers() const  { return numbers; }
+    int* const allNumbers() const  { return numbers; }
     
     /// Возвращает кол-во роддомов
     const int allCount() const  { return count; }
     
+    
+    void setNumbers(string *numbers) {
+        for (int i=0; i<count; i++) {
+            this -> numbers[i] = stoi(numbers[i]);
+        }
+    }
+    
+    ~Region() { }
+    
 };
-
 
 
 
@@ -143,23 +155,23 @@ public:
      *
      * @return Динамический массив string номеров роддомов
      */
-    string * const getAll(Area area, string areaText, int &forCount) const {
-        string *numbers = nullptr;
+    int* getAll(Area area, string areaText, int &forCount) const {
+        int *numbers = nullptr;
         switch (area) {
             case city:
                 forCount = allCount();
-                numbers = new string[forCount];
+//                numbers = new string[forCount];
                 numbers = allNumbers();
                 break;
             case region:
                 forCount = findRegion(areaText).allCount();
-                numbers = new string[forCount];
+//                numbers = new string[forCount];
                 numbers = findRegion(areaText).allNumbers();
                 break;
             case hospital:
                 forCount = 1;
-                numbers = new string[forCount];
-                numbers[0] = areaText;
+                numbers = new int[forCount];
+                numbers[0] = stoi(areaText);
                 break;
         }
         return numbers;
@@ -175,8 +187,8 @@ public:
     }
     
     /// Возвращает номера роддомов всех вхождений
-    string* const allNumbers() const {
-        string *numbers = new string[allCount()];
+    int* const allNumbers() const {
+        int *numbers = new int[allCount()];
         int now = 0;
         for (int i=0; i<count; i++) {
             for (int j=0; j < regions[i].count ; j++) {
@@ -185,6 +197,12 @@ public:
         }
         return numbers;
     }
+    
+    
+    ~City() {
+        delete [] regions;
+    }
+    
     
 };
 
