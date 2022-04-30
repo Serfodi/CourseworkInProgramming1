@@ -56,25 +56,21 @@ public:
      *
      * @return Динамический массив из одной или двух дат зависит от Data format
      *
-     * @throws
+     * @throws ошибка ввода даты
      *
      * @Warning Память выделяется внутри
      */
-    Data * const dataCast (string dataText, DataFormat format) const {
+    const vector<Data> dataCast (string dataText, DataFormat format) const {
         if (dataText == "") { throw ErrorInput::incorrectData; }
-        
-        Data *data = new Data[format+1]; // Вопрос на засыпку: где выделать память?
-        
+        vector<Data>  data(format+1);
         switch (format) {
             case day:
                 data[0] = Data(dataText);
                 break;
             case interval:
-                string *components = ExtensionString::componentsSeparatedBy(dataText, '-', format + 1);
-                for (int i=0; i < format + 1 ; i++) {
-                    data[i] = Data(*(components + i));
-                }
-                delete [] components;
+                vector<string> components = ExtensionString::componentsSeparatedBy(dataText, '-');
+                for (int i=0; i < format + 1 ; i++)
+                    data[i] = Data(components[i]);
                 break;
         }
         return data;
@@ -89,7 +85,7 @@ public:
     /**
      * @brief Приводит число к перечислению ChoiceProcessing
      * @param number  Целое число от 1 до 4
-     * @throws
+     * @throws ошибка ввода
      */
     ChoiceProcessing choiceProcessingCast(int number) {
         if (number > 4 || number < 1) { throw ErrorInput::outOfIndex; }
@@ -99,7 +95,7 @@ public:
     /**
      * @brief Приводит число к перечислению Area
      * @param number  Целое число от 1 до 3
-     * @throws
+     * @throws ошибка ввода
      */
     Area areaCast(int number) {
         if (number > 3 || number < 1) { throw ErrorInput::outOfIndex; }
@@ -109,7 +105,7 @@ public:
     /**
      * @brief Приводит число к перечислению DataFormat
      * @param number  Целое число от 1 до 2
-     * @throws
+     * @throws ошибка ввода
      */
     DataFormat dataFormatCast(int number) {
         if (number > 2 || number < 1) { throw ErrorInput::outOfIndex; }
@@ -119,7 +115,7 @@ public:
     /**
      * @brief Приводит число к перечислению Birthrate
      * @param number  Целое число от 1 до 4
-     * @throws
+     * @throws ошибка ввода
      */
     Attribute attributeCast(int number) {
         if (number > 4 || number < 1) { throw ErrorInput::outOfIndex; }

@@ -75,9 +75,6 @@ private:
         dataModel.dataInput = input.dataCast(input.text(), day);
     }
     
-
-    
-public: ~Menu() {}
     
     
 };

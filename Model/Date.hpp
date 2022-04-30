@@ -10,17 +10,17 @@
 #define Date_hpp
 
 
-using namespace std;
+
 
 
 /// Представление даты. В формате: дд.мм.гггг
-class Data {
+struct Data {
     
     // MARK:  Свойства
 public:
     
     /// Разделитель даты
-    static const char sep = '.';
+    const char sep = '.';
     
 private:
     /// day День. Целое число от 1 до 31
@@ -35,7 +35,7 @@ private:
     // MARK:  Инициализатор
 public:
     
-    Data() { }
+    Data() {}
     
     /**
      * Приводит строчку типа дд.мм.гггг к дате.
@@ -45,11 +45,10 @@ public:
      * @throws ошибка выхода за придела даты
      */
     Data(string text) {
-        string *components = ExtensionString::componentsSeparatedBy(text, sep, 3);
-        day = stoi(*(components));
-        month = stoi(*(components + 1));
-        year = stoi(*(components + 2));
-        delete [] components;
+        vector<string> components = ExtensionString::componentsSeparatedBy(text, sep);
+        day = stoi(components[0]);
+        month = stoi(components[1]);
+        year = stoi(components[2]);
     }
     
     Data(int day, int month, int year) {
@@ -63,7 +62,7 @@ public:
     // MARK:  Перегрузки
     
     
-    Data operator = (Data second) {
+    Data& operator = (const Data &second) {
         day = second.day;
         month = second.month;
         year = second.year;
@@ -127,7 +126,6 @@ public:
     /// Возвращает месяц
     const int getMonth() const { return month; }
     
-    
     /// Возвращает дату в формате: дд.мм.гггг
     string description() const {
         string s;
@@ -138,7 +136,9 @@ public:
     }
     
     
-    ~Data() { }
+    
+    ~Data() {}
+    
     
     
 };

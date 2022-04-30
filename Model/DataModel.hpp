@@ -23,15 +23,11 @@ struct DataModel {
     /// Ввод фамилии
     string fIOInput;
     /// Ввод даты
-    Data *dataInput;
+    vector<Data> dataInput;
+    /// Все роддомы которые были в файле
+    vector<int> numbers = {1,2,3,4,5,6,7,8,9,10,11,12};
     /// Ввод адреса
     string areaText;
-    
-    
-    ~DataModel() {
-        delete [] dataInput;
-    }
-    
     
 };
 

@@ -13,7 +13,7 @@
 #define Sex_hpp
 
 
-using namespace std;
+//using namespace std;
 
 
 /// Пол ребенка
@@ -41,12 +41,11 @@ public:
     SexСhild() {}
     
     
-    // MARK:  Методы
     
+    // MARK:  Методы
     
     /// Добавляет новый элемент в конец
     void append(Sex newElement) { child[count++] = newElement; }
-    
     
     /**
      * Приводит букву к перечислению Sex
@@ -64,7 +63,6 @@ public:
         }
         return static_cast<Sex>(index);
     }
-    
     
     /**
      * Провекра по признуку
@@ -105,7 +103,8 @@ public:
     
     const Sex operator [] (int index) const { return child[index]; }
     
-    SexСhild operator = (SexСhild second) {
+    
+    SexСhild& operator = (const SexСhild &second) {
         count = second.count;
         for (int i = 0; i < count; i++)
             child[i] = second.child[i];

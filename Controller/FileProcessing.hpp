@@ -30,6 +30,7 @@ ifstream read;
 ofstream write;
 
 
+
 /// Выбор опций для обработки
 enum Options {
     /// Запись данных в файла
@@ -41,6 +42,7 @@ enum Options {
 };
 
 
+
 /**
  * Работа с файлом
  *
@@ -48,6 +50,7 @@ enum Options {
  * Обработка баз данных.
  */
 class FileProcessing {
+    
     
     
     // MARK: Свойства
@@ -82,61 +85,58 @@ public:
     void initCity(string fromResource, City &city) {
         
         openRead(fromResource+"/City.txt");
-        while (!read.eof()) city = City(readText());
+        while (!read.eof()) city.setName(readText(read));
         read.close();
         
-        openRead(fromResource + "/" + city.name + ".txt");
-        Region region;
-        while (!read.eof()) {
-            read >> region;
-            city.append(region);
-        }
+        openRead(fromResource + "/" + city.getName() + ".txt");
+        while (!read.eof()) city.append(readStruct<Region>(read));
         read.close();
+        
     }
-    
     
     
     /**
      * Создает бинарные файлы по номерам для модели Birth
+     *
+     * Читает из файла и записывает в файла по номерам
      *
      * @param fromResource пусть к папку со всеми записями рождения
      */
     template<class Type>
     void initData(string fromResource) {
         openRead(fromResource);
-        Type data;
+        Type data = readStruct<Type>(read);
         while (!read.eof()) {
-            read >> data;
+            data = readStruct<Type>(read);
             openFile(to_string(data.number) + ".txt", ios_base::binary | ios::out);
             writeFileData(data);
+            
             file.close();
         }
         read.close();
     }
     
     
-    
     /**
      * Обработка файлов
      *
      * @param[out] processing  Метод обработки, однапроходный алгоритм возврощающий bool
-     * @param count кол-во адресов
      * @param numbers адреса
      * @param options опции обработки. Если processing вернул true
+     *
+     * @bug При чтения слова со знаком: "-" он читает какую-то фигню
      */
     template<class Type>
-    void fileProcessing(Processing &processing, int count, int *numbers, Options options = isNon) {
+    void fileProcessing(Processing &processing, const vector<int> &numbers, Options options = isNon) {
         Type type;
-        for (int i = 0; i<count; i++) {
-            openRead(to_string(numbers[i]) + ".txt", ios::binary);
+        for (int i = 0; i < numbers.size(); i++) {
+            openRead(to_string(numbers[i]) + ".txt");
             while ( read.read((char*)&type, sizeof(Type)) )
-                if ( processing.processing(type))
+                if (processing.processing(type))
                     optionsProcessing(type, options);
             read.close();
         }
     }
-    
-    
     
     
     /**
@@ -160,8 +160,6 @@ public:
     }
     
     
-    
-    
     /**
      * Вывод в файл.
      *
@@ -178,8 +176,6 @@ public:
     
     
     
-    
-    
     // MARK: - private Работа с файлами
 private:
     
@@ -187,35 +183,34 @@ private:
     
     // MARK: Открытия файла
     
-    
     /**
      * Открывает поток read ifstream
      *
-     * @throws
+     * @throws ошибка файла
      */
     void openRead(string resource, ios_base::openmode __mode = ios::in) {
         read.open(resource, __mode);
-        if (!read.is_open()) { throw ErrorFile::errorOpen; }
+        if (!read.is_open()) { throw "Error:" + resource; }
     }
     
     /**
      * Открывает поток write ofstream
      *
-     * @throws
+     * @throws ошибка файла
      */
     void openWrite(string resource, ios_base::openmode __mode = ios::out) {
         write.open(resource, __mode);
-        if (!write.is_open()) { throw ErrorFile::errorOpen; }
+        if (!write.is_open()) { throw "Error:" + resource; }
     }
     
     /**
      * Открывает поток file fstream
      *
-     * @throws
+     * @throws ошибка фалйа
      */
     void openFile(string resource, ios_base::openmode __mode) {
         file.open(resource, __mode);
-        if (!file.is_open()) { throw ErrorFile::errorOpen; }
+        if (!file.is_open()) { throw "Error:" + resource; }
     }
     
     
@@ -244,8 +239,6 @@ private:
         
     // MARK: Удаления
     
-    
-        
     /// Удаления
     template <class Type>
     void delet(const Type &data) { }
@@ -255,23 +248,33 @@ private:
     
     // MARK: Сортировка
     
-    
-        
     /// Сортировка текущего файла
     void sortedBy(bool (*test)(Data, Data) ) { }
     
     
     
     
-    // MARK:  Чтения и запись
-    
+    // MARK:  Чтения
     
     /// Читает строчку из потока read
-    string readText() {
+    string readText(ifstream &stream) {
         string text;
-        getline(read, text);
+        getline(stream, text);
         return text;
     }
+    
+    /// Читает структуру Region из потока
+    template <class Type>
+    Type readStruct (ifstream &stream) {
+        Type data;
+        read >> data;
+        return data;
+    }
+    
+    
+    
+    
+    // MARK:  Запись
     
     /// Записывает Data в поток write
     template <class Type>
@@ -289,9 +292,6 @@ private:
     
     
     
-public:   ~FileProcessing() {}
-    
-    
 };
 
 
@@ -301,10 +301,8 @@ ifstream& operator >> (ifstream &in, Region & region) {
     string line;
     getline(in, region.name, FileProcessing::sep);
     getline(in, line);
-    int count = ExtensionString::countWords(line, ',');
-    string *componentsNumber = ExtensionString::componentsSeparatedBy(line, ',', count);
-    region.setNumbers(componentsNumber);
-    delete [] componentsNumber;
+    vector<string> componentsNumber = ExtensionString::componentsSeparatedBy(line, ',');
+    region.appNumbers(componentsNumber);
     return in;
 }
 

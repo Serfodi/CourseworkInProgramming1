@@ -40,7 +40,7 @@ public:
     
     // MARK:  Инициализаторы
     
-    Birth() { }
+    Birth() {}
     
     Birth (int number, Data dOB, string region, string fIO, Data dOBMother, SexСhild children) {
         this -> number = number;
@@ -66,7 +66,7 @@ public:
     // MARK:  Перегрузки
     
     
-    Birth operator = (Birth second) {
+    Birth& operator = (const Birth &second) {
         number = second.number;
         dOB = second.dOB;
         region = second.region;
@@ -82,6 +82,8 @@ public:
     bool operator == (Birth second) const { return (fIO == second.fIO && dOBMother == second.dOBMother); }
     
     friend ifstream& operator >> (ifstream &, Birth &);
+    
+    
     
     /// Вывод описания
     string description() const {

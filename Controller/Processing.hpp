@@ -21,7 +21,6 @@ public:
     
     DataModel dataModel;
     
-    
     virtual bool processing(const Birth&) = 0;
     
     ~Processing() {}
@@ -70,6 +69,10 @@ public:
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
     };
     
+    Histogram(DataModel dataModel) {
+        this -> dataModel = dataModel;
+    }
+    
     bool processing(const Birth &birth) override {
         if ( !SexСhild::isAttribute(dataModel.attribute, birth.children) ) { return false; }
         mouthStat[birth.dOB.getMonth()] += 1;
@@ -99,6 +102,10 @@ public:
     int mouthStat[13] = {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
     };
+    
+    Birthrate(DataModel dataModel) {
+        this -> dataModel = dataModel;
+    }
     
     bool processing(const Birth &birth) override {
         
