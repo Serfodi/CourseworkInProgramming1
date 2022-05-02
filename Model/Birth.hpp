@@ -88,13 +88,14 @@ public:
     /// Вывод описания
     string description() const {
         std::string text;
-        text += std::to_string(number) + "\n";
-        text += dOB.description() + "\n";
-        text += region + "\n";
-        text += fIO + "\n";
-        text += dOBMother.description() + "\n";
-        for (int i = 0; i < 3; i++) text += std::to_string(children[i]) + " ";
-        text += "\n";
+        text += std::to_string(number) + "|";
+        text += dOB.description() + "|";
+        text += region + "|";
+        text += fIO + "|";
+        text += dOBMother.description() + "|";
+        const string sexChar[3] = {"м", "ж", "0"};
+        for (int i = 0; i < 3; i++)
+            text += sexChar[ children[i] ] + "|";
         return text;
     }
     

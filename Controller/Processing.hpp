@@ -41,7 +41,6 @@ public:
     }
     
     bool processing(const Birth &birth) override {
-        if ( SexСhild::isAttribute(dataModel.attribute, birth.children) ) { return false; }
         switch (dataModel.dataFormat) {
             case day:
                 return  birth.dOB == dataModel.dataInput[0];

@@ -31,24 +31,21 @@ public:
     // MARK: Перегрузки
     
     /// Сравнения имён
-    bool operator == (City second){ return name == second.name; }
+    bool operator == (City second) { return name == second.name; }
     
     /// Доступ к regions по индексу
-    Region operator [] (int index) { return regions[index]; }
+    Region operator [] (int index) const { return regions[index]; }
     
     
     
     // MARK: Методы
     
+    
     /// Устанавливает имя
-    void setName(string name) {
-        this -> name = name;
-    }
+    void setName(string name) { this -> name = name; }
     
     /// Возвращает имя
-    const string getName() const {
-        return name;
-    }
+    const string getName() const { return name; }
     
     /// Добавляет новый элемент в конец regions
     void append(Region newElement) {
@@ -67,6 +64,13 @@ public:
         return nullptr;
     }
     
+    
+    /// Возвращает кол-во регионов в городе
+    int getCount() const {
+        return regions.size();
+    }
+    
+    
     /**
      * Обработка выдачи номера роддомов
      *
@@ -77,19 +81,19 @@ public:
      *
      * @return Вектор массив string номеров роддомов
      */
-    vector<int> getAll(Area area, string areaText, vector<int> numbers) const {
+    vector<int> getAll(Area area, string areaText) const {
         switch (area) {
             case city:
-                return binaryAnd(numbers, allNumbers());
+                return allNumbers();
             case region:
-                return binaryAnd(numbers, find(areaText) -> allNumbers());
+                return find(areaText) -> allNumbers();
             case hospital:
                 return vector<int>(1, stoi(areaText));
         }
     }
     
     
-    /// Возвращает номера роддомов
+    /// Возвращает номера всех роддомов входящие в город
     const vector<int> allNumbers() const override {
         vector<int> numbers;
         for (int i=0; i < regions.size(); i++) {
@@ -99,22 +103,6 @@ public:
         }
         return numbers;
     }
-    
-private:
-    
-    vector<int> binaryAnd (vector<int> one, vector<int> two) const {
-        if (one == two) return one;
-        vector<int> numbers;
-        for (int i=0; i<one.size(); i++) {
-            for (int j=0; j<two.size(); j++) {
-                if (one[i] == two[j]) {
-                    numbers.push_back(one[i]);
-                }
-            }
-        }
-        return numbers;
-    }
-    
     
     
 };

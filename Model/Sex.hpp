@@ -40,8 +40,6 @@ public:
     
     SexСhild() {}
     
-    
-    
     // MARK:  Методы
     
     /// Добавляет новый элемент в конец
@@ -65,6 +63,17 @@ public:
     }
     
     /**
+     * Приводит число к перечислению букве
+     *
+     * @param text  Буква
+     */
+    const static string sexCast(int text) {
+        const string sexChar[3] = {"m", "g", "0"};
+        return sexChar[text];
+    }
+    
+    
+    /**
      * Провекра по признуку
      *
      * @param attribute  Признак по которому будет проверка
@@ -84,10 +93,14 @@ public:
     }
     
     
+private:
+    
     /// Проверка на один пол
     const bool attribute(Sex sex) const {
-        bool flag = false;
-        for (int i=0; i<count; i++) flag = child[i] == sex && flag;
+        bool flag = true;
+        for (int i=0; i<count; i++)
+            if (child[i] != no)
+                flag = child[i] == sex && flag;
         return flag;
     }
     
@@ -97,9 +110,9 @@ public:
     }
     
     
-    
+
     // MARK:  Перегрузки
-    
+public:
     
     const Sex operator [] (int index) const { return child[index]; }
     

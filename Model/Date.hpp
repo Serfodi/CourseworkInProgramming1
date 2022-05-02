@@ -20,7 +20,7 @@ struct Data {
 public:
     
     /// Разделитель даты
-    const char sep = '.';
+    static const char sep = '.';
     
 private:
     /// day День. Целое число от 1 до 31

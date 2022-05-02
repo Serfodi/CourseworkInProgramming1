@@ -20,7 +20,7 @@ public:
     
     // MARK: Свойства
     
-    /// Номера роддомов
+    /// Номера роддомов*
     vector<int> numbers;
     
     
@@ -39,7 +39,7 @@ public:
     // MARK: Перегрузки
     
     /// Доступ к numbers по индексу
-    int operator [] (int index) { return numbers[index]; }
+    int operator [] (int index) const { return numbers[index]; }
     
     /// Сравнения имён
     bool operator == (Region second){ return name == second.name; }

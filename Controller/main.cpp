@@ -10,6 +10,8 @@
 #include <string>
 #include <vector>
 
+using namespace std;
+
 // Supporting
 #include "ClassError.hpp"
 #include "ExtensionString.hpp"
@@ -31,7 +33,6 @@
 #include "FileProcessing.hpp"
 
 
-using namespace std;
 
 
 int main() {
@@ -42,48 +43,32 @@ int main() {
     // model Data
     DataModel dataModel;
     City city;
-    
     FileProcessing file;
-    
     Menu menu;
     
     
-    // MARK: - Обработка файла
-    
     
     try {
+        
+        // MARK: - Обработка файла
         
         file.initCity("/Users/serfodi/Data/City", city);
+        file.initData<Birth>("/Users/serfodi/Test/FileDataInfo_Rand.txt");
         
-        file.initData<Birth>("/Users/serfodi/Test/FileDataInfo_2.txt");
         
-    } catch(string n) {
-        cout << "Ошибка файла !!!!!!!!! " << n << endl;
-    }
-    
-    
-    
-    // MARK: -  Mеню
-    
-    try {
+        
+        // MARK: -  Mеню
         
         menu.openMenu(dataModel);
         
-    } catch(...) {
-        cout << "Ошибка ввода!!!!!" << endl;
-    }
-    
-    
-    
-//      31, 12, 9999
-    
-    
-    // MARK: - Обработка
-    
-    try {
+        
+        //    01.01.0001 - 01.01.9999
+        
+        // MARK: - Обработка
+        
         
         // Получения всех номеров госпиталей в заданном area
-        vector<int> numbers = city.getAll(dataModel.area, dataModel.areaText, dataModel.numbers);
+        vector<int> numbers = city.getAll(dataModel.area, dataModel.areaText);
         
         
         switch (dataModel.choiceProcessing) {
@@ -97,7 +82,7 @@ int main() {
             case histogram: {
                 Histogram histogram = { dataModel };
                 file.fileProcessing<Birth>(histogram, numbers);
-                HistogramViewText view = HistogramViewText(histogram.mouthStat);
+                HistogramViewText view = HistogramViewText(histogram.mouthStat, dataModel.attribute);
                 file.fileOutput(view);
                 view.output(cout);
                 break;
@@ -112,22 +97,25 @@ int main() {
             }
             default:
                 break;
-//            case delet: {
-//                Delet delet;
-//                dataModel.areaText = city.name;
-//                file.fileProcessing(delet, dataModel, city, isDelete);
-//
-//                break;
-//            }
-        
+                //            case delet: {
+                //                Delet delet;
+                //                dataModel.areaText = city.name;
+                //                file.fileProcessing(delet, dataModel, city, isDelete);
+                //
+                //                break;
+                //            }
         }
         
         
-    } catch(...) {
-        cout << "Ошибка обработки";
+    }
+    catch(string n) {
+        cout << "Ошибка файла !!!!!!!!! " << n << endl;
+    }
+    catch(...) {
+        cout << "Ошибка ввода!!!!!" << endl;
     }
     
-    
+    file.deleteFileData(city);
     
     return 0;
 }

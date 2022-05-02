@@ -59,7 +59,7 @@ private:
     /// Файл с результатом
     string res = "res.txt";
     /// Файла с записями Brith
-    string dataRes = "dataRes.txt";
+    string dataRes = "hospital/dataRes.txt";
     
 public:
     
@@ -105,12 +105,12 @@ public:
     template<class Type>
     void initData(string fromResource) {
         openRead(fromResource);
-        Type data = readStruct<Type>(read);
+        Type data;
         while (!read.eof()) {
             data = readStruct<Type>(read);
-            openFile(to_string(data.number) + ".txt", ios_base::binary | ios::out);
+            string url = "hospital/" + to_string(data.number) + ".txt";
+            openFile(url, ios_base::binary | ios::out | ios::app);
             writeFileData(data);
-            
             file.close();
         }
         read.close();
@@ -130,11 +130,13 @@ public:
     void fileProcessing(Processing &processing, const vector<int> &numbers, Options options = isNon) {
         Type type;
         for (int i = 0; i < numbers.size(); i++) {
-            openRead(to_string(numbers[i]) + ".txt");
-            while ( read.read((char*)&type, sizeof(Type)) )
-                if (processing.processing(type))
-                    optionsProcessing(type, options);
-            read.close();
+            string url = "hospital/" + to_string(numbers[i]) + ".txt";
+            if (openRead(url)) {
+                while ( read.read((char*)&type, sizeof(Type)) )
+                    if (processing.processing(type))
+                        optionsProcessing(type, options);
+                read.close();
+            }
         }
     }
     
@@ -168,10 +170,23 @@ public:
      * @param viewText выид вывода
      */
     void fileOutput(ViewText &viewText) {
-        openWrite(res);
+        openWrite(res, ios::app);
         viewText.output(write);
         write.close();
     }
+    
+    
+    
+    /// Удаляет файла после использования
+    void deleteFileData(const City &city) {
+        vector<int> n = city.getAll(Area::city, "Москва");
+        for (int i = 0; i<n.size(); i++) {
+            remove(( "hospital/" + to_string(n[i]) + ".txt").c_str());
+        }
+        remove(dataRes.c_str());
+    }
+    
+    
     
     
     
@@ -188,9 +203,9 @@ private:
      *
      * @throws ошибка файла
      */
-    void openRead(string resource, ios_base::openmode __mode = ios::in) {
+    bool openRead(string resource, ios_base::openmode __mode = ios::in) {
         read.open(resource, __mode);
-        if (!read.is_open()) { throw "Error:" + resource; }
+        return read.is_open();
     }
     
     /**
@@ -198,9 +213,9 @@ private:
      *
      * @throws ошибка файла
      */
-    void openWrite(string resource, ios_base::openmode __mode = ios::out) {
+    bool openWrite(string resource, ios_base::openmode __mode = ios::out) {
         write.open(resource, __mode);
-        if (!write.is_open()) { throw "Error:" + resource; }
+        return read.is_open();
     }
     
     /**
@@ -208,9 +223,9 @@ private:
      *
      * @throws ошибка фалйа
      */
-    void openFile(string resource, ios_base::openmode __mode) {
+    bool openFile(string resource, ios_base::openmode __mode) {
         file.open(resource, __mode);
-        if (!file.is_open()) { throw "Error:" + resource; }
+        return read.is_open();
     }
     
     
@@ -222,7 +237,7 @@ private:
     void optionsProcessing(const Type &data, Options options) {
         switch (options) {
             case isRead:
-                openFile(dataRes, ios::binary | ios::out);
+                openFile(dataRes, ios::binary | ios::out | ios::app);
                 writeFileData(data);
                 file.close();
                 break;
@@ -234,7 +249,6 @@ private:
         }
     }
     
-        
         
         
     // MARK: Удаления
@@ -289,6 +303,13 @@ private:
         if (!file.is_open()) { throw ErrorFile::errorOpen; }
         file.write((char*)&data, sizeof(Type));
     }
+    
+    
+    
+    
+    
+    
+    
     
     
     

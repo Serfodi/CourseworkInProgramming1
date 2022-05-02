@@ -14,12 +14,15 @@ class HistogramViewText: public ViewText {
     
     int mouthStat[13];
     
+    Attribute attribute;
+    
     /// Поинт вывода
     string bricks ="#";
     
 public:
     
-    HistogramViewText(int mouthStat[13]) {
+    HistogramViewText(int mouthStat[13], Attribute attribute) {
+        this -> attribute = attribute;
         for (int i=0; i<13; i++)
             this -> mouthStat[i] = mouthStat[i];
     }
@@ -40,7 +43,7 @@ public:
         // Вывод строчек
         
         // Шапка
-        out << "Вывод гистрограммы рождаемости:" << endl;
+        out << "Вывод гистрограммы рождаемости: " << attribute << endl;
         out << "     |-------------------------|" << endl;
         
         for (int i=0; i < (max + 1); i++) {
