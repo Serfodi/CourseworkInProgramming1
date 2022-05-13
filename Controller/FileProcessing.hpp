@@ -60,16 +60,11 @@ private:
     string res = "res.txt";
     /// Файла с записями Brith
     string dataRes = "hospital/dataRes.txt";
-    
-public:
-    
-    /// Разделитель между словами
-    static const char sep = '|';
-    
-    
+        
     
     // MARK: Методы
 public:
+    
     
     /**
      * Инициализация базы данных номера госпиталей
@@ -89,7 +84,7 @@ public:
         read.close();
         
         openRead(fromResource + "/" + city.getName() + ".txt");
-        while (!read.eof()) city.append(readStruct<Region>(read));
+        while (!read.eof()) city.append(readStruct<DictionaryRegion>(read));
         read.close();
         
     }
@@ -105,16 +100,21 @@ public:
     template<class Type>
     void initData(string fromResource) {
         openRead(fromResource);
+        
         Type data;
         while (!read.eof()) {
+            
             data = readStruct<Type>(read);
-            string url = "hospital/" + to_string(data.number) + ".txt";
-            openFile(url, ios_base::binary | ios::out | ios::app);
+            string path = "hospital/" + to_string(data.number) + ".txt";
+            
+            openFile(path, ios_base::binary | ios::out | ios::app);
             writeFileData(data);
             file.close();
+            
         }
         read.close();
     }
+    
     
     
     /**
@@ -123,20 +123,21 @@ public:
      * @param[out] processing  Метод обработки, однапроходный алгоритм возврощающий bool
      * @param numbers адреса
      * @param options опции обработки. Если processing вернул true
-     *
-     * @bug При чтения слова со знаком: "-" он читает какую-то фигню
      */
     template<class Type>
     void fileProcessing(Processing &processing, const vector<int> &numbers, Options options = isNon) {
         Type type;
         for (int i = 0; i < numbers.size(); i++) {
-            string url = "hospital/" + to_string(numbers[i]) + ".txt";
-            if (openRead(url)) {
-                while ( read.read((char*)&type, sizeof(Type)) )
-                    if (processing.processing(type))
-                        optionsProcessing(type, options);
-                read.close();
-            }
+            
+            string path = "hospital/" + to_string(numbers[i]) + ".txt";
+            if (!openRead(path)) { return; }
+            
+            while ( read.read((char*)&type, sizeof(Type)) )
+                
+                if (processing.processing(type))
+                    optionsProcessing(type, options);
+            
+            read.close();
         }
     }
     
@@ -152,11 +153,21 @@ public:
     void fileOutput(Table &tableViewText) {
         openFile(dataRes, ios::in);
         openWrite(res);
+        
+        tableViewText.tableHeaderViewText(write);
+        tableViewText.tableHeaderViewText(cout);
+        
         Type data;
         while (file.read((char*)&data, sizeof(Type))) {
-            tableViewText.addToTable(write, data);
-            tableViewText.addToTable(cout, data);
+            
+            tableViewText.addCell(write, data);
+            tableViewText.addCell(cout, data);
+            
         }
+        
+        tableViewText.tableFooterViewText(write);
+        tableViewText.tableFooterViewText(cout);
+        
         write.close();
         file.close();
     }
@@ -177,9 +188,9 @@ public:
     
     
     
-    /// Удаляет файла после использования
-    void deleteFileData(const City &city) {
-        vector<int> n = city.getAll(Area::city, "Москва");
+    /// Удаляет файла после завершения
+    void deleteFileData(City &city) const {
+        const vector<int> n = city.getNumbers(Area::city, "Москва");
         for (int i = 0; i<n.size(); i++) {
             remove(( "hospital/" + to_string(n[i]) + ".txt").c_str());
         }
@@ -268,7 +279,9 @@ private:
     
     
     
+    
     // MARK:  Чтения
+    
     
     /// Читает строчку из потока read
     string readText(ifstream &stream) {
@@ -277,9 +290,9 @@ private:
         return text;
     }
     
-    /// Читает структуру Region из потока
+    /// Читает из потока данные оператором >>
     template <class Type>
-    Type readStruct (ifstream &stream) {
+    const Type readStruct(ifstream &stream) {
         Type data;
         read >> data;
         return data;
@@ -317,45 +330,11 @@ private:
 
 
 
-/// Ввод Region
-ifstream& operator >> (ifstream &in, Region & region) {
-    string line;
-    getline(in, region.name, FileProcessing::sep);
-    getline(in, line);
-    vector<string> componentsNumber = ExtensionString::componentsSeparatedBy(line, ',');
-    region.appNumbers(componentsNumber);
-    return in;
-}
 
 
 
-/// Ввод Birth
-ifstream& operator >> (ifstream &in, Birth &birth) {
-    string line;
-    
-    getline(in, line, FileProcessing::sep);
-    birth.number = stoi(line);
-    
-    getline(in, line, FileProcessing::sep);
-    birth.dOB = Data(line);
-    
-    getline(in, birth.region, FileProcessing::sep);
-    getline(in, birth.fIO, FileProcessing::sep);
-    
-    getline(in, line, FileProcessing::sep);
-    birth.dOBMother = Data(line);
-    
-    SexСhild children;
-    for (int i = 0; i < 2; i++) {
-        getline(in, line, FileProcessing::sep);
-        children.append(SexСhild::sexCast(line));
-    }
-    getline(in, line);
-    children.append(SexСhild::sexCast(line));
-    birth.children = children;
-    
-    return in;
-}
+
+
 
 
 

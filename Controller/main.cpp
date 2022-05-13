@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -22,7 +23,7 @@ using namespace std;
 #include "Sex.hpp"
 #include "Birth.hpp"
 #include "DataModel.hpp"
-#include "Tower.hpp"
+#include "City.hpp"
 
 // View
 #include "Menu.hpp"
@@ -67,16 +68,20 @@ int main() {
         // MARK: - Обработка
         
         
+        
         // Получения всех номеров госпиталей в заданном area
-        vector<int> numbers = city.getAll(dataModel.area, dataModel.areaText);
+        vector<int> numbers = city.getNumbers(dataModel.area, dataModel.areaText);
         
         
         switch (dataModel.choiceProcessing) {
             case viewData: {
+                
                 ViewData viewData = { dataModel };
                 file.fileProcessing<Birth>(viewData, numbers, isRead);
-                Table tabel;
+                
+                Table tabel = { 100 };
                 file.fileOutput<Birth>(tabel);
+                
                 break;
             }
             case histogram: {
@@ -95,15 +100,12 @@ int main() {
                 view.output(cout);
                 break;
             }
-            default:
+            case delet: {
+                
+                
+                
                 break;
-                //            case delet: {
-                //                Delet delet;
-                //                dataModel.areaText = city.name;
-                //                file.fileProcessing(delet, dataModel, city, isDelete);
-                //
-                //                break;
-                //            }
+            }
         }
         
         

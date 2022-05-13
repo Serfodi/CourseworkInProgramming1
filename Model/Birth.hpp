@@ -105,5 +105,36 @@ public:
 };
 
 
+/// Ввод Birth
+ifstream& operator >> (ifstream &in, Birth &birth) {
+    string line;
+    
+    char sep = '|';
+    
+    getline(in, line, sep);
+    birth.number = stoi(line);
+    
+    getline(in, line, sep);
+    birth.dOB = Data(line);
+    
+    getline(in, birth.region, sep);
+    getline(in, birth.fIO, sep);
+    
+    getline(in, line, sep);
+    birth.dOBMother = Data(line);
+    
+    SexСhild children;
+    for (int i = 0; i < 2; i++) {
+        getline(in, line, sep);
+        children.append(SexСhild::sexCast(line));
+    }
+    getline(in, line);
+    children.append(SexСhild::sexCast(line));
+    birth.children = children;
+    
+    return in;
+}
+
+
 
 #endif /* ModelBirth_hpp */

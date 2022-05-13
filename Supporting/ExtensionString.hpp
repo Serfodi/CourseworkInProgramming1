@@ -34,6 +34,7 @@ public:
     static vector<string> componentsSeparatedBy(string text, char separatedBy) {
         vector<string> components;
         string words;
+        
         for (int i = 0; i < text.size(); i++) {
             if (text[i] != separatedBy) {
                 words += text[i];
@@ -42,6 +43,7 @@ public:
                 words = "";
             }
         }
+        
         components.push_back(words);
         return components;
     }

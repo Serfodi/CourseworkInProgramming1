@@ -15,14 +15,9 @@
 /// Отображения меню
 class Table: public ViewText {
 private:
-    /// Разделитель в таблице
-    static const char sep = '|';
-    
-    bool ifTabel = false;
     
     /// Ширина в символах
-    const int width = 100;
-    
+    int width = 100;
     
     
     string textTabel[2][8] = {
@@ -31,43 +26,54 @@ private:
     };
     
     
-    
 public:
     
-    Table() {}
     
-    
-private:
-    
-    /// Печать шапки таблицы
-    void printTable(ostream &out) {
-        if (ifTabel) return;
-        TableViewTextCell cell = {textTabel[0]};
-        out << cell.description() << endl;
-        cell = {textTabel[1]};
-        out << cell.description() << endl;
-        cell = {'-'};
-        out << cell.description() << endl;
-        ifTabel = true;
+    Table(int width) {
+        this -> width = width;
     }
     
     
-public:
+    /// Текст, который отображается над содержимым таблицы.
+    void tableHeaderViewText (ostream &out) {
+        
+        TableViewTextCell cell = {textTabel[0]};
+        out << cell.description() << endl;
+        
+        cell = {textTabel[1]};
+        out << cell.description() << endl;
+        
+        cell = {'-'};
+        out << cell.description() << endl;
+    }
     
-    /// Печать строчки таблицы
-    void addToTable(ostream &out, Birth birth) {
-        printTable(out);
+    /// Текст, который отображается под содержимым таблицы.
+    void tableFooterViewText (ostream &out) {
+        
+    }
+    
+    /// Строчка таблицы которая выводится
+    void addCell(ostream &out, Birth birth) {
         TableViewTextCell cell = {birth, width};
         out << cell.description() << endl;
     }
     
     
     
-    
-    
     void output(ostream &out) override {}
     
     
+private:
+    
+    
+    void widthSpaceLeft(ostream &out, string text, int width) {
+        out << left << setw(width) << text;
+    }
+    
+    
+    
+    
+public:
     
     ~Table() {}
     

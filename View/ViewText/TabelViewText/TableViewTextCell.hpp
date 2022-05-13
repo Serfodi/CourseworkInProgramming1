@@ -9,8 +9,8 @@
 #define TabelViewTextCell_hpp
 
 enum Align {
-    left,
-    middle
+    leftT,
+    middleT
 };
 
 
@@ -24,12 +24,12 @@ public:
     TableViewTextCell(Birth birth,int width) {
         cell += "|";
         cell += widthSpase(to_string(birth.number), 4) + "|";
-        cell += widthSpase(birth.dOB.description(), 12, middle) + "|";
+        cell += widthSpase(birth.dOB.description(), 12, middleT) + "|";
         cell += widthSpase(birth.region, 15) + "|";
         cell += widthSpase(birth.fIO, 27) + "|";
-        cell += widthSpase(birth.dOBMother.description(), 12, middle) + "|";
+        cell += widthSpase(birth.dOBMother.description(), 12, middleT) + "|";
         for (int i=0; i<3; i++) {
-            cell += widthSpase(SexСhild::sexCast(birth.children[i]), 7, middle) + "|";
+            cell += widthSpase(SexСhild::sexCast(birth.children[i]), 7, middleT) + "|";
         }
     }
     
@@ -66,9 +66,9 @@ public:
     
 private:
     
-    string widthSpase(string text, int width, Align align = Align::left) {
+    string widthSpase(string text, int width, Align align = Align::leftT) {
         int leftSpase = (width - text.size()) / 2;
-        if (align == Align::left) leftSpase = 1;
+        if (align == Align::leftT) leftSpase = 1;
         if (width == text.size()) leftSpase = 0;
         int rightSpase = width - (text.size() + leftSpase);
         string c(leftSpase, ' ');
