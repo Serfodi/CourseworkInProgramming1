@@ -75,13 +75,10 @@ int main() {
         
         switch (dataModel.choiceProcessing) {
             case viewData: {
-                
                 ViewData viewData = { dataModel };
                 file.fileProcessing<Birth>(viewData, numbers, isRead);
-                
-                Table tabel = { 100 };
+                TableViewText tabel;
                 file.fileOutput<Birth>(tabel);
-                
                 break;
             }
             case histogram: {

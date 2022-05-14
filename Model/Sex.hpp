@@ -27,8 +27,36 @@ enum Sex {
 };
 
 
+/// Класс преобразования для Sex
+class SexCast {
+public:
+    
+    /// Преобразует Sex в символ. Ассоциация для 'enum Sex'
+    static string toString(Sex sex) {
+        map<Sex, string> dict = {
+            {m, "M"},
+            {g, "G"},
+            {no, "0"}
+        };
+        return dict[sex];
+    }
+    
+    /// Преобразует символ в Sex. Ассоциация для 'enum Sex'
+    static Sex toSexEnum(string sex) {
+        map<string, Sex> dict = {
+            {"м", m},
+            {"ж", g},
+            {"0", no}
+        };
+        return dict[sex];
+    }
+    
+};
+
+
 /// Модель 3-х детей
 class SexСhild {
+        
 private:
     
     /// Дети
@@ -44,34 +72,6 @@ public:
     
     /// Добавляет новый элемент в конец
     void append(Sex newElement) { child[count++] = newElement; }
-    
-    /**
-     * Приводит букву к перечислению Sex
-     *
-     * @param text  Буква
-     */
-    const static Sex sexCast(string text) {
-        const string sexChar[3] = {"м", "ж", "0"};
-        int index = -1;
-        for (int i=0; i<3; i++) {
-            if (text == sexChar[i] ) {
-                index = i;
-                break;
-            }
-        }
-        return static_cast<Sex>(index);
-    }
-    
-    /**
-     * Приводит число к перечислению букве
-     *
-     * @param text  Буква
-     */
-    const static string sexCast(int text) {
-        const string sexChar[3] = {"m", "g", "0"};
-        return sexChar[text];
-    }
-    
     
     /**
      * Провекра по признуку
@@ -123,9 +123,6 @@ public:
             child[i] = second.child[i];
         return *this;
     }
-    
-    
-    ~SexСhild() {}
     
     
 };

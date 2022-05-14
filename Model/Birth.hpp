@@ -26,13 +26,13 @@ public:
     /// Номер роддома
     int number;
     /// Дата рождения ребенка
-    Data dOB;
+    Date dOB;
     /// Район
     string region;
     /// Фио матери
     string fIO;
     /// Дата рождения матери
-    Data dOBMother;
+    Date dOBMother;
     /// Дети
     SexСhild children;
     
@@ -42,7 +42,7 @@ public:
     
     Birth() {}
     
-    Birth (int number, Data dOB, string region, string fIO, Data dOBMother, SexСhild children) {
+    Birth (int number, Date dOB, string region, string fIO, Date dOBMother, SexСhild children) {
         this -> number = number;
         this -> dOB = dOB;
         this -> region = region;
@@ -56,7 +56,7 @@ public:
      *
      * Используется для поиска
      */
-    Birth(string fIO, Data data) {
+    Birth(string fIO, Date data) {
         this -> fIO = fIO;
         this -> dOBMother = data;
     }
@@ -77,26 +77,30 @@ public:
     }
     
     /// Сравнивает ФИО и ДатуРожденияМатери
-    bool operator != (Birth second) const { return !(fIO == second.fIO && dOBMother == second.dOBMother); }
+    bool operator != (Birth second) const {
+        return !(fIO == second.fIO && dOBMother == second.dOBMother);
+    }
+    
     /// Сравнивает ФИО и ДатуРожденияМатери
-    bool operator == (Birth second) const { return (fIO == second.fIO && dOBMother == second.dOBMother); }
+    bool operator == (Birth second) const {
+        return (fIO == second.fIO && dOBMother == second.dOBMother);
+    }
     
     friend ifstream& operator >> (ifstream &, Birth &);
     
-    
-    
-    /// Вывод описания
-    string description() const {
-        std::string text;
-        text += std::to_string(number) + "|";
-        text += dOB.description() + "|";
-        text += region + "|";
-        text += fIO + "|";
-        text += dOBMother.description() + "|";
-        const string sexChar[3] = {"м", "ж", "0"};
-        for (int i = 0; i < 3; i++)
-            text += sexChar[ children[i] ] + "|";
-        return text;
+    /// Возвращяет массив строк
+    vector<string> getDescription () {
+        vector<string> description = {
+            ExtensionString::leading(number, 2, ' '),
+            dOB.description(),
+            region,
+            fIO,
+            dOBMother.description(),
+            SexCast::toString(children[0]),
+            SexCast::toString(children[1]),
+            SexCast::toString(children[2])
+        };
+        return description;
     }
     
     
@@ -115,21 +119,23 @@ ifstream& operator >> (ifstream &in, Birth &birth) {
     birth.number = stoi(line);
     
     getline(in, line, sep);
-    birth.dOB = Data(line);
+    birth.dOB = Date(line);
     
     getline(in, birth.region, sep);
     getline(in, birth.fIO, sep);
     
     getline(in, line, sep);
-    birth.dOBMother = Data(line);
+    birth.dOBMother = Date(line);
     
     SexСhild children;
+    
     for (int i = 0; i < 2; i++) {
         getline(in, line, sep);
-        children.append(SexСhild::sexCast(line));
+        children.append(SexCast::toSexEnum(line));
     }
+    
     getline(in, line);
-    children.append(SexСhild::sexCast(line));
+    children.append(SexCast::toSexEnum(line));
     birth.children = children;
     
     return in;

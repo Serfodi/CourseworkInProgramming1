@@ -23,7 +23,7 @@ struct DataModel {
     /// Ввод фамилии
     string fIOInput;
     /// Ввод даты
-    vector<Data> dataInput;
+    vector<Date> dataInput;
     /// Ввод адреса
     string areaText;
     

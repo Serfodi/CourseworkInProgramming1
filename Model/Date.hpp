@@ -11,10 +11,8 @@
 
 
 
-
-
 /// Представление даты. В формате: дд.мм.гггг
-struct Data {
+struct Date {
     
     // MARK:  Свойства
 public:
@@ -22,7 +20,6 @@ public:
     /// Разделитель даты
     static const char sep = '.';
     
-private:
     /// day День. Целое число от 1 до 31
     int day;
     /// month Месяц. Целое число от 1 до 12
@@ -35,23 +32,21 @@ private:
     // MARK:  Инициализатор
 public:
     
-    Data() {}
+    Date() {}
     
     /**
      * Приводит строчку типа дд.мм.гггг к дате.
      *
      * @param text Строка типа: "дд.мм.гггг"
-     *
-     * @throws ошибка выхода за придела даты
      */
-    Data(string text) {
+    Date(string text) {
         vector<string> components = ExtensionString::componentsSeparatedBy(text, sep);
         day = stoi(components[0]);
         month = stoi(components[1]);
         year = stoi(components[2]);
     }
     
-    Data(int day, int month, int year) {
+    Date(int day, int month, int year) {
         this -> day = day;
         this -> month = month;
         this -> year = year;
@@ -62,14 +57,14 @@ public:
     // MARK:  Перегрузки
     
     
-    Data& operator = (const Data &second) {
+    Date& operator = (const Date &second) {
         day = second.day;
         month = second.month;
         year = second.year;
         return *this;
     }
     
-    const bool operator == ( Data two) const {
+    const bool operator == ( Date two) const {
         return (day == two.day && month == two.month && year == two.year);
     }
     
@@ -78,18 +73,7 @@ public:
      В операторах: >, <, >=, <=, сравниваются сначала год, потом месяц, потом день.
      */
     
-    const bool operator > (Data two) const {
-        if (year == two.year) {
-            if (month == two.month) {
-                return day > two.day;
-            } else {
-                return month > two.month;
-            }
-        }
-        return year > two.year;
-    }
-    
-    const bool operator >= (Data two) const {
+    const bool operator >= (Date two) const {
         if (year == two.year) {
             if (month == two.month) {
                 return day >= two.day;
@@ -100,7 +84,7 @@ public:
         return year >= two.year;
     }
     
-    const bool operator <= (Data two) const {
+    const bool operator <= (Date two) const {
         if (year == two.year) {
             if (month == two.month) {
                 return day <= two.day;
@@ -114,13 +98,13 @@ public:
     
     // MARK:  Методы
     
-    /// setDay
+    /// Устанавливает день
     void setDay(int day) { this -> day = day; }
     
-    /// setMonth
+    /// Устанавливает месяц
     void setMonth(int month) { this -> month = month; }
     
-    /// setYear
+    /// Устанавливает год
     void setYear(int year) { this -> year = year; }
     
     /// Возвращает месяц
@@ -129,19 +113,17 @@ public:
     /// Возвращает дату в формате: дд.мм.гггг
     string description() const {
         string s;
-        s += to_string(day) + sep;
-        s += to_string(month) + sep;
-        s += to_string(year);
+        s += ExtensionString::leading(day, 2) + sep;
+        s += ExtensionString::leading(month, 2) + sep;
+        s += ExtensionString::leading(year, 4);
         return s;
     }
     
-    
-    
-    ~Data() {}
-    
-    
-    
 };
 
+ostream& operator << (ostream &out, const Date& date) {
+    printf("%02d - %02d - %04d", date.day, date.month, date.year);
+    return out;
+}
 
 #endif /* Date_hpp */

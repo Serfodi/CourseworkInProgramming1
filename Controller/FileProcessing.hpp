@@ -57,10 +57,12 @@ class FileProcessing {
 private:
     
     /// Файл с результатом
-    string res = "res.txt";
-    /// Файла с записями Brith
-    string dataRes = "hospital/dataRes.txt";
-        
+    string delegateFileName = "result.txt";
+    /// Путь с записями Brith
+    string tmpFileName = "tmp/";
+    
+    /// Даты файлов которые были записаны
+    vector<Date> dates;
     
     // MARK: Методы
 public:
@@ -128,16 +130,15 @@ public:
     void fileProcessing(Processing &processing, const vector<int> &numbers, Options options = isNon) {
         Type type;
         for (int i = 0; i < numbers.size(); i++) {
-            
             string path = "hospital/" + to_string(numbers[i]) + ".txt";
-            if (!openRead(path)) { return; }
-            
-            while ( read.read((char*)&type, sizeof(Type)) )
-                
-                if (processing.processing(type))
-                    optionsProcessing(type, options);
-            
-            read.close();
+            if (openRead(path)) {
+                while ( read.read((char*)&type, sizeof(Type)) ) {
+                    if (processing.processing(type)) {
+                        optionsProcessing(type, options);
+                    }
+                }
+                read.close();
+            }
         }
     }
     
@@ -150,9 +151,13 @@ public:
      * @param tableViewText вид вывода
      */
     template<class Type>
-    void fileOutput(Table &tableViewText) {
-        openFile(dataRes, ios::in);
-        openWrite(res);
+    void fileOutput(TableViewText &tableViewText) {
+        
+        sortedData(dates);
+        unionDataFile();
+        
+        openFile(tmpFileName + "tmp.txt", ios::in);
+        openWrite(delegateFileName);
         
         tableViewText.tableHeaderViewText(write);
         tableViewText.tableHeaderViewText(cout);
@@ -181,7 +186,7 @@ public:
      * @param viewText выид вывода
      */
     void fileOutput(ViewText &viewText) {
-        openWrite(res, ios::app);
+        openWrite(delegateFileName, ios::app);
         viewText.output(write);
         write.close();
     }
@@ -194,7 +199,12 @@ public:
         for (int i = 0; i<n.size(); i++) {
             remove(( "hospital/" + to_string(n[i]) + ".txt").c_str());
         }
-        remove(dataRes.c_str());
+        remove(tmpFileName.c_str());
+        
+        for (int i = 0; i<dates.size(); i++) {
+            remove(( tmpFileName + dates[i].description() + ".txt").c_str());
+        }
+        remove((tmpFileName + "tmp.txt").c_str());
     }
     
     
@@ -244,14 +254,16 @@ private:
         
     // MARK: Вспомогательные методы
     
-    template<class Type>
-    void optionsProcessing(const Type &data, Options options) {
+    void optionsProcessing(const Birth &data, Options options) {
         switch (options) {
-            case isRead:
-                openFile(dataRes, ios::binary | ios::out | ios::app);
+            case isRead: {
+                string url = tmpFileName + data.dOB.description() + ".txt";
+                if (!findData(dates, data.dOB)) dates.push_back(data.dOB);
+                openFile(url, ios::binary | ios::out | ios::app);
                 writeFileData(data);
                 file.close();
                 break;
+            }
             case isDelete:
                 delet(data);
                 break;
@@ -260,21 +272,83 @@ private:
         }
     }
     
+    /// Оледенения даных дат в один
+    void unionDataFile() {
+        openWrite(tmpFileName + "tmp.txt", ios::app);
+        for (int i = 0; i<dates.size(); i++) {
+            openRead(tmpFileName + dates[i].description() + ".txt");
+            Birth birth;
+            while(!read.eof()) {
+                read.read((char*)&birth, sizeof(Birth));
+                writeData(birth);
+            }
+            read.close();
+        }
+        write.close();
+    }
+    
+    void sortedData(vector<Date> &dates) {
+        for (int i = 0; i<dates.size() -1; i++) {
+            for (int j = 0; j<dates.size() - i - 1; j++) {
+                if (dates[j] >= dates[j+1]) {
+                    Date tmp = dates[j];
+                    dates[j] = dates[j+1];
+                    dates[j+1] = tmp;
+                }
+            }
+        }
+    }
+    
+    bool findData(vector<Date> dates, Date isFind) {
+        for (int i = 0; i<dates.size(); i++) {
+            if (dates[i] == isFind)
+                return true;
+        }
+        return false;
+    }
+    
+    
         
         
     // MARK: Удаления
     
     /// Удаления
     template <class Type>
-    void delet(const Type &data) { }
-    
-    
+    void delet(const Type &data) {
         
+    }
     
-    // MARK: Сортировка
-    
-    /// Сортировка текущего файла
-    void sortedBy(bool (*test)(Data, Data) ) { }
+    bool remove_line(const char *filename, size_t index)
+    {
+        std::vector<std::string> vec;
+        std::ifstream file(filename);
+        
+        if (file.is_open())
+        {
+            
+            std::string str;
+            while (std::getline(file, str))
+                vec.push_back(str);
+            
+            file.close();
+            if (vec.size() < index)
+                return false;
+            
+            vec.erase(vec.begin() + index);
+            
+            std::ofstream outfile(filename);
+            
+            if (outfile.is_open())
+            {
+                std::copy(vec.begin(), vec.end(), std::ostream_iterator<std::string>(outfile, "\n"));
+                outfile.close();
+                return true;
+            }
+            return false;
+            
+        }
+        return false;
+    }
     
     
     
@@ -317,26 +391,7 @@ private:
         file.write((char*)&data, sizeof(Type));
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
 };
-
-
-
-
-
-
-
-
-
-
 
 
 #endif /* FileProcess_hpp */

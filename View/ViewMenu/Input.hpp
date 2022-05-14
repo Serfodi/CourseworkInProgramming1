@@ -60,17 +60,17 @@ public:
      *
      * @Warning Память выделяется внутри
      */
-    const vector<Data> dataCast (string dataText, DataFormat format) const {
+    const vector<Date> dataCast (string dataText, DataFormat format) const {
         if (dataText == "") { throw ErrorInput::incorrectData; }
-        vector<Data>  data(format+1);
+        vector<Date>  data(format+1);
         switch (format) {
             case day:
-                data[0] = Data(dataText);
+                data[0] = Date(dataText);
                 break;
             case interval:
                 vector<string> components = ExtensionString::componentsSeparatedBy(dataText, '-');
                 for (int i=0; i < format + 1 ; i++)
-                    data[i] = Data(components[i]);
+                    data[i] = Date(components[i]);
                 break;
         }
         return data;

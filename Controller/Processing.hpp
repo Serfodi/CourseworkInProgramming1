@@ -23,7 +23,6 @@ public:
     
     virtual bool processing(const Birth&) = 0;
     
-    ~Processing() {}
 };
 
 
@@ -48,9 +47,6 @@ public:
                 return (birth.dOB >= dataModel.dataInput[0] && birth.dOB <= dataModel.dataInput[1]);
         }
     }
-    
-    
-    ~ViewData() {}
     
 };
 
@@ -77,9 +73,6 @@ public:
         mouthStat[birth.dOB.getMonth()] += 1;
         return true;
     }
-    
-    
-    ~Histogram() {}
     
 };
 
