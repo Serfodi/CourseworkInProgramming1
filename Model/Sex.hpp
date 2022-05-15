@@ -41,6 +41,16 @@ public:
         return dict[sex];
     }
     
+    /// Преобразует Sex в символ. Ассоциация для 'enum Sex'
+    static string toStringRus(Sex sex) {
+        map<Sex, string> dict = {
+            {m, "м"},
+            {g, "ж"},
+            {no, "0"}
+        };
+        return dict[sex];
+    }
+    
     /// Преобразует символ в Sex. Ассоциация для 'enum Sex'
     static Sex toSexEnum(string sex) {
         map<string, Sex> dict = {
@@ -50,6 +60,9 @@ public:
         };
         return dict[sex];
     }
+    
+    
+    
     
 };
 

@@ -56,7 +56,7 @@ public:
      *
      * @return Вектор массив string номеров роддомов
      */
-    vector<int> getNumbers(Area area, string areaText) {
+    vector<int> getNumbers(Area area, string areaText = "") {
         switch (area) {
             case city:
                 return allNumbers();

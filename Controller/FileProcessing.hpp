@@ -34,7 +34,7 @@ ofstream write;
 /// Выбор опций для обработки
 enum Options {
     /// Запись данных в файла
-    isRead,
+    isWrite,
     /// Удаления данных из текущего файла
     isDelete,
     /// Ничего не делать
@@ -56,13 +56,24 @@ class FileProcessing {
     // MARK: Свойства
 private:
     
+    /// Расположение регионов
+    string cityFileName = "Москва";
+    /// Расположение записей о рождении
+    string fileBirthData = "FileBirth";
     /// Файл с результатом
-    string delegateFileName = "result.txt";
-    /// Путь с записями Brith
-    string tmpFileName = "tmp/";
+    string delegateFileName = "Result";
     
-    /// Даты файлов которые были записаны
+    /// Путь к записями Brith tmp
+    string tmpFileNamePatch = "tmp/";
+    /// Пусть к записям роддомов
+    string hospitalFileNamePatch = "hospital/";
+    
+    /// Даты файлов которые были записаны tmp
     vector<Date> dates;
+    
+    
+    string getFileName(string name) { return name + ".txt"; }
+    
     
     // MARK: Методы
 public:
@@ -74,50 +85,33 @@ public:
      * Читает из файла City названия города и записывает его в city.name.
      * Потом проходит в файл где сохранены Регионы  по пути "названияГорода"
      *
-     * @param fromResource пусть к папку Data/City
      * @param[out] city  Модель где хранятся данный о госпиталях
      *
      * @warning Указывать путь до папки Data без  '/' в конце.
      */
-    void initCity(string fromResource, City &city) {
-        
-        openRead(fromResource+"/City.txt");
-        while (!read.eof()) city.setName(readText(read));
+    void initCity(City &city) {
+        city.setName(cityFileName);
+        openRead(getFileName(cityFileName));
+        while (!read.eof()) city.append(readData<DictionaryRegion>(read));
         read.close();
-        
-        openRead(fromResource + "/" + city.getName() + ".txt");
-        while (!read.eof()) city.append(readStruct<DictionaryRegion>(read));
-        read.close();
-        
     }
-    
     
     /**
      * Создает бинарные файлы по номерам для модели Birth
      *
      * Читает из файла и записывает в файла по номерам
-     *
-     * @param fromResource пусть к папку со всеми записями рождения
      */
-    template<class Type>
-    void initData(string fromResource) {
-        openRead(fromResource);
-        
-        Type data;
+    void initData() {
+        openRead(getFileName(fileBirthData));
+        Birth data;
         while (!read.eof()) {
-            
-            data = readStruct<Type>(read);
-            string path = "hospital/" + to_string(data.number) + ".txt";
-            
-            openFile(path, ios_base::binary | ios::out | ios::app);
+            data = readData<Birth>(read);
+            openFile(getFileName(hospitalFileNamePatch + to_string(data.number)), ios_base::binary | ios::out | ios::app);
             writeFileData(data);
             file.close();
-            
         }
         read.close();
     }
-    
-    
     
     /**
      * Обработка файлов
@@ -126,21 +120,33 @@ public:
      * @param numbers адреса
      * @param options опции обработки. Если processing вернул true
      */
-    template<class Type>
     void fileProcessing(Processing &processing, const vector<int> &numbers, Options options = isNon) {
-        Type type;
+        Birth data;
         for (int i = 0; i < numbers.size(); i++) {
-            string path = "hospital/" + to_string(numbers[i]) + ".txt";
-            if (openRead(path)) {
-                while ( read.read((char*)&type, sizeof(Type)) ) {
-                    if (processing.processing(type)) {
-                        optionsProcessing(type, options);
+            if (openRead(getFileName(hospitalFileNamePatch + to_string(numbers[i])))) {
+                while (read.read((char*)&data, sizeof(Birth))) {
+                    if (processing.processing(data)) {
+                        switch (options) {
+                            case isWrite:
+                                if (!findDate(dates, data.dOB)) dates.push_back(data.dOB);
+                                writeTmpDateFile(data);
+                                break;
+                            case isDelete:
+                                read.close();
+                                deletBirth(data);
+                                return;
+                            case isNon: break;
+                        }
                     }
                 }
                 read.close();
             }
         }
     }
+    
+    
+    
+    // MARK:  Output
     
     
     /**
@@ -150,33 +156,27 @@ public:
      *
      * @param tableViewText вид вывода
      */
-    template<class Type>
     void fileOutput(TableViewText &tableViewText) {
         
-        sortedData(dates);
+        sort(dates.begin(), dates.end());
         unionDataFile();
         
-        openFile(tmpFileName + "tmp.txt", ios::in);
+        openFile(getFileName(tmpFileNamePatch + "tmp"), ios::in);
         openWrite(delegateFileName);
         
         tableViewText.tableHeaderViewText(write);
         tableViewText.tableHeaderViewText(cout);
-        
-        Type data;
-        while (file.read((char*)&data, sizeof(Type))) {
-            
+        Birth data;
+        while (file.read((char*)&data, sizeof(Birth))) {
             tableViewText.addCell(write, data);
             tableViewText.addCell(cout, data);
-            
         }
-        
         tableViewText.tableFooterViewText(write);
         tableViewText.tableFooterViewText(cout);
         
         write.close();
         file.close();
     }
-    
     
     /**
      * Вывод в файл.
@@ -193,18 +193,23 @@ public:
     
     
     
+    
+    // MARK:  Delete
+    
+    
+    
     /// Удаляет файла после завершения
     void deleteFileData(City &city) const {
         const vector<int> n = city.getNumbers(Area::city, "Москва");
         for (int i = 0; i<n.size(); i++) {
             remove(( "hospital/" + to_string(n[i]) + ".txt").c_str());
         }
-        remove(tmpFileName.c_str());
+        remove(tmpFileNamePatch.c_str());
         
         for (int i = 0; i<dates.size(); i++) {
-            remove(( tmpFileName + dates[i].description() + ".txt").c_str());
+            remove(( tmpFileNamePatch + dates[i].description() + ".txt").c_str());
         }
-        remove((tmpFileName + "tmp.txt").c_str());
+        remove((tmpFileNamePatch + "tmp.txt").c_str());
     }
     
     
@@ -212,71 +217,25 @@ public:
     
     
     
-    // MARK: - private Работа с файлами
+    // MARK: - Работа с файлами
+    
 private:
     
     
     
-    // MARK: Открытия файла
-    
-    /**
-     * Открывает поток read ifstream
-     *
-     * @throws ошибка файла
-     */
-    bool openRead(string resource, ios_base::openmode __mode = ios::in) {
-        read.open(resource, __mode);
-        return read.is_open();
-    }
-    
-    /**
-     * Открывает поток write ofstream
-     *
-     * @throws ошибка файла
-     */
-    bool openWrite(string resource, ios_base::openmode __mode = ios::out) {
-        write.open(resource, __mode);
-        return read.is_open();
-    }
-    
-    /**
-     * Открывает поток file fstream
-     *
-     * @throws ошибка фалйа
-     */
-    bool openFile(string resource, ios_base::openmode __mode) {
-        file.open(resource, __mode);
-        return read.is_open();
-    }
-    
-    
-    
-        
     // MARK: Вспомогательные методы
     
-    void optionsProcessing(const Birth &data, Options options) {
-        switch (options) {
-            case isRead: {
-                string url = tmpFileName + data.dOB.description() + ".txt";
-                if (!findData(dates, data.dOB)) dates.push_back(data.dOB);
-                openFile(url, ios::binary | ios::out | ios::app);
-                writeFileData(data);
-                file.close();
-                break;
-            }
-            case isDelete:
-                delet(data);
-                break;
-            default:
-                break;
-        }
+    void writeTmpDateFile (const Birth &data) {
+        openFile(getFileName(tmpFileNamePatch + data.dOB.description()), ios::binary | ios::out | ios::app);
+        writeFileData(data);
+        file.close();
     }
     
     /// Оледенения даных дат в один
     void unionDataFile() {
-        openWrite(tmpFileName + "tmp.txt", ios::app);
+        openWrite(getFileName(tmpFileNamePatch + "tmp"), ios::app);
         for (int i = 0; i<dates.size(); i++) {
-            openRead(tmpFileName + dates[i].description() + ".txt");
+            openRead(getFileName(tmpFileNamePatch + dates[i].description()));
             Birth birth;
             while(!read.eof()) {
                 read.read((char*)&birth, sizeof(Birth));
@@ -287,23 +246,10 @@ private:
         write.close();
     }
     
-    void sortedData(vector<Date> &dates) {
-        for (int i = 0; i<dates.size() -1; i++) {
-            for (int j = 0; j<dates.size() - i - 1; j++) {
-                if (dates[j] >= dates[j+1]) {
-                    Date tmp = dates[j];
-                    dates[j] = dates[j+1];
-                    dates[j+1] = tmp;
-                }
-            }
-        }
-    }
-    
-    bool findData(vector<Date> dates, Date isFind) {
-        for (int i = 0; i<dates.size(); i++) {
-            if (dates[i] == isFind)
-                return true;
-        }
+    /// Поиск даты
+    bool findDate(vector<Date> dates, Date isFind) {
+        for (int i = 0; i<dates.size(); i++)
+            if (dates[i] == isFind) return true;
         return false;
     }
     
@@ -313,44 +259,42 @@ private:
     // MARK: Удаления
     
     /// Удаления
-    template <class Type>
-    void delet(const Type &data) {
-        
-    }
-    
-    bool remove_line(const char *filename, size_t index)
-    {
-        std::vector<std::string> vec;
-        std::ifstream file(filename);
-        
-        if (file.is_open())
-        {
-            
-            std::string str;
-            while (std::getline(file, str))
-                vec.push_back(str);
-            
-            file.close();
-            if (vec.size() < index)
-                return false;
-            
-            vec.erase(vec.begin() + index);
-            
-            std::ofstream outfile(filename);
-            
-            if (outfile.is_open())
-            {
-                std::copy(vec.begin(), vec.end(), std::ostream_iterator<std::string>(outfile, "\n"));
-                outfile.close();
-                return true;
-            }
-            return false;
-            
+    void deletBirth(const Birth &data) {
+        openRead(getFileName(fileBirthData));
+        openWrite(getFileName("tmp" + fileBirthData));
+        Birth birth;
+        while (!read.eof()) {
+            birth = readData<Birth>(read);
+            if (birth != data) write << birth;
         }
-        return false;
+        read.close();
+        write.close();
+        remove(getFileName(fileBirthData).c_str());
+        rename(getFileName("tmp" + fileBirthData).c_str(), getFileName(fileBirthData).c_str());
     }
     
     
+    
+    
+    // MARK: Открытия файла
+    
+    /// Открывает поток read ifstream
+    bool openRead(string resource, ios_base::openmode __mode = ios::in) {
+        read.open(resource, __mode);
+        return read.is_open();
+    }
+    
+    /// Открывает поток write ofstream
+    bool openWrite(string resource, ios_base::openmode __mode = ios::out) {
+        write.open(resource, __mode);
+        return read.is_open();
+    }
+    
+    /// Открывает поток file fstream
+    bool openFile(string resource, ios_base::openmode __mode) {
+        file.open(resource, __mode);
+        return read.is_open();
+    }
     
     
     
@@ -366,12 +310,11 @@ private:
     
     /// Читает из потока данные оператором >>
     template <class Type>
-    const Type readStruct(ifstream &stream) {
+    const Type readData(ifstream &in) {
         Type data;
-        read >> data;
+        in >> data;
         return data;
     }
-    
     
     
     
@@ -390,6 +333,8 @@ private:
         if (!file.is_open()) { throw ErrorFile::errorOpen; }
         file.write((char*)&data, sizeof(Type));
     }
+    
+    
     
 };
 

@@ -95,6 +95,27 @@ public:
         return year <= two.year;
     }
     
+    const bool operator > (Date two) const {
+        if (year == two.year) {
+            if (month == two.month) {
+                return day > two.day;
+            } else {
+                return month > two.month;
+            }
+        }
+        return year > two.year;
+    }
+    
+    const bool operator < (Date two) const {
+        if (year == two.year) {
+            if (month == two.month) {
+                return day < two.day;
+            } else {
+                return month < two.month;
+            }
+        }
+        return year < two.year;
+    }
     
     // MARK:  Методы
     
@@ -122,7 +143,9 @@ public:
 };
 
 ostream& operator << (ostream &out, const Date& date) {
-    printf("%02d - %02d - %04d", date.day, date.month, date.year);
+    out << ExtensionString::leading(date.day, 2) + Date::sep;
+    out << ExtensionString::leading(date.month, 2) + Date::sep;
+    out << ExtensionString::leading(date.year, 4);
     return out;
 }
 

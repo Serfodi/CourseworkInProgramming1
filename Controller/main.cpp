@@ -34,8 +34,6 @@ using namespace std;
 #include "FileProcessing.hpp"
 
 
-
-
 int main() {
     
     setlocale(LC_ALL, "ru");
@@ -53,8 +51,8 @@ int main() {
         
         // MARK: - Обработка файла
         
-        file.initCity("/Users/serfodi/Data/City", city);
-        file.initData<Birth>("/Users/serfodi/Test/FileDataInfo_Rand.txt");
+        file.initCity(city);
+        file.initData();
         
         
         
@@ -70,36 +68,50 @@ int main() {
         
         
         // Получения всех номеров госпиталей в заданном area
-        vector<int> numbers = city.getNumbers(dataModel.area, dataModel.areaText);
-        
         
         switch (dataModel.choiceProcessing) {
             case viewData: {
+                
                 ViewData viewData = { dataModel };
-                file.fileProcessing<Birth>(viewData, numbers, isRead);
+                vector<int> numbers = city.getNumbers(dataModel.area, dataModel.areaText);
+                file.fileProcessing(viewData, numbers, isWrite);
+                
                 TableViewText tabel;
-                file.fileOutput<Birth>(tabel);
+                file.fileOutput(tabel);
+                
                 break;
             }
             case histogram: {
+                
                 Histogram histogram = { dataModel };
-                file.fileProcessing<Birth>(histogram, numbers);
-                HistogramViewText view = HistogramViewText(histogram.mouthStat, dataModel.attribute);
+                vector<int> numbers = city.getNumbers(dataModel.area, dataModel.areaText);
+                file.fileProcessing(histogram, numbers);
+                
+                HistogramViewText view = HistogramViewText(histogram.mouthStat, dataModel.attribute, dataModel.areaText);
+                
                 file.fileOutput(view);
                 view.output(cout);
+                
                 break;
+                
             }
             case birthrate: {
+                
                 Birthrate birthrate = { dataModel };
-                file.fileProcessing<Birth>(birthrate, numbers);
-                BirthrateViewText view = BirthrateViewText(birthrate.max, birthrate.indexMax, birthrate.min, birthrate.indexMin);
+                vector<int> numbers = city.getNumbers(dataModel.area, dataModel.areaText);
+                file.fileProcessing(birthrate, numbers);
+                
+                BirthrateViewText view = BirthrateViewText(birthrate.max, birthrate.indexMax, birthrate.min, birthrate.indexMin, dataModel.attribute, dataModel.areaText);
+                
                 file.fileOutput(view);
                 view.output(cout);
+                
                 break;
             }
             case delet: {
-                
-                
+                                
+                Delet delet = { dataModel };
+                file.fileProcessing(delet, city.getNumbers(Area::city), isDelete);
                 
                 break;
             }

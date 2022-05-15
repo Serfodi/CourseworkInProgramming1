@@ -60,7 +60,7 @@ public:
 
 #include "TableViewTextCell.hpp"
 
-/// Отображения меню
+/// Отображения таблицы
 class TableViewText: public ViewText, public Table {
 private:
     

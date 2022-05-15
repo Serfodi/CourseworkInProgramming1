@@ -133,6 +133,11 @@ public:
  *
  */
 class Delet: public Processing {
+public:
+    
+    Delet(DataModel dataModel) {
+        this -> dataModel = dataModel;
+    }
     
     bool processing(const Birth &birth) override {
         return ( dataModel.fIOInput == birth.fIO && dataModel.dataInput[0] == birth.dOBMother );

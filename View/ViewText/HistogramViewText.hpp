@@ -16,13 +16,16 @@ class HistogramViewText: public ViewText {
     
     Attribute attribute;
     
+    string area;
+    
     /// Поинт вывода
     string bricks ="#";
     
 public:
     
-    HistogramViewText(int mouthStat[13], Attribute attribute) {
+    HistogramViewText(int mouthStat[13], Attribute attribute, string area) {
         this -> attribute = attribute;
+        this -> area = area;
         for (int i=0; i<13; i++)
             this -> mouthStat[i] = mouthStat[i];
     }
@@ -43,7 +46,9 @@ public:
         // Вывод строчек
         
         // Шапка
-        out << "Вывод гистрограммы рождаемости: " << attribute << endl;
+        out << "Вывод гистрограммы рождаемости: " << attributeText() << endl;
+        out << "По городу: " << area << endl;
+        
         out << "     |-------------------------|" << endl;
         
         for (int i=0; i < (max + 1); i++) {
@@ -64,6 +69,21 @@ public:
     
     
 private:
+    
+    /// Выводит текст по attribute
+    string attributeText() {
+        switch (attribute) {
+            case general:
+                return "Общая рождаемость.";
+            case boys:
+                return "Только мальчики.";
+            case girls:
+                return "Только девочки.";
+            case multiple:
+                return "Многодетные родители.";
+        }
+    }
+    
     
     /// Выводит строчку
     ///
@@ -93,7 +113,6 @@ private:
     }
     
     
-public:  ~HistogramViewText() {}
     
 };
 

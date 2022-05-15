@@ -141,6 +141,19 @@ ifstream& operator >> (ifstream &in, Birth &birth) {
     return in;
 }
 
+ostream& operator << (ostream &out, const Birth& birth) {
+    out
+    << birth.number << "|"
+    << birth.dOB << "|"
+    << birth.region << "|"
+    << birth.fIO << "|"
+    << birth.dOBMother << "|"
+    << SexCast::toStringRus(birth.children[0]) << "|"
+    << SexCast::toStringRus(birth.children[1]) << "|"
+    << SexCast::toStringRus(birth.children[2]) << "|"
+    << endl;
+    return out;
+}
 
 
 #endif /* ModelBirth_hpp */
