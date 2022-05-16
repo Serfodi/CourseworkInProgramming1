@@ -13,9 +13,6 @@
 #define ClassError_hpp
 
 
-using namespace std;
-
-
 class Error: public exception {
     
 public:

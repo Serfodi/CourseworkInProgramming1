@@ -24,7 +24,7 @@ public:
     // MARK: Методы
     
     /// Меню выбора обработки
-    void openMenu(DataModel &dataModel) {
+    void open(DataModel &dataModel) {
         output.outMenu(output.textСP, 5);
         dataModel.choiceProcessing = input.choiceProcessingCast(input.number());
         

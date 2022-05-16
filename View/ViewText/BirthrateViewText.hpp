@@ -12,13 +12,7 @@
 class BirthrateViewText: public ViewText {
 private:
     
-    Attribute attribute;
-    string area;
-    
-    int maxCount;
-    int maxMouth;
-    int minCount;
-    int minMouth;
+    Birthrate birthrate;
     
     string textData[12] = {
         "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октяборь", "Нояборь", "Декабарь"
@@ -26,33 +20,31 @@ private:
     
 public:
     
-    BirthrateViewText(int maxCount, int maxMouth, int minCount, int minMouth, Attribute attribute, string area) {
-        this -> maxCount = maxCount;
-        this -> maxMouth = maxMouth;
-        this -> minCount = minCount;
-        this -> minMouth = minMouth;
-        this -> attribute = attribute;
-        this -> area = area;
+    
+    BirthrateViewText(const Birthrate &birthrate, const DataModel &dataModel) {
+        this -> birthrate = birthrate;
+        this -> dataModel = dataModel;
     }
     
+    
     void output(ostream &out) override {
-        if (maxCount == minCount) {
+        if (birthrate.min == birthrate.max) {
             
             out <<
-            "Статистика по городу" << area + "." << endl <<
+            "Статистика по городу" << dataModel.areaText + "." << endl <<
             "Искать по: " << attributeText() << endl <<
             "В каждом месяцы было одинаковое кол-во рождений." << endl <<
-            "Что составило: " << max(maxCount, minCount);
+            "Что составило: " << max(birthrate.min, birthrate.max) << endl;
             
         } else {
             
             out <<
-            "Статистика по городу" << area + "." << endl <<
+            "Статистика по городу" << dataModel.areaText + "." << endl <<
             "Искать по: " << attributeText() << endl <<
-            "Максимальное кол-во рождений: " << textData[maxMouth -1 ] << endl
-            << "Что составило: " << maxCount << endl;
-            out << "Минимальное кол-во рождений: " << textData[minMouth -1] << endl
-            << "Что составило: " << minCount << endl;
+            "Максимальное кол-во рождений: " << textData[birthrate.indexMax -1 ] << endl
+            << "Что составило: " << birthrate.max << endl;
+            out << "Минимальное кол-во рождений: " << textData[birthrate.indexMin -1] << endl
+            << "Что составило: " << birthrate.min << endl;
             
         }
     }
@@ -61,7 +53,7 @@ public:
 private:
     /// Выводит текст по attribute
     string attributeText() {
-        switch (attribute) {
+        switch (dataModel.attribute) {
             case general:
                 return "Общая рождаемость.";
             case boys:

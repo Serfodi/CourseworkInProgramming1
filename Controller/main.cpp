@@ -24,14 +24,15 @@ using namespace std;
 #include "Birth.hpp"
 #include "DataModel.hpp"
 #include "City.hpp"
+#include "Processing.hpp"
 
 // View
 #include "Menu.hpp"
 #include "ViewText.hpp"
 
 // Controller
-#include "Processing.hpp"
 #include "FileProcessing.hpp"
+
 
 
 int main() {
@@ -39,94 +40,109 @@ int main() {
     setlocale(LC_ALL, "ru");
     
     
-    // model Data
-    DataModel dataModel;
-    City city;
+    
     FileProcessing file;
+    City city;
+    DataModel dataModel;
     Menu menu;
     
-    
+    string is = "да";
     
     try {
         
+        
         // MARK: - Обработка файла
         
+        
         file.initCity(city);
-        file.initData();
+        file.initHospital();
         
         
         
         // MARK: -  Mеню
         
-        menu.openMenu(dataModel);
-        
-        
-        //    01.01.0001 - 01.01.9999
-        
-        // MARK: - Обработка
-        
-        
-        
-        // Получения всех номеров госпиталей в заданном area
-        
-        switch (dataModel.choiceProcessing) {
-            case viewData: {
-                
-                ViewData viewData = { dataModel };
-                vector<int> numbers = city.getNumbers(dataModel.area, dataModel.areaText);
-                file.fileProcessing(viewData, numbers, isWrite);
-                
-                TableViewText tabel;
-                file.fileOutput(tabel);
-                
-                break;
+        while (is != "нет") {
+            
+            
+            
+            menu.open(dataModel);
+            
+            // 01.01.0001 - 31.12.9999
+            
+            // MARK: - Обработка
+            
+            
+            switch (dataModel.choiceProcessing) {
+                case viewData: {
+                    
+                    ViewData viewData = { dataModel };
+                    file.fileProcessing(viewData, city.getNumbers(dataModel.area, dataModel.areaText), Write);
+                    
+                    TableViewText tabel = { dataModel };
+                    file.fileOutput(tabel);
+                    
+                    file.removeDateTmpFile();
+                    
+                    break;
+                }
+                case histogram: {
+                    
+                    Histogram histogram = { dataModel };
+                    file.fileProcessing(histogram, city.getNumbers(dataModel.area, dataModel.areaText));
+                    
+                    HistogramViewText view = { histogram, dataModel };
+                    file.fileOutput(view);
+                    view.output(cout);
+                    
+                    break;
+                    
+                }
+                case birthrate: {
+                    
+                    Birthrate birthrate = { dataModel };
+                    file.fileProcessing(birthrate, city.getNumbers(dataModel.area, dataModel.areaText));
+                    
+                    BirthrateViewText view = { birthrate, dataModel };
+                    file.fileOutput(view);
+                    view.output(cout);
+                    
+                    break;
+                }
+                case delet: {
+                    
+                    Delet delet = { dataModel };
+                    file.fileProcessing(delet, city.getNumbers(Area::city), Remove);
+                    
+                    file.removeHospitalFile(city);
+                    file.initHospital();
+                    
+                    break;
+                }
             }
-            case histogram: {
-                
-                Histogram histogram = { dataModel };
-                vector<int> numbers = city.getNumbers(dataModel.area, dataModel.areaText);
-                file.fileProcessing(histogram, numbers);
-                
-                HistogramViewText view = HistogramViewText(histogram.mouthStat, dataModel.attribute, dataModel.areaText);
-                
-                file.fileOutput(view);
-                view.output(cout);
-                
-                break;
-                
-            }
-            case birthrate: {
-                
-                Birthrate birthrate = { dataModel };
-                vector<int> numbers = city.getNumbers(dataModel.area, dataModel.areaText);
-                file.fileProcessing(birthrate, numbers);
-                
-                BirthrateViewText view = BirthrateViewText(birthrate.max, birthrate.indexMax, birthrate.min, birthrate.indexMin, dataModel.attribute, dataModel.areaText);
-                
-                file.fileOutput(view);
-                view.output(cout);
-                
-                break;
-            }
-            case delet: {
-                                
-                Delet delet = { dataModel };
-                file.fileProcessing(delet, city.getNumbers(Area::city), isDelete);
-                
-                break;
-            }
+            
+            cout << "Продолжить? да нет : ";
+            getline(cin, is);
+            
         }
+        
         
         
     }
     catch(string n) {
-        cout << "Ошибка файла !!!!!!!!! " << n << endl;
+        cout << n << endl;
+    }
+    catch (out_of_range) {
+        cout << endl << "Ошибка выход за приделы!" << endl;
+    }
+    catch (invalid_argument) {
+        cout << endl << "Ошибка ввода данных!" << endl;
     }
     catch(...) {
-        cout << "Ошибка ввода!!!!!" << endl;
+        cout << endl << "Неизвестная ошибка!" << endl;
     }
     
-    file.deleteFileData(city);
+    file.removeHospitalFile(city);
+    
     
     return 0;
 }

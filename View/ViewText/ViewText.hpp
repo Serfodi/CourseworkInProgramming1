@@ -13,6 +13,8 @@
 class ViewText {
 public:
     
+    DataModel dataModel;
+    
     virtual void output(ostream &out) = 0;
     
 };

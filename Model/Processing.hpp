@@ -64,6 +64,8 @@ public:
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
     };
     
+    Histogram() {}
+    
     Histogram(DataModel dataModel) {
         this -> dataModel = dataModel;
     }
@@ -86,14 +88,22 @@ public:
 class Birthrate: public Processing {
 public:
     
-    int indexMax, indexMin;
+    /// месяц максимального кол-во
+    int indexMax,
+    /// месяц минимального кол-во
+    indexMin;
     
+    /// максимально кол-во
     int max = 0;
+    /// минимальное кол-во
     int min = -1;
+    
     
     int mouthStat[13] = {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
     };
+    
+    Birthrate() {}
     
     Birthrate(DataModel dataModel) {
         this -> dataModel = dataModel;

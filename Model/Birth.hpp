@@ -116,6 +116,9 @@ ifstream& operator >> (ifstream &in, Birth &birth) {
     char sep = '|';
     
     getline(in, line, sep);
+    
+    if (line == "") { return in; }
+    
     birth.number = stoi(line);
     
     getline(in, line, sep);
@@ -150,8 +153,7 @@ ostream& operator << (ostream &out, const Birth& birth) {
     << birth.dOBMother << "|"
     << SexCast::toStringRus(birth.children[0]) << "|"
     << SexCast::toStringRus(birth.children[1]) << "|"
-    << SexCast::toStringRus(birth.children[2]) << "|"
-    << endl;
+    << SexCast::toStringRus(birth.children[2]);
     return out;
 }
 

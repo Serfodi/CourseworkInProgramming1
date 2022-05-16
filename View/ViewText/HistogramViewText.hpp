@@ -11,23 +11,18 @@
 
 /// Вывод гистограммы рождаемости
 class HistogramViewText: public ViewText {
+private:
     
-    int mouthStat[13];
-    
-    Attribute attribute;
-    
-    string area;
+    Histogram histogram;
     
     /// Поинт вывода
     string bricks ="#";
     
 public:
     
-    HistogramViewText(int mouthStat[13], Attribute attribute, string area) {
-        this -> attribute = attribute;
-        this -> area = area;
-        for (int i=0; i<13; i++)
-            this -> mouthStat[i] = mouthStat[i];
+    HistogramViewText(const Histogram &histogram, const DataModel &dataModel) {
+        this -> histogram = histogram;
+        this -> dataModel = dataModel;
     }
     
     /**
@@ -40,20 +35,20 @@ public:
         // максимальный элимент – это будет высота гистограммы (max + 1)
         int max = 0;
         for (int i = 1; i<13; i++)
-            if (max < mouthStat[i])
-                max = mouthStat[i];
+            if (max < histogram.mouthStat[i])
+                max = histogram.mouthStat[i];
         
         // Вывод строчек
         
         // Шапка
         out << "Вывод гистрограммы рождаемости: " << attributeText() << endl;
-        out << "По городу: " << area << endl;
+        out << "По городу: " << dataModel.area << endl;
         
         out << "     |-------------------------|" << endl;
         
         for (int i=0; i < (max + 1); i++) {
             int count = (max + 1) - i;
-            bool *avail = availability(count, mouthStat);
+            bool *avail = availability(count, histogram.mouthStat);
             
             // Вывод строчки histogramString
             out << setw(4) << count << " | " << histogramString(count, avail) << "|" << endl;
@@ -72,7 +67,7 @@ private:
     
     /// Выводит текст по attribute
     string attributeText() {
-        switch (attribute) {
+        switch (dataModel.attribute) {
             case general:
                 return "Общая рождаемость.";
             case boys:

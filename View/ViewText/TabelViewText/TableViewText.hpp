@@ -72,6 +72,12 @@ private:
     
 public:
     
+//    TableViewText() {}
+    
+    TableViewText (const DataModel &dataModel) {
+        this -> dataModel = dataModel;
+    }
+    
     /// Текст, который отображается над содержимым таблицы.
     void tableHeaderViewText (ostream &out) {
         line(out);
