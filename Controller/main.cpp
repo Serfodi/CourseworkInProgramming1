@@ -5,11 +5,14 @@
 //  Created by Сергей Насыбуллин on 26.03.2022.
 //
 
+
 #include <iostream>
 #include <fstream>
 #include <map>
 #include <string>
 #include <vector>
+
+#include <cstdlib>
 
 using namespace std;
 
@@ -20,7 +23,7 @@ using namespace std;
 
 // Model
 #include "Date.hpp"
-#include "Sex.hpp"
+#include "Сhildren.hpp"
 #include "Birth.hpp"
 #include "DataModel.hpp"
 #include "City.hpp"
@@ -46,7 +49,7 @@ int main() {
     DataModel dataModel;
     Menu menu;
     
-    string is = "да";
+    string is = "1";
     
     try {
         
@@ -61,37 +64,32 @@ int main() {
         
         // MARK: -  Mеню
         
-        while (is != "нет") {
+        while (is != "0") {
             
             
+            menu.open(dataModel, city);
             
-            menu.open(dataModel);
-            
-            // 01.01.0001 - 31.12.9999
             
             // MARK: - Обработка
             
             
             switch (dataModel.choiceProcessing) {
-                case viewData: {
+                case viewBirth: {
                     
-                    ViewData viewData = { dataModel };
-                    file.fileProcessing(viewData, city.getNumbers(dataModel.area, dataModel.areaText), Write);
-                    
-                    TableViewText tabel = { dataModel };
-                    file.fileOutput(tabel);
-                    
-                    file.removeDateTmpFile();
+                    ViewBirthProcessing processing = { dataModel };
+                    file.processing(processing, city.getNumbers(dataModel.area, dataModel.areaText));
+                    TableViewText view = {processing, dataModel};
+                    file.output(view);
+                    view.output(cout);
                     
                     break;
                 }
                 case histogram: {
                     
-                    Histogram histogram = { dataModel };
-                    file.fileProcessing(histogram, city.getNumbers(dataModel.area, dataModel.areaText));
-                    
-                    HistogramViewText view = { histogram, dataModel };
-                    file.fileOutput(view);
+                    HistogramProcessing processing = { dataModel };
+                    file.processing(processing, city.getNumbers(dataModel.area, dataModel.areaText));
+                    HistogramViewText view = { processing, dataModel };
+                    file.output(view);
                     view.output(cout);
                     
                     break;
@@ -99,20 +97,23 @@ int main() {
                 }
                 case birthrate: {
                     
-                    Birthrate birthrate = { dataModel };
-                    file.fileProcessing(birthrate, city.getNumbers(dataModel.area, dataModel.areaText));
-                    
-                    BirthrateViewText view = { birthrate, dataModel };
-                    file.fileOutput(view);
+                    BirthrateProcessing processing = { dataModel };
+                    file.processing(processing, city.getNumbers(dataModel.area, dataModel.areaText));
+                    BirthrateViewText view = { processing, dataModel };
+                    file.output(view);
                     view.output(cout);
                     
                     break;
                 }
-                case delet: {
+                case removeBirth: {
                     
-                    Delet delet = { dataModel };
-                    file.fileProcessing(delet, city.getNumbers(Area::city), Remove);
+                    DeleteProcessing processing = { dataModel };
+                    file.processing(processing, city.getNumbers(Area::city));
+                    DeleteViewText view = { dataModel };
+                    file.output(view);
+                    view.output(cout);
                     
+                    file.removeBirth(processing);
                     file.removeHospitalFile(city);
                     file.initHospital();
                     
@@ -120,7 +121,8 @@ int main() {
                 }
             }
             
-            cout << "Продолжить? да нет : ";
+            
+            cout << "Продолжить? 1 0 : ";
             getline(cin, is);
             
         }
@@ -140,6 +142,7 @@ int main() {
     catch(...) {
         cout << endl << "Неизвестная ошибка!" << endl;
     }
+    
     
     file.removeHospitalFile(city);
     

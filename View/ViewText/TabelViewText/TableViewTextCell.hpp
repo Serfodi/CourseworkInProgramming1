@@ -14,7 +14,7 @@ public:
     TableViewTextCell(ostream &out, Birth birth) {
         vector<string> description = birth.getDescription();
         for (int i=0; i<description.size(); i++) {
-            out << border[1] << left << setw(getWidth(i)) << (widthSpace(description[i].size(), i, align[i]) + description[i]);
+            out << border[1] << left << setw(getLayoutWidth(i)) << (widthSpace(description[i].size(), i, align[i]) + description[i]);
         }
         out << border[1]  << endl;
     }
@@ -23,7 +23,7 @@ private:
     
     /// Возвращает количество  - смещение влево первого символа строки
     string widthSpace(long int sizeText, int column, Align align) {
-        int widthLayout = getWidth(column);
+        int widthLayout = getLayoutWidth(column);
         
         if (sizeText >= widthLayout) return "";
         if (align == Left) return " ";

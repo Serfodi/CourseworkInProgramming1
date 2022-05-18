@@ -21,7 +21,13 @@ public:
     
     DataModel dataModel;
     
-    virtual bool processing(const Birth&) = 0;
+    Processing() {}
+    
+    Processing(DataModel dataModel) {
+        this -> dataModel = dataModel;
+    }
+    
+    virtual void processing(const Birth&) = 0;
     
 };
 
@@ -29,24 +35,31 @@ public:
 
 /**
  *
- *
+ * Просмотр данных за любой день (или за любой временной интервал)
  *
  */
-class ViewData: public Processing {
+class ViewBirthProcessing: public Processing {
 public:
     
-    ViewData(DataModel dataModel) {
-        this -> dataModel = dataModel;
-    }
+    vector<Birth> birthData;
     
-    bool processing(const Birth &birth) override {
+    ViewBirthProcessing() {}
+    
+    ViewBirthProcessing(DataModel dataModel) : Processing(dataModel) {}
+    
+    
+    void processing(const Birth &birth) override {
         switch (dataModel.dataFormat) {
             case day:
-                return  birth.dOB == dataModel.dataInput[0];
+                if (birth.dOB == dataModel.dataInput[0])
+                    birthData.push_back(birth);
             case interval:
-                return (birth.dOB >= dataModel.dataInput[0] && birth.dOB <= dataModel.dataInput[1]);
+                if (birth.dOB >= dataModel.dataInput[0] && birth.dOB <= dataModel.dataInput[1])
+                    birthData.push_back(birth);
         }
+        sort(birthData.begin(), birthData.end());
     }
+    
     
 };
 
@@ -54,27 +67,25 @@ public:
 
 /**
  *
- *
+ * Вывод гистограммы рождаемости по месяцам года и кривой  рождаемости за год
  *
  */
-class Histogram: public Processing {
+class HistogramProcessing: public Processing {
 public:
     
-    int mouthStat[13] = {
+    int mouth[13] = {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
     };
     
-    Histogram() {}
+    HistogramProcessing() {}
     
-    Histogram(DataModel dataModel) {
-        this -> dataModel = dataModel;
-    }
+    HistogramProcessing(DataModel dataModel) : Processing(dataModel) {}
     
-    bool processing(const Birth &birth) override {
-        if ( !SexСhild::isAttribute(dataModel.attribute, birth.children) ) { return false; }
-        mouthStat[birth.dOB.getMonth()] += 1;
-        return true;
+    void processing(const Birth &birth) override {
+        if ( !Сhildren::attribute(dataModel.attribute, birth.children) ) { return; }
+        mouth[birth.dOB.month] += 1;
     }
+  
     
 };
 
@@ -82,55 +93,46 @@ public:
 
 /**
  *
- *
+ * Определение месяцев максимальной и минимальной рождаемости
  *
  */
-class Birthrate: public Processing {
+class BirthrateProcessing: public Processing {
 public:
     
-    /// месяц максимального кол-во
-    int indexMax,
-    /// месяц минимального кол-во
-    indexMin;
+    // 0 – кол-во
+    // 1 - месяц
+    int min[2] = {-1, 0};
+    int max[2] = {0, 0};
     
-    /// максимально кол-во
-    int max = 0;
-    /// минимальное кол-во
-    int min = -1;
-    
-    
-    int mouthStat[13] = {
+    int mouth[13] = {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
     };
     
-    Birthrate() {}
+    BirthrateProcessing() {}
     
-    Birthrate(DataModel dataModel) {
-        this -> dataModel = dataModel;
-    }
+    BirthrateProcessing(DataModel dataModel) : Processing(dataModel) {}
     
-    bool processing(const Birth &birth) override {
+    
+    void processing(const Birth &birth) override {
+        if (!Сhildren::attribute(dataModel.attribute, birth.children)) { return; }
         
-        if (!SexСhild::isAttribute(dataModel.attribute, birth.children)) { return false; }
+        mouth[birth.dOB.month] += 1;
         
-        mouthStat[birth.dOB.getMonth()] += 1;
-        
-        if ( mouthStat[birth.dOB.getMonth()] > max ) {
-            max = mouthStat[birth.dOB.getMonth()];
-            indexMax = mouthStat[birth.dOB.getMonth()];
+        if ( mouth[birth.dOB.month] > max[0] ) {
+            max[0] = mouth[birth.dOB.month];
+            max[1] = mouth[birth.dOB.month];
         }
         
-        if (min == -1) {
-            min = 1;
-            indexMin = mouthStat[birth.dOB.getMonth()];
+        if (min[0] == -1) {
+            min[0] = 1;
+            min[1] = mouth[birth.dOB.month];
         }
         
-        if ( mouthStat[birth.dOB.getMonth()] < min ) {
-            min = mouthStat[birth.dOB.getMonth()];
-            indexMin = mouthStat[birth.dOB.getMonth()];
+        if ( mouth[birth.dOB.month] < min[0] ) {
+            min[0] = mouth[birth.dOB.month];
+            min[1] = mouth[birth.dOB.month];
         }
         
-        return true;
     }
     
     
@@ -142,15 +144,16 @@ public:
  * Удаления по: фио матери и году рождения матери
  *
  */
-class Delet: public Processing {
+class DeleteProcessing: public Processing {
 public:
     
-    Delet(DataModel dataModel) {
-        this -> dataModel = dataModel;
-    }
+    vector<Birth> birthData;
     
-    bool processing(const Birth &birth) override {
-        return ( dataModel.fIOInput == birth.fIO && dataModel.dataInput[0] == birth.dOBMother );
+    DeleteProcessing(DataModel dataModel) : Processing(dataModel) {}
+    
+    void processing(const Birth &birth) override {
+        if (!(dataModel.fIOInput == birth.fIO && dataModel.dataInput[0] == birth.dOBMother))
+            birthData.push_back(birth);
     }
     
 };

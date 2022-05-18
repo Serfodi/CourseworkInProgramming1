@@ -17,32 +17,10 @@ class Error: public exception {
     
 public:
     
-//    Error(char *text) : exception() {}
-    
-    
-    
-    
 };
 
-
-/// Ошибки ввода
-enum ErrorInput {
-    /// Выход за приделы массива или перечисления
-    outOfIndex,
-    /// Неправильный ввод текста
-    incorrectData
-};
-
-/// Ошибка поиска
-enum ErrorFind {
-    /// Такого экземпляра не существует
-    noFind
-};
-
-/// Ошибки открытия файла
-enum ErrorFile {
-    /// Ошибка открытия
-    errorOpen,
+enum DateError {
+    outRangeDate
 };
 
 

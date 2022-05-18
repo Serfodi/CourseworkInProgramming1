@@ -30,19 +30,6 @@ ifstream read;
 ofstream write;
 
 
-
-/// Выбор опций для обработки
-enum Options {
-    /// Запись данных в файла
-    Write,
-    /// Удаления данных из текущего файла
-    Remove,
-    /// Ничего не делать
-    No
-};
-
-
-
 /**
  * Работа с файлом
  *
@@ -57,22 +44,16 @@ private:
     /// Расположение регионов
     string cityFileName = "Москва";
     /// Расположение записей о рождении
-    string birthFileName = "FileBirth";
+    string birthFileName = "Birth";
     /// Файл с результатом
     string resultFileName = "Result";
-    /// Расположение временных файлов
-    string tmpFileName = "tmp";
     /// Расположение записей роддомов файлов
-    string hospitalFileName = "hospital";
-    
-    /// Даты файлов которые были записаны tmp
-    vector<Date> dates;
+    string hospitalFileName = "Hospital";
     
     string getFileName(string name) const { return name + ".txt"; }
     string getFilePatch(string name) const { return name + "/"; }
     
     
-    // MARK: Методы
 public:
     
     /**
@@ -106,37 +87,24 @@ public:
     }
     
     
+    
+    // MARK:  Processing
+    
+    
     /**
      * Обработка файлов
      *
+     * Чтение из бинарных фалов
+     *
      * @param[out] processing  Метод обработки, однапроходный алгоритм возврощающий bool
      * @param numbers адреса
-     * @param options опции обработки. Если processing вернул true
      */
-    void fileProcessing(Processing &processing, const vector<int> &numbers, Options options = No) {
+    void processing (Processing &processing, const vector<int> &numbers) {
         Birth data;
         for (int i = 0; i < numbers.size(); i++) {
             if (openFile(getFilePatch(hospitalFileName) + to_string(numbers[i]), ios::in)) {
-                while (file.read((char*)&data, sizeof(Birth))) {
-                    if (processing.processing(data)) {
-                        switch (options) {
-                            case Write:
-                                if (!binary_search(dates.begin(), dates.end(), data.dOB)) {
-                                    dates.push_back(data.dOB);
-                                    sort(dates.begin(), dates.end());
-                                }
-                                openWrite(getFilePatch(tmpFileName) + data.dOB.description(), ios::binary | ios::app);
-                                write.write((char*)&data, sizeof(Birth));
-                                write.close();
-                                break;
-                            case Remove:
-                                file.close();
-                                removeBirth(data);
-                                return;
-                            case No: break;
-                        }
-                    }
-                }
+                while (file.read((char*)&data, sizeof(Birth)))
+                    processing.processing(data);
                 file.close();
             }
         }
@@ -146,42 +114,14 @@ public:
     
     // MARK:  Output
     
-    
-    /**
-     * Вывод в файл и в консоль
-     *
-     * Открывает файл "dataRes" и читает из него. Также записывает в "res" в виде Table.
-     *
-     * @param tableViewText вид вывода
-     */
-    void fileOutput(TableViewText &tableViewText) {
-        unionDataFile();
-        
-        openRead(getFilePatch(tmpFileName) + tmpFileName);
-        openWrite(resultFileName, ios::app);
-        
-        tableViewText.tableHeaderViewText(write);
-        tableViewText.tableHeaderViewText(cout);
-        Birth data;
-        while (read.read((char*)&data, sizeof(Birth))) {
-            tableViewText.addCell(write, data);
-            tableViewText.addCell(cout, data);
-        }
-        tableViewText.tableFooterViewText(write);
-        tableViewText.tableFooterViewText(cout);
-        
-        write.close();
-        read.close();
-    }
-    
     /**
      * Вывод в файл.
      *
      * Открывает файл "res" и записывает в виде viewText
      *
-     * @param viewText выид вывода
+     * @param viewText вид вывода
      */
-    void fileOutput(ViewText &viewText) {
+    void output(ViewText &viewText) {
         openWrite(resultFileName, ios::app);
         viewText.output(write);
         write << endl;
@@ -190,27 +130,32 @@ public:
     
     
     
-    
-    // MARK:  Delete
-    
+    // MARK:  Remove
     
     
-    /// Удаления файлов дат
-    void removeDateTmpFile() {
-        for (int i = 0; i < dates.size(); i++) {
-            remove(getFileName(getFilePatch(tmpFileName) + dates[i].description()).c_str());
+    /// Удаления записи
+    void removeBirth(const DeleteProcessing &processing) {
+        bool isEmpty = true;
+        remove(birthFileName.c_str());
+        openWrite(birthFileName);
+        for (Birth i : processing.birthData) {
+            if (isEmpty) {
+                write << i;
+                isEmpty = false;
+            } else {
+                write << endl << i;
+            }
         }
-        remove(getFileName(getFilePatch(tmpFileName) + tmpFileName).c_str());
-        dates.clear();
+        write.close();
     }
     
+    
     /// Удаления файлов  госпиталей
-    void removeHospitalFile (City &city) const {
+    void removeHospitalFile (City &city) {
         const vector<int> n = city.getNumbers(Area::city, cityFileName);
         for (int i = 0; i<n.size(); i++) {
             remove(getFileName(getFilePatch(hospitalFileName) + to_string(n[i])).c_str());
         }
-        remove(tmpFileName.c_str());
     }
     
     
@@ -219,49 +164,7 @@ public:
     
 private:
     
-    
-    
-    // MARK: Вспомогательные методы
-    
-    
-    /// Слияния файлов в дат в один
-    void unionDataFile() {
-        openWrite(getFilePatch(tmpFileName) + tmpFileName, ios::app | ios::binary);
-        for (int i = 0; i<dates.size(); i++) {
-            openRead(getFilePatch(tmpFileName) + dates[i].description(), ios::binary);
-            Birth birth;
-            while(read.read((char*)&birth, sizeof(Birth))) {
-                write.write((char*)&birth, sizeof(Birth));
-            }
-            read.close();
-        }
-        write.close();
-    }
-    
-    
         
-    // MARK: Удаления
-    
-    /// Удаления
-    void removeBirth(const Birth &data) {
-        openRead(birthFileName);
-        openWrite(tmpFileName + birthFileName);
-        Birth birth;
-        while (!read.eof()) {
-            read >> birth;
-            if (birth != data) {
-                if (!write.eof()) write << endl;
-                write << birth;
-            }
-            
-        }
-        read.close();
-        write.close();
-        remove(birthFileName.c_str());
-        rename(getFileName(tmpFileName + birthFileName).c_str(), getFileName(birthFileName).c_str());
-    }
-    
-    
     
     
     // MARK: Открытия файла

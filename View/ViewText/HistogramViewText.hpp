@@ -13,16 +13,15 @@
 class HistogramViewText: public ViewText {
 private:
     
-    Histogram histogram;
+    HistogramProcessing histogram;
     
     /// Поинт вывода
     string bricks ="#";
     
 public:
     
-    HistogramViewText(const Histogram &histogram, const DataModel &dataModel) {
+    HistogramViewText(const HistogramProcessing &histogram, const DataModel &dataModel) : ViewText(dataModel) {
         this -> histogram = histogram;
-        this -> dataModel = dataModel;
     }
     
     /**
@@ -32,11 +31,11 @@ public:
      */
     void output(ostream &out) override {
         
-        // максимальный элимент – это будет высота гистограммы (max + 1)
+        // максимальный элемент – это будет высота гистограммы (max + 1)
         int max = 0;
         for (int i = 1; i<13; i++)
-            if (max < histogram.mouthStat[i])
-                max = histogram.mouthStat[i];
+            if (max < histogram.mouth[i])
+                max = histogram.mouth[i];
         
         // Вывод строчек
         
@@ -48,7 +47,7 @@ public:
         
         for (int i=0; i < (max + 1); i++) {
             int count = (max + 1) - i;
-            bool *avail = availability(count, histogram.mouthStat);
+            bool *avail = availability(count, histogram.mouth);
             
             // Вывод строчки histogramString
             out << setw(4) << count << " | " << histogramString(count, avail) << "|" << endl;

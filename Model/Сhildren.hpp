@@ -1,5 +1,5 @@
 //
-//  Sex.hpp
+//  Сhildren.hpp
 //  CourseworkInProgramming26
 //
 //  Created by Сергей Насыбуллин on 31.03.2022.
@@ -9,8 +9,8 @@
  * @file Описания модели Sex и методы обработки.
  */
 
-#ifndef Sex_hpp
-#define Sex_hpp
+#ifndef Сhildren_hpp
+#define Сhildren_hpp
 
 
 //using namespace std;
@@ -61,15 +61,11 @@ public:
         return dict[sex];
     }
     
-    
-    
-    
 };
 
 
 /// Модель 3-х детей
-class SexСhild {
-        
+class Сhildren {
 private:
     
     /// Дети
@@ -79,7 +75,7 @@ private:
     
 public:
     
-    SexСhild() {}
+    Сhildren() {}
     
     // MARK:  Методы
     
@@ -92,24 +88,34 @@ public:
      * @param attribute  Признак по которому будет проверка
      * @param children Объект который проверяется
      */
-    const static bool isAttribute(Attribute attribute, SexСhild children)  {
+    const static bool attribute(Attribute attribute, Сhildren children)  {
         switch (attribute) {
             case general:
                 return true;
             case boys:
-                return children.attribute(m);
+                return children.isAttribute(m);
             case girls:
-                return children.attribute(g);
+                return children.isAttribute(g);
             case multiple:
                 return children.isMultiple();
         }
     }
     
     
+    const Sex operator [] (int index) const { return child[index]; }
+    
+    Сhildren& operator = (const Сhildren &second) {
+        count = second.count;
+        for (int i = 0; i < count; i++)
+            child[i] = second.child[i];
+        return *this;
+    }
+    
+    
 private:
     
     /// Проверка на один пол
-    const bool attribute(Sex sex) const {
+    const bool isAttribute(Sex sex) const {
         bool flag = true;
         for (int i=0; i<count; i++)
             if (child[i] != no)
@@ -122,22 +128,6 @@ private:
         return count >= 2;
     }
     
-    
-
-    // MARK:  Перегрузки
-public:
-    
-    const Sex operator [] (int index) const { return child[index]; }
-    
-    
-    SexСhild& operator = (const SexСhild &second) {
-        count = second.count;
-        for (int i = 0; i < count; i++)
-            child[i] = second.child[i];
-        return *this;
-    }
-    
-    
 };
 
-#endif /* Sex_hpp */
+#endif /* Сhildren_hpp */

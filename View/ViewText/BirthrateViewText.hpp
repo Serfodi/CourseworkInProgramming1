@@ -12,7 +12,7 @@
 class BirthrateViewText: public ViewText {
 private:
     
-    Birthrate birthrate;
+    BirthrateProcessing birthrate;
     
     string textData[12] = {
         "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октяборь", "Нояборь", "Декабарь"
@@ -20,10 +20,8 @@ private:
     
 public:
     
-    
-    BirthrateViewText(const Birthrate &birthrate, const DataModel &dataModel) {
+    BirthrateViewText(const BirthrateProcessing &birthrate, const DataModel &dataModel) : ViewText(dataModel) {
         this -> birthrate = birthrate;
-        this -> dataModel = dataModel;
     }
     
     
@@ -41,9 +39,9 @@ public:
             out <<
             "Статистика по городу" << dataModel.areaText + "." << endl <<
             "Искать по: " << attributeText() << endl <<
-            "Максимальное кол-во рождений: " << textData[birthrate.indexMax -1 ] << endl
+            "Максимальное кол-во рождений: " << textData[birthrate.max[1] -1 ] << endl
             << "Что составило: " << birthrate.max << endl;
-            out << "Минимальное кол-во рождений: " << textData[birthrate.indexMin -1] << endl
+            out << "Минимальное кол-во рождений: " << textData[birthrate.min[1] -1] << endl
             << "Что составило: " << birthrate.min << endl;
             
         }

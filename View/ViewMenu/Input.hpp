@@ -49,28 +49,22 @@ public:
     /**
      * Приводит строчку к Data
      *
-     * Память выделяется внутри
-     *
      * @param dataText  Строка в формате "дд.мм.гггг" или "дд.мм.гггг - дд.мм.гггг"
      * @param format Формат преобразования к одной дате или интервалу
      *
-     * @return Динамический массив из одной или двух дат зависит от Data format
+     * @return массив из одной или двух дат зависит от Data format
      *
      * @throws ошибка ввода даты
-     *
-     * @Warning Память выделяется внутри
      */
-    const vector<Date> dataCast (string dataText, DataFormat format) const {
-        if (dataText == "") { throw ErrorInput::incorrectData; }
-        vector<Date>  data(format+1);
+    const vector<Date> dateCast (string dataText, DataFormat format) const {
+        vector<Date> data(format+1);
         switch (format) {
             case day:
-                data[0] = Date(dataText);
+                data[0] = Date::dateCast(dataText);
                 break;
             case interval:
                 vector<string> components = ExtensionString::componentsSeparatedBy(dataText, '-');
-                for (int i=0; i < format + 1 ; i++)
-                    data[i] = Date(components[i]);
+                for (int i=0; i < format + 1 ; i++) data[i] = Date::dateCast(components[i]);
                 break;
         }
         return data;
@@ -88,7 +82,7 @@ public:
      * @throws ошибка ввода
      */
     ChoiceProcessing choiceProcessingCast(int number) {
-        if (number > 4 || number < 1) { throw ErrorInput::outOfIndex; }
+        if (number > 4 || number < 1) { throw "Ошибка каста choiceProcessingCast."; }
         return static_cast<ChoiceProcessing>(number-1);
     }
     
@@ -98,7 +92,7 @@ public:
      * @throws ошибка ввода
      */
     Area areaCast(int number) {
-        if (number > 3 || number < 1) { throw ErrorInput::outOfIndex; }
+        if (number > 3 || number < 1) { throw "Ошибка каста areaCast."; }
         return static_cast<Area>(number-1);
     }
     
@@ -108,7 +102,7 @@ public:
      * @throws ошибка ввода
      */
     DataFormat dataFormatCast(int number) {
-        if (number > 2 || number < 1) { throw ErrorInput::outOfIndex; }
+        if (number > 2 || number < 1) { throw "Ошибка каста dataFormatCast."; }
         return static_cast<DataFormat>(number-1);
     }
     
@@ -118,12 +112,9 @@ public:
      * @throws ошибка ввода
      */
     Attribute attributeCast(int number) {
-        if (number > 4 || number < 1) { throw ErrorInput::outOfIndex; }
+        if (number > 4 || number < 1) { throw "Ошибка каста attributeCast."; }
         return static_cast<Attribute>(number-1);
     }
-    
-    
-    ~Input() {}
     
     
 };

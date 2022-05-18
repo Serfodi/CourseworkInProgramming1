@@ -32,6 +32,7 @@ public:
     };
     
 private:
+    
     float layout[column] = {
         0.04,
         0.12,
@@ -45,7 +46,7 @@ private:
     
 public:
     
-    int getWidth(int column) {
+    int getLayoutWidth(int column) {
         return (int)width*layout[column];
     }
     
@@ -58,55 +59,58 @@ public:
     
 };
 
+
 #include "TableViewTextCell.hpp"
+
 
 /// Отображения таблицы
 class TableViewText: public ViewText, public Table {
 private:
     
-    string textTabel[2][column] = {
+    ViewBirthProcessing processing;
+    
+    string headerText[2][column] = {
         {"N", "Date of bi-", "Region", "FIO", "Date of bi-", "Sex 1", "Sex 2", "Sex 3" },
         {"", "rth child", "", "mothers", "rth mothers", "chi.", "chi.", "chi."}
     };
     
-    
 public:
     
-//    TableViewText() {}
-    
-    TableViewText (const DataModel &dataModel) {
-        this -> dataModel = dataModel;
+    TableViewText (const ViewBirthProcessing &processing, const DataModel &dataModel) : ViewText(dataModel) {
+        this -> processing = processing;
     }
+    
+    void output (ostream &out) override {
+        if (processing.birthData.size() == 0) {
+            out << "Нет данных." << endl;
+        } else {
+            tableHeaderViewText(out);
+            for (Birth i : processing.birthData) { TableViewTextCell cell = {out, i}; }
+            tableFooterViewText(out);
+        }
+    }
+    
+    
+private:
     
     /// Текст, который отображается над содержимым таблицы.
     void tableHeaderViewText (ostream &out) {
         line(out);
-        lineHeader(out, textTabel[0]);
-        lineHeader(out, textTabel[1]);
+        lineHeader(out, headerText[0]);
+        lineHeader(out, headerText[1]);
         line(out);
     }
     
     /// Текст, который отображается под содержимым таблицы.
     void tableFooterViewText (ostream &out) {
         line(out);
+        out << endl;
     }
-    
-    /// Строчка таблицы которая выводится
-    void addCell (ostream &out, Birth birth) {
-        TableViewTextCell cell = {out, birth};
-    }
-    
-    
-    
-    void output(ostream &out) override {}
-    
-    
-private:
     
     /// Вывод шапки
     void lineHeader(ostream &out, string text[column]) {
         for (int i=0; i<column; i++) {
-            out << border[1] << ' ' << left << setw(getWidth(i)-1) << text[i];
+            out << border[1] << ' ' << left << setw(getLayoutWidth(i)-1) << text[i];
         }
         out << border[1] << endl;
     }
@@ -114,10 +118,11 @@ private:
     /// Вывод разделителя
     void line(ostream &out) {
         for (int i=0; i<column; i++) {
-            out << border[1] << string(getWidth(i), border[0]);
+            out << border[1] << string(getLayoutWidth(i), border[0]);
         }
         out << border[1] << endl;
     }
+    
     
 };
 

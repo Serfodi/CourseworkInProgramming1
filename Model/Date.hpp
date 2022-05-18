@@ -30,21 +30,8 @@ public:
     
     
     // MARK:  Инициализатор
-public:
     
     Date() {}
-    
-    /**
-     * Приводит строчку типа дд.мм.гггг к дате.
-     *
-     * @param text Строка типа: "дд.мм.гггг"
-     */
-    Date(string text) {
-        vector<string> components = ExtensionString::componentsSeparatedBy(text, sep);
-        day = stoi(components[0]);
-        month = stoi(components[1]);
-        year = stoi(components[2]);
-    }
     
     Date(int day, int month, int year) {
         this -> day = day;
@@ -52,6 +39,13 @@ public:
         this -> year = year;
     }
     
+    static Date dateCast(string text) {
+        vector<string> components = ExtensionString::componentsSeparatedBy(text, sep);
+        int day = stoi(components[0]);
+        int month = stoi(components[1]);
+        int year = stoi(components[2]);
+        return Date(day,month,year);
+    }
     
     
     // MARK:  Перегрузки
@@ -117,19 +111,6 @@ public:
         return year < two.year;
     }
     
-    // MARK:  Методы
-    
-    /// Устанавливает день
-    void setDay(int day) { this -> day = day; }
-    
-    /// Устанавливает месяц
-    void setMonth(int month) { this -> month = month; }
-    
-    /// Устанавливает год
-    void setYear(int year) { this -> year = year; }
-    
-    /// Возвращает месяц
-    const int getMonth() const { return month; }
     
     /// Возвращает дату в формате: дд.мм.гггг
     string description() const {

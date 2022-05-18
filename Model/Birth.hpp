@@ -13,10 +13,6 @@
 #define Birth_hpp
 
 
-
-using namespace std;
-
-
 /// Модель данных о рождении детей.
 struct Birth {
     
@@ -34,7 +30,7 @@ public:
     /// Дата рождения матери
     Date dOBMother;
     /// Дети
-    SexСhild children;
+    Сhildren children;
     
     
     
@@ -42,7 +38,7 @@ public:
     
     Birth() {}
     
-    Birth (int number, Date dOB, string region, string fIO, Date dOBMother, SexСhild children) {
+    Birth (int number, Date dOB, string region, string fIO, Date dOBMother, Сhildren children) {
         this -> number = number;
         this -> dOB = dOB;
         this -> region = region;
@@ -86,10 +82,27 @@ public:
         return (fIO == second.fIO && dOBMother == second.dOBMother);
     }
     
+    bool operator > (Birth second) const {
+        return dOB > second.dOB;
+    }
+    
+    bool operator < (Birth second) const {
+        return dOB < second.dOB;
+    }
+    
+    bool operator >= (Birth second) const {
+        return dOB >= second.dOB;
+    }
+    
+    bool operator <= (Birth second) const {
+        return dOB <= second.dOB;
+    }
+    
+    
     friend ifstream& operator >> (ifstream &, Birth &);
     
     /// Возвращяет массив строк
-    vector<string> getDescription () {
+    vector<string> getDescription() {
         vector<string> description = {
             ExtensionString::leading(number, 2, ' '),
             dOB.description(),
@@ -103,34 +116,27 @@ public:
         return description;
     }
     
-    
-    ~Birth() {}
-    
 };
 
 
 /// Ввод Birth
 ifstream& operator >> (ifstream &in, Birth &birth) {
     string line;
-    
     char sep = '|';
     
     getline(in, line, sep);
-    
-    if (line == "") { return in; }
-    
     birth.number = stoi(line);
     
     getline(in, line, sep);
-    birth.dOB = Date(line);
+    birth.dOB = Date::dateCast(line);
     
     getline(in, birth.region, sep);
     getline(in, birth.fIO, sep);
     
     getline(in, line, sep);
-    birth.dOBMother = Date(line);
+    birth.dOBMother = Date::dateCast(line);
     
-    SexСhild children;
+    Сhildren children;
     
     for (int i = 0; i < 2; i++) {
         getline(in, line, sep);
@@ -146,11 +152,11 @@ ifstream& operator >> (ifstream &in, Birth &birth) {
 
 ostream& operator << (ostream &out, const Birth& birth) {
     out
-    << birth.number << "|"
-    << birth.dOB << "|"
-    << birth.region << "|"
-    << birth.fIO << "|"
-    << birth.dOBMother << "|"
+    << birth.number     << "|"
+    << birth.dOB       << "|"
+    << birth.region     << "|"
+    << birth.fIO       << "|"
+    << birth.dOBMother   << "|"
     << SexCast::toStringRus(birth.children[0]) << "|"
     << SexCast::toStringRus(birth.children[1]) << "|"
     << SexCast::toStringRus(birth.children[2]);

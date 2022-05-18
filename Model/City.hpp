@@ -9,7 +9,7 @@
 #define City_hpp
 
 
-
+/// Словарь для региона
 using DictionaryRegion = map<string, vector<int>>;
 
 
@@ -68,8 +68,28 @@ public:
     }
     
     
+    vector<string> getRegionName() {
+        vector<string> name;
+        DictionaryRegion::iterator reg;
+        for (reg = regions.begin(); reg != regions.end(); reg++)
+            name.push_back(reg -> first);
+        return name;
+    }
+    
+    vector<string> getNumberName() {
+        vector<string> name;
+        DictionaryRegion::iterator reg;
+        for (reg = regions.begin(); reg != regions.end(); reg++) {
+            string text = "";
+            for (int i : reg -> second)
+                text += to_string(i) + ", ";
+            name.push_back(text);
+        }
+        return name;
+    }
     
 private:
+    
     
     /// Возвращает номера всех роддомов входящие в город
     vector<int> allNumbers() {
@@ -84,8 +104,10 @@ private:
 
 
 ifstream& operator >> (ifstream &in, DictionaryRegion &region) {
+    
     string name;
     getline(in, name, '|');
+    
     string text;
     getline(in, text);
     

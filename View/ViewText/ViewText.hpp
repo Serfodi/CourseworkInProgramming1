@@ -15,6 +15,10 @@ public:
     
     DataModel dataModel;
     
+    ViewText(const DataModel &dataModel) {
+        this -> dataModel = dataModel;
+    }
+    
     virtual void output(ostream &out) = 0;
     
 };
@@ -22,5 +26,6 @@ public:
 #include "TableViewText.hpp"
 #include "HistogramViewText.hpp"
 #include "BirthrateViewText.hpp"
+#include "DeleteViewText.hpp"
 
 #endif /* ViewText_hpp */
