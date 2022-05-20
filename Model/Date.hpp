@@ -15,7 +15,7 @@
 struct Date {
     
     // MARK:  Свойства
-public:
+    
     
     /// Разделитель даты
     static const char sep = '.';
@@ -33,18 +33,23 @@ public:
     
     Date() {}
     
-    Date(int day, int month, int year) {
-        this -> day = day;
-        this -> month = month;
-        this -> year = year;
-    }
+//    Date(int day, int month, int year) {
+//        this -> day = day;
+//        this -> month = month;
+//        this -> year = year;
+//    }
     
-    static Date dateCast(string text) {
+    /// Дата на основании строки формта дд.мм.гггг
+    Date (string text) {
         vector<string> components = ExtensionString::componentsSeparatedBy(text, sep);
-        int day = stoi(components[0]);
-        int month = stoi(components[1]);
-        int year = stoi(components[2]);
-        return Date(day,month,year);
+        try {
+            this -> day = stoi(components[0]);
+            this -> month = stoi(components[1]);
+            this -> year = stoi(components[2]);
+        }
+        catch (invalid_argument) {
+            throw DateError(text);
+        }
     }
     
     

@@ -14,9 +14,6 @@
 #define Input_hpp
 
 
-using namespace std;
-
-
 /**
  * Отвечает за ввод данных их обработку из консоли или из файла.
  *
@@ -30,16 +27,21 @@ public:
      *
      * @note Преобразуют строчку к int с помощью функции stoi. Из-за того что в буфере при нажатии на enter остается "\0" пришлось использовать этот метод.
      */
-    int number() {
+    static int number() {
         string textNumber = text();
         int number;
-        number = stoi(textNumber);
+        try {
+            number = stoi(textNumber);
+        }
+        catch (...) {
+            throw InputError("int");
+        }
         return number;
     }
     
     
     /// Ввод с клавиатуры текста string
-    string text() {
+    static string text() {
         string text;
         getline(cin, text);
         return text;
@@ -54,17 +56,17 @@ public:
      *
      * @return массив из одной или двух дат зависит от Data format
      *
-     * @throws ошибка ввода даты
+     * @throws DateError
      */
-    const vector<Date> dateCast (string dataText, DataFormat format) const {
+    static const vector<Date> dateCast (string dataText, DataFormat format) {
         vector<Date> data(format+1);
         switch (format) {
             case day:
-                data[0] = Date::dateCast(dataText);
+                data[0] = Date(dataText);
                 break;
             case interval:
                 vector<string> components = ExtensionString::componentsSeparatedBy(dataText, '-');
-                for (int i=0; i < format + 1 ; i++) data[i] = Date::dateCast(components[i]);
+                for (int i=0; i < format + 1 ; i++) data[i] = Date(components[i]);
                 break;
         }
         return data;
@@ -81,8 +83,8 @@ public:
      * @param number  Целое число от 1 до 4
      * @throws ошибка ввода
      */
-    ChoiceProcessing choiceProcessingCast(int number) {
-        if (number > 4 || number < 1) { throw "Ошибка каста choiceProcessingCast."; }
+    static ChoiceProcessing choiceProcessingCast(int number) {
+        if (number > 4 || number < 1) { throw InputError("choiceProcessing"); }
         return static_cast<ChoiceProcessing>(number-1);
     }
     
@@ -91,8 +93,8 @@ public:
      * @param number  Целое число от 1 до 3
      * @throws ошибка ввода
      */
-    Area areaCast(int number) {
-        if (number > 3 || number < 1) { throw "Ошибка каста areaCast."; }
+    static Area areaCast(int number) {
+        if (number > 3 || number < 1) { throw InputError("areaCast"); }
         return static_cast<Area>(number-1);
     }
     
@@ -101,8 +103,8 @@ public:
      * @param number  Целое число от 1 до 2
      * @throws ошибка ввода
      */
-    DataFormat dataFormatCast(int number) {
-        if (number > 2 || number < 1) { throw "Ошибка каста dataFormatCast."; }
+    static DataFormat dataFormatCast(int number) {
+        if (number > 2 || number < 1) { throw InputError("dataFormatCast"); }
         return static_cast<DataFormat>(number-1);
     }
     
@@ -111,8 +113,8 @@ public:
      * @param number  Целое число от 1 до 4
      * @throws ошибка ввода
      */
-    Attribute attributeCast(int number) {
-        if (number > 4 || number < 1) { throw "Ошибка каста attributeCast."; }
+    static Attribute attributeCast(int number) {
+        if (number > 4 || number < 1) { throw InputError("attributeCast"); }
         return static_cast<Attribute>(number-1);
     }
     

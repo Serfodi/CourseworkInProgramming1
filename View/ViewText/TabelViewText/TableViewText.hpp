@@ -67,7 +67,7 @@ public:
 class TableViewText: public ViewText, public Table {
 private:
     
-    ViewBirthProcessing processing;
+    ViewBirthProcessing *processing;
     
     string headerText[2][column] = {
         {"N", "Date of bi-", "Region", "FIO", "Date of bi-", "Sex 1", "Sex 2", "Sex 3" },
@@ -76,16 +76,17 @@ private:
     
 public:
     
-    TableViewText (const ViewBirthProcessing &processing, const DataModel &dataModel) : ViewText(dataModel) {
+    TableViewText (ViewBirthProcessing *processing, const DataModel &dataModel) : ViewText(dataModel) {
         this -> processing = processing;
+        sort(processing->birthData.begin(), processing->birthData.end());
     }
     
     void output (ostream &out) override {
-        if (processing.birthData.size() == 0) {
+        if (processing->birthData.size() == 0) {
             out << "Нет данных." << endl;
         } else {
             tableHeaderViewText(out);
-            for (Birth i : processing.birthData) { TableViewTextCell cell = {out, i}; }
+            for (Birth i : processing->birthData) { TableViewTextCell cell = {out, i}; }
             tableFooterViewText(out);
         }
     }

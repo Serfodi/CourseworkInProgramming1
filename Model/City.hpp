@@ -34,17 +34,21 @@ public:
     /// Устанавливает имя города
     void setName(string name) { this -> name = name; }
     
+    
     /// Добавляет новый элемент в конец regions
     void append(DictionaryRegion region) {
         DictionaryRegion::iterator it = region.begin();
         regions[it->first] = it->second;
     }
     
+    
     /// Возвращает региона по слову. Как в словарике
     const vector<int> find(string region) { return regions[region]; }
     
+    
     /// Возвращает кол-во регионов в городе
     long int getCount() const { return regions.size(); }
+    
     
     /**
      * Обработка выдачи номера роддомов
@@ -67,8 +71,8 @@ public:
         }
     }
     
-    
-    vector<string> getRegionName() {
+    /// Выдает все регионы в городе
+    vector<string> getAllRegionName() {
         vector<string> name;
         DictionaryRegion::iterator reg;
         for (reg = regions.begin(); reg != regions.end(); reg++)
@@ -76,7 +80,8 @@ public:
         return name;
     }
     
-    vector<string> getNumberName() {
+    /// Выдает все номера в городе
+    vector<string> getAllNumberName() {
         vector<string> name;
         DictionaryRegion::iterator reg;
         for (reg = regions.begin(); reg != regions.end(); reg++) {
@@ -87,6 +92,7 @@ public:
         }
         return name;
     }
+    
     
 private:
     
@@ -114,7 +120,7 @@ ifstream& operator >> (ifstream &in, DictionaryRegion &region) {
     vector<string> numbersText = ExtensionString::componentsSeparatedBy(text, ',');
     vector<int> numbers;
     for (int i = 0; i<numbersText.size(); i++)
-        numbers.push_back( stoi(numbersText[i]));
+        numbers.push_back(stoi(numbersText[i]));
     region[name] = numbers;
     
     return in;

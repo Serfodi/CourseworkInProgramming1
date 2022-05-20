@@ -7,12 +7,11 @@
 
 
 #include <iostream>
+#include <exception>
 #include <fstream>
 #include <map>
 #include <string>
 #include <vector>
-
-#include <cstdlib>
 
 using namespace std;
 
@@ -78,9 +77,9 @@ int main() {
                     
                     ViewBirthProcessing processing = { dataModel };
                     file.processing(processing, city.getNumbers(dataModel.area, dataModel.areaText));
-                    TableViewText view = {processing, dataModel};
-                    file.output(view);
+                    TableViewText view = {&processing, dataModel};
                     view.output(cout);
+                    file.output(view);
                     
                     break;
                 }
@@ -109,7 +108,7 @@ int main() {
                     
                     DeleteProcessing processing = { dataModel };
                     file.processing(processing, city.getNumbers(Area::city));
-                    DeleteViewText view = { dataModel };
+                    DeleteViewText view = {&processing, dataModel };
                     file.output(view);
                     view.output(cout);
                     
@@ -120,6 +119,7 @@ int main() {
                     break;
                 }
             }
+            
             
             
             cout << "Продолжить? 1 0 : ";
@@ -133,11 +133,8 @@ int main() {
     catch(string n) {
         cout << n << endl;
     }
-    catch (out_of_range) {
-        cout << endl << "Ошибка выход за приделы!" << endl;
-    }
-    catch (invalid_argument) {
-        cout << endl << "Ошибка ввода данных!" << endl;
+    catch(char *n) {
+        cout << n << endl;
     }
     catch(...) {
         cout << endl << "Неизвестная ошибка!" << endl;

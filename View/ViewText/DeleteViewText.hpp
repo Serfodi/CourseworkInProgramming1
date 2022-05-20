@@ -12,10 +12,20 @@
 class DeleteViewText: public ViewText {
 public:
     
-    DeleteViewText(const DataModel &dataModel) : ViewText(dataModel) { }
+    DeleteProcessing *processing;
+    
+    DeleteViewText(DeleteProcessing *processing, const DataModel &dataModel) : ViewText(dataModel) {
+        this -> processing = processing;
+    }
     
     void output(ostream &out) override {
-        out << "Удален: " << dataModel.fIOInput << ". Дата рождения: " << dataModel.dataInput[0] << endl;
+        
+        if (processing->isEmpty) {
+            out << "Удален: " << dataModel.fIOInput << ". Дата рождения: " << dataModel.dataInput[0] << endl;
+        } else {
+            out << "Мать не найдена." << endl;
+        }
+        
     }
     
 };

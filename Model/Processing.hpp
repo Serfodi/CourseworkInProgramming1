@@ -41,6 +41,7 @@ public:
 class ViewBirthProcessing: public Processing {
 public:
     
+    /// База данных Birth
     vector<Birth> birthData;
     
     ViewBirthProcessing() {}
@@ -57,9 +58,7 @@ public:
                 if (birth.dOB >= dataModel.dataInput[0] && birth.dOB <= dataModel.dataInput[1])
                     birthData.push_back(birth);
         }
-        sort(birthData.begin(), birthData.end());
     }
-    
     
 };
 
@@ -149,12 +148,18 @@ public:
     
     vector<Birth> birthData;
     
+    bool isEmpty = false;
+    
     DeleteProcessing(DataModel dataModel) : Processing(dataModel) {}
     
     void processing(const Birth &birth) override {
-        if (!(dataModel.fIOInput == birth.fIO && dataModel.dataInput[0] == birth.dOBMother))
+        if (!(dataModel.fIOInput == birth.fIO && dataModel.dataInput[0] == birth.dOBMother)) {
             birthData.push_back(birth);
+        } else {
+            isEmpty = true;
+        }
     }
+    
     
 };
 

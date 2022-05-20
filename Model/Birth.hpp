@@ -17,7 +17,6 @@
 struct Birth {
     
     // MARK:  Свойства
-public:
     
     /// Номер роддома
     int number;
@@ -82,6 +81,10 @@ public:
         return (fIO == second.fIO && dOBMother == second.dOBMother);
     }
     
+    /*
+     Сравнивают по дате рождения ребенка
+     */
+    
     bool operator > (Birth second) const {
         return dOB > second.dOB;
     }
@@ -99,7 +102,7 @@ public:
     }
     
     
-    friend ifstream& operator >> (ifstream &, Birth &);
+//    friend ifstream& operator >> (ifstream &, Birth &);
     
     /// Возвращяет массив строк
     vector<string> getDescription() {
@@ -128,13 +131,13 @@ ifstream& operator >> (ifstream &in, Birth &birth) {
     birth.number = stoi(line);
     
     getline(in, line, sep);
-    birth.dOB = Date::dateCast(line);
+    birth.dOB = Date(line);
     
     getline(in, birth.region, sep);
     getline(in, birth.fIO, sep);
     
     getline(in, line, sep);
-    birth.dOBMother = Date::dateCast(line);
+    birth.dOBMother = Date(line);
     
     Сhildren children;
     

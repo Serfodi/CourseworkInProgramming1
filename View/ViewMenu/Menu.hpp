@@ -11,76 +11,147 @@
 #include "Input.hpp"
 
 class Menu {
-private:
-    
-    /// Ввод
-    Input input;
-    
-    
 public:
     
     // MARK: Методы
     
+    
     /// Меню выбора обработки
     void open(DataModel &dataModel, City &city) {
         
-        output(textСP);
-        dataModel.choiceProcessing = input.choiceProcessingCast(input.number());
+        choiceProcessingMenu(dataModel);
         
         if (dataModel.choiceProcessing != removeBirth) menuArea(dataModel, city);
+        
         switch (dataModel.choiceProcessing) {
             case viewBirth:
-                menuDataFormat(dataModel);
+                
+                dateFormatMenu(dataModel);
                 break;
+                
             case histogram: case birthrate:
+                
                 menuAttributeBirthrate(dataModel);
                 break;
+                
             case removeBirth:
+                
                 menuDelete(dataModel);
+                break;
         }
-        
-        
     }
     
     
 private:
     
     
-    /// Меню выбора дата
-    void menuDataFormat(DataModel &dataModel) {
-        output(textDataFormat);
-        dataModel.dataFormat = input.dataFormatCast(input.number());
-        cout << textDataFormatInput[dataModel.dataFormat];
-        dataModel.dataInput = input.dateCast(input.text(), dataModel.dataFormat);
+    void choiceProcessingMenu(DataModel &dataModel) {
+        output(textСP);
+        choiceProcessingInput(dataModel);
     }
     
-    /// Меню выбора места поиска
+    void dateFormatMenu(DataModel &dataModel) {
+        output(textDataFormat);
+        dateFormatInput(dataModel);
+        output(textDataFormatInput[dataModel.dataFormat]);
+        dateInput(dataModel);
+    }
+    
     void menuArea(DataModel &dataModel, City &city) {
         output(textArea);
-        dataModel.area = input.areaCast(input.number());
+        areaInput( dataModel);
         outCity(dataModel.area, city);
         cout << endl << textAreaInput[dataModel.area];
-        dataModel.areaText = input.text();
+        areaTextInput(dataModel);
     }
     
-    // Меню выбора критерия Birthrate
+    
     void menuAttributeBirthrate(DataModel &dataModel) {
         output(textBirthrate);
-        dataModel.attribute = input.attributeCast(input.number());
+        attributeInput(dataModel);
     }
     
-    /// Меню удаления
+    
     void menuDelete(DataModel &dataModel) {
-        cout << textDeletInput[0];
-        dataModel.fIOInput = input.text();
-        cout << textDeletInput[1];
-        dataModel.dataInput = input.dateCast(input.text(), day);
+        output(textDeletInput[0]);
+        dataModel.fIOInput = Input::text();
+        output(textDeletInput[1]);
+        dataModel.dataFormat = day;
+        dateInput(dataModel);
     }
     
     
     
     
-private:
+    // MARK: - Ввод
+    
+    
+    void dateInput (DataModel &dataModel) {
+        try {
+            dataModel.dataInput = Input::dateCast(Input::text(), dataModel.dataFormat);
+        }
+        catch (DateError error) {
+            cout << error.what();
+            dateInput(dataModel);
+        }
+        
+    }
+    
+    void dateFormatInput (DataModel &dataModel) {
+        try {
+            dataModel.dataFormat = Input::dataFormatCast(Input::number());
+        }
+        catch (InputError error) {
+            cout << error.what();
+            dateFormatInput(dataModel);
+        }
+    }
+    
+    void choiceProcessingInput (DataModel &dataModel) {
+        try {
+            dataModel.choiceProcessing = Input::choiceProcessingCast(Input::number());
+        }
+        catch (InputError error) {
+            cout << error.what();
+            choiceProcessingInput(dataModel);
+        }
+    }
+    
+    void areaInput(DataModel &dataModel) {
+        try {
+            dataModel.area = Input::areaCast(Input::number());
+        }
+        catch (InputError error) {
+            cout << error.what();
+            areaInput(dataModel);
+        }
+    }
+    
+    void areaTextInput (DataModel &dataModel) {
+        try {
+            dataModel.areaText = Input::text();
+        }
+        catch (InputError error) {
+            cout << error.what();
+            areaTextInput(dataModel);
+        }
+    }
+    
+    void attributeInput (DataModel &dataModel) {
+        try {
+            dataModel.attribute = Input::attributeCast(Input::number());
+        }
+        catch (InputError error) {
+            cout << error.what();
+            attributeInput(dataModel);
+        }
+    }
+    
+    
+    
+    
+    // MARK: -  Вывод текста
+    
     
     void outCity (Area area, City &city) {
         switch (area) {
@@ -88,22 +159,30 @@ private:
                 cout << city.getName();
                 break;
             case Area::region:
-                output(city.getRegionName());
+                output(city.getAllRegionName());
                 break;
             case Area::hospital:
-                output(city.getNumberName());
+                output(city.getAllNumberName());
                 break;
         }
     }
     
+    
     void output(vector<string> array) {
         for (int i = 0; i < array.size(); i++) {
             cout << array[i];
-            if (!(i == array.size()-1)) {
+            if (!(i == array.size()-1))
                 cout << endl;
-            }
         }
     }
+    
+    void output (string text) { cout << text; }
+    
+    
+    
+    
+    
+    // MARK: - Текст
     
     
     
