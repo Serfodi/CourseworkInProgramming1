@@ -78,7 +78,6 @@ public:
     
     TableViewText (ViewBirthProcessing *processing, const DataModel &dataModel) : ViewText(dataModel) {
         this -> processing = processing;
-        sort(processing->birthData.begin(), processing->birthData.end());
     }
     
     void output (ostream &out) override {

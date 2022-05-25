@@ -44,33 +44,36 @@ public:
     
 private:
     
-    
     void choiceProcessingMenu(DataModel &dataModel) {
         output(textСP);
         choiceProcessingInput(dataModel);
+        clearTab();
     }
     
     void dateFormatMenu(DataModel &dataModel) {
         output(textDataFormat);
         dateFormatInput(dataModel);
+        clearTab();
         output(textDataFormatInput[dataModel.dataFormat]);
         dateInput(dataModel);
+        clearTab();
     }
     
     void menuArea(DataModel &dataModel, City &city) {
         output(textArea);
         areaInput( dataModel);
+        clearTab();
         outCity(dataModel.area, city);
         cout << endl << textAreaInput[dataModel.area];
         areaTextInput(dataModel);
+        clearTab();
     }
-    
     
     void menuAttributeBirthrate(DataModel &dataModel) {
         output(textBirthrate);
         attributeInput(dataModel);
+        clearTab();
     }
-    
     
     void menuDelete(DataModel &dataModel) {
         output(textDeletInput[0]);
@@ -78,11 +81,17 @@ private:
         output(textDeletInput[1]);
         dataModel.dataFormat = day;
         dateInput(dataModel);
+        clearTab();
     }
     
+public:
     
+    void clearTab() {
+//        system("cls");
+        for (int i = 0; i<30; i++) { cout << endl; }
+    }
     
-    
+private:
     // MARK: - Ввод
     
     
@@ -94,7 +103,6 @@ private:
             cout << error.what();
             dateInput(dataModel);
         }
-        
     }
     
     void dateFormatInput (DataModel &dataModel) {
@@ -166,7 +174,6 @@ private:
                 break;
         }
     }
-    
     
     void output(vector<string> array) {
         for (int i = 0; i < array.size(); i++) {

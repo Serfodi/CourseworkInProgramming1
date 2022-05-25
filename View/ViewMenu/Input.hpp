@@ -30,15 +30,9 @@ public:
     static int number() {
         string textNumber = text();
         int number;
-        try {
-            number = stoi(textNumber);
-        }
-        catch (...) {
-            throw InputError("int");
-        }
+        number = stoi(textNumber);
         return number;
     }
-    
     
     /// Ввод с клавиатуры текста string
     static string text() {
@@ -60,6 +54,14 @@ public:
      */
     static const vector<Date> dateCast (string dataText, DataFormat format) {
         vector<Date> data(format+1);
+        
+        if (dataText == "all") {
+            vector<Date> data;
+            data.push_back(Date(0, 0, 0));
+            data.push_back(Date(31, 12, 9999));
+            return data;
+        }
+        
         switch (format) {
             case day:
                 data[0] = Date(dataText);
@@ -72,8 +74,6 @@ public:
         return data;
     }
 
-    
-    
     
     
     // MARK:  Cast to enum ChoiceMenu
@@ -117,7 +117,6 @@ public:
         if (number > 4 || number < 1) { throw InputError("attributeCast"); }
         return static_cast<Attribute>(number-1);
     }
-    
     
 };
 

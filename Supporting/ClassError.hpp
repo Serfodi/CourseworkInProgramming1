@@ -15,6 +15,8 @@
 class Error {
 public:
 
+    Error() {}
+    
     string text;
     
     Error(string text) {
@@ -37,6 +39,8 @@ class OpenFileError: public Error {
 
 class DateError: public Error {
 public:
+    
+    DateError() {}
     
     DateError(string text) : Error(text) {}
     

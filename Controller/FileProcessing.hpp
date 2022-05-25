@@ -17,9 +17,6 @@
 #define FileProces_hpp
 
 
-using namespace std;
-
-
 // Потоки
 
 /// Двух-сторонний
@@ -46,18 +43,20 @@ private:
     /// Расположение записей о рождении
     string birthFileName = "Birth";
     /// Файл с результатом
-    string resultFileName = "Result";
+    string resultFileName =  "Protocol";
     /// Расположение записей роддомов файлов
     string hospitalFileName = "Hospital";
     
+    /// Выдает расширения файла
     string getFileName(string name) const { return name + ".txt"; }
+    // Выдает пусть к файлу
     string getFilePatch(string name) const { return name + "/"; }
     
     
 public:
     
     /**
-     * Инициализация базы данных номера госпиталей
+     * Инициализация базы данных номера госпиталей и регионы
      *
      * @param[out] city  Модель где хранятся данный о госпиталях
      */
@@ -71,7 +70,6 @@ public:
         }
         read.close();
     }
-    
     
     /// Создает бинарные файлы по номерам для модели Birth
     void initHospital() {
@@ -94,7 +92,7 @@ public:
     /**
      * Обработка файлов
      *
-     * Чтение из бинарных фалов
+     * Чтение из бинарных фалов по адресам
      *
      * @param[out] processing  Метод обработки, однапроходный алгоритм возврощающий bool
      * @param numbers адреса
@@ -106,6 +104,7 @@ public:
                 while (file.read((char*)&data, sizeof(Birth)))
                     processing.processing(data);
                 file.close();
+                processing.processingEnd();
             }
         }
     }
@@ -124,7 +123,6 @@ public:
     void output(ViewText &viewText) {
         openWrite(resultFileName, ios::app);
         viewText.output(write);
-        write << endl;
         write.close();
     }
     
@@ -133,22 +131,22 @@ public:
     // MARK:  Remove
     
     
-    /// Удаления записи
+    /// Удаления записей
     void removeBirth(const DeleteProcessing &processing) {
-        bool isEmpty = true;
-        remove(birthFileName.c_str());
-        openWrite(birthFileName);
-        for (Birth i : processing.birthData) {
-            if (isEmpty) {
-                write << i;
-                isEmpty = false;
-            } else {
-                write << endl << i;
-            }
-        }
+        if (!processing.isEmpty) return;
+        string tmpFileName = getFilePatch(hospitalFileName)+ "tmp";
+        string oldFileName = getFilePatch(hospitalFileName) + to_string(processing.birth.number);
+        openWrite(tmpFileName, ios::binary);
+        openRead(oldFileName);
+        Birth data;
+        while (read.read((char*)&data, sizeof(Birth)))
+            if (processing.birth != data)
+                write.write((char*)&data, sizeof(Birth));
+        read.close();
         write.close();
+        remove(getFileName(oldFileName).c_str());
+        rename(getFileName(tmpFileName).c_str(), getFileName(oldFileName).c_str());
     }
-    
     
     /// Удаления файлов  госпиталей
     void removeHospitalFile (City &city) {
@@ -159,13 +157,7 @@ public:
     }
     
     
-    
-    // MARK: - Работа с файлами
-    
 private:
-    
-        
-    
     
     // MARK: Открытия файла
     

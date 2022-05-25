@@ -9,8 +9,6 @@
 #ifndef Date_hpp
 #define Date_hpp
 
-
-
 /// Представление даты. В формате: дд.мм.гггг
 struct Date {
     
@@ -33,11 +31,11 @@ struct Date {
     
     Date() {}
     
-//    Date(int day, int month, int year) {
-//        this -> day = day;
-//        this -> month = month;
-//        this -> year = year;
-//    }
+    Date(int day, int month, int year) {
+        this -> day = day;
+        this -> month = month;
+        this -> year = year;
+    }
     
     /// Дата на основании строки формта дд.мм.гггг
     Date (string text) {
@@ -46,11 +44,17 @@ struct Date {
             this -> day = stoi(components[0]);
             this -> month = stoi(components[1]);
             this -> year = stoi(components[2]);
+            
+            if (day > 31 || day < 0) throw DateError();
+            if (month > 12 || month < 0) throw DateError();
+            if (year > 9999 || year < 0) throw DateError();
+            
         }
-        catch (invalid_argument) {
+        catch (...) {
             throw DateError(text);
         }
     }
+    
     
     
     // MARK:  Перегрузки

@@ -33,7 +33,7 @@ public:
         
         // максимальный элемент – это будет высота гистограммы (max + 1)
         int max = 0;
-        for (int i = 1; i<13; i++)
+        for (int i = 0; i<12; i++)
             if (max < histogram.mouth[i])
                 max = histogram.mouth[i];
         
@@ -42,23 +42,17 @@ public:
         // Шапка
         out << "Вывод гистрограммы рождаемости: " << attributeText() << endl;
         out << "По городу: " << dataModel.area << endl;
-        
         out << "     |-------------------------|" << endl;
-        
         for (int i=0; i < (max + 1); i++) {
             int count = (max + 1) - i;
             bool *avail = availability(count, histogram.mouth);
-            
             // Вывод строчки histogramString
             out << setw(4) << count << " | " << histogramString(count, avail) << "|" << endl;
-            
             delete [] avail;
         }
-        
         // Подвал
         out << "     |-------------------------|" << endl;
         out << "     | я ф м а м и и а с о н д |" << endl;
-        
     }
     
     
@@ -78,7 +72,6 @@ private:
         }
     }
     
-    
     /// Выводит строчку
     ///
     /// Собирает строчку для вывода гистрограмы сверху вниз.
@@ -89,9 +82,9 @@ private:
     ///
     /// @param count кол-во обозначает слева
     ///
-    string histogramString(int count, bool availability[13]) {
+    string histogramString(int count, bool availability[12]) {
         string s;
-        for (int i=1; i<13; i++) {
+        for (int i=0; i<12; i++) {
             s += availability[i] ? bricks : " ";
             s += " ";
         }
@@ -99,14 +92,12 @@ private:
     }
     
     /// Просматривает есть ли рождаемость на заданном кол-во
-    bool* availability(int count, const int mouth[13]) {
+    bool* availability(int count, const int mouth[12]) {
         bool *array = new bool[13];
-        for (int i=1; i<13; i++)
+        for (int i=0; i<12; i++)
             array[i] = count <= mouth[i];
         return array;
     }
-    
-    
     
 };
 

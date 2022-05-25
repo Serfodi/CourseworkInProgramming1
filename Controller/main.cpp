@@ -39,19 +39,20 @@ using namespace std;
 
 int main() {
     
-    setlocale(LC_ALL, "ru");
     
+    setlocale(LC_ALL, "ru");
     
     
     FileProcessing file;
     City city;
-    DataModel dataModel;
     Menu menu;
+    DataModel dataModel;
+    
     
     string is = "1";
     
+    
     try {
-        
         
         // MARK: - Обработка файла
         
@@ -76,65 +77,53 @@ int main() {
                 case viewBirth: {
                     
                     ViewBirthProcessing processing = { dataModel };
-                    file.processing(processing, city.getNumbers(dataModel.area, dataModel.areaText));
+                    vector<int> numbers = city.getNumbers(dataModel.area, dataModel.areaText);
+                    file.processing(processing, numbers);
                     TableViewText view = {&processing, dataModel};
                     view.output(cout);
                     file.output(view);
-                    
                     break;
                 }
                 case histogram: {
                     
                     HistogramProcessing processing = { dataModel };
-                    file.processing(processing, city.getNumbers(dataModel.area, dataModel.areaText));
+                    vector<int> numbers = city.getNumbers(dataModel.area, dataModel.areaText);
+                    file.processing(processing, numbers);
                     HistogramViewText view = { processing, dataModel };
                     file.output(view);
                     view.output(cout);
-                    
                     break;
                     
                 }
                 case birthrate: {
                     
                     BirthrateProcessing processing = { dataModel };
-                    file.processing(processing, city.getNumbers(dataModel.area, dataModel.areaText));
+                    vector<int> numbers = city.getNumbers(dataModel.area, dataModel.areaText);
+                    file.processing(processing, numbers);
                     BirthrateViewText view = { processing, dataModel };
                     file.output(view);
                     view.output(cout);
-                    
                     break;
                 }
                 case removeBirth: {
                     
                     DeleteProcessing processing = { dataModel };
-                    file.processing(processing, city.getNumbers(Area::city));
-                    DeleteViewText view = {&processing, dataModel };
+                    vector<int> numbers = city.getNumbers(Area::city);
+                    file.processing(processing, numbers);
+                    file.removeBirth(processing);
+                    DeleteViewText view = {processing, dataModel };
                     file.output(view);
                     view.output(cout);
-                    
-                    file.removeBirth(processing);
-                    file.removeHospitalFile(city);
-                    file.initHospital();
-                    
                     break;
                 }
             }
-            
-            
-            
             cout << "Продолжить? 1 0 : ";
             getline(cin, is);
-            
+            menu.clearTab();
         }
-        
-        
-        
     }
-    catch(string n) {
-        cout << n << endl;
-    }
-    catch(char *n) {
-        cout << n << endl;
+    catch(OpenFileError error) {
+        cout << error.text << endl;
     }
     catch(...) {
         cout << endl << "Неизвестная ошибка!" << endl;

@@ -84,25 +84,10 @@ struct Birth {
     /*
      Сравнивают по дате рождения ребенка
      */
-    
-    bool operator > (Birth second) const {
-        return dOB > second.dOB;
-    }
-    
-    bool operator < (Birth second) const {
-        return dOB < second.dOB;
-    }
-    
-    bool operator >= (Birth second) const {
-        return dOB >= second.dOB;
-    }
-    
-    bool operator <= (Birth second) const {
-        return dOB <= second.dOB;
-    }
-    
-    
-//    friend ifstream& operator >> (ifstream &, Birth &);
+    bool operator > (Birth second) const { return dOB > second.dOB; }
+    bool operator >= (Birth second) const { return dOB >= second.dOB; }
+    bool operator < (Birth second) const { return dOB < second.dOB; }
+    bool operator <= (Birth second) const { return dOB <= second.dOB; }
     
     /// Возвращяет массив строк
     vector<string> getDescription() {

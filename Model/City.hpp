@@ -15,25 +15,20 @@ using DictionaryRegion = map<string, vector<int>>;
 
 /// Город
 class City {
-private:
     
     /// имя
     string name;
     /// Регионы в городе
     DictionaryRegion regions = {};
     
-    
-    
 public:
     
     City () {}
-    
     
     /// Возвращает имя города
     const string getName() const { return name; }
     /// Устанавливает имя города
     void setName(string name) { this -> name = name; }
-    
     
     /// Добавляет новый элемент в конец regions
     void append(DictionaryRegion region) {
@@ -41,10 +36,8 @@ public:
         regions[it->first] = it->second;
     }
     
-    
     /// Возвращает региона по слову. Как в словарике
     const vector<int> find(string region) { return regions[region]; }
-    
     
     /// Возвращает кол-во регионов в городе
     long int getCount() const { return regions.size(); }
@@ -63,7 +56,9 @@ public:
     vector<int> getNumbers(Area area, string areaText = "") {
         switch (area) {
             case city:
-                return allNumbers();
+                if (areaText == name) {
+                    return allNumbers();
+                }
             case region:
                 return regions[areaText];
             case hospital:
@@ -95,7 +90,6 @@ public:
     
     
 private:
-    
     
     /// Возвращает номера всех роддомов входящие в город
     vector<int> allNumbers() {
